@@ -12,6 +12,7 @@ Router.get('/', (req, res) => res.json({message: "Hello!!!"}));
 
 // Fire Sensor - Routes
 Router.get("/firereadings", FireSensorController.index);
+Router.get("/firereading/:id", FireSensorController.findById);
 Router.post("/firereading", FireSensorController.create);
 
 // Mq7 Sensor - Routes

@@ -28,6 +28,25 @@ class FireSensorController{
             res.sendStatus(status.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async findById(req, res){
+        try{
+            const id = req.params.id;
+            if(isNaN(id)){
+                res.status(status.BAD_REQUEST).json({error: "Invalid ID"});
+            } else {
+                const reading = await FireSensor.findById(id);
+                if(!reading){
+                    res.status(status.NOT_FOUND).json({error: "Not readings found"})
+                } else {
+                    res.json(reading);
+                }
+            }
+        } catch(err){
+            console.error(err);
+            res.sendStatus(status.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 module.exports = new FireSensorController();

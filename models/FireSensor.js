@@ -27,7 +27,6 @@ class FireSensor{
     async findById(id){
         try{
             const reading = await knex.select().where({id}).first().table(this.table);
-
             return reading;
         } catch(err){
             throw err;
