@@ -16,7 +16,7 @@ class Mq7SensorController{
         try{
             const mq7Value = req.body.mq7Value;
 
-            const response = await MQ7Sensor.create(mq7Value);
+            const response = await MQ7Sensor.create({value: mq7Value, date: new Date()});
             if(response){
                 res.json(response);
             }

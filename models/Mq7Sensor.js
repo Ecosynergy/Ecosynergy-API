@@ -28,11 +28,11 @@ class Mq7Sensor {
         }
     }
 
-    async create(value){
+    async create(reading){
         try{
             return await knex.insert({
-                value: value,
-                date: new Date()
+                value: reading.value,
+                date: reading.date
             });
         } catch(err){
             throw err;
