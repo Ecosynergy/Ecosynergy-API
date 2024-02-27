@@ -9,5 +9,6 @@ const UserController = require("../controllers/UserController");
 
 // Routes
 Router.get('/', (req, res) => res.json({message: "Hello!!!"}));
+Router.get("/firereadings", FireSensorController.index);
 
 module.exports = Router;
