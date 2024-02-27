@@ -20,4 +20,9 @@ Router.get("/mq7readings", Mq7SensorController.index);
 Router.get("/mq7reading/:id", Mq7SensorController.findById);
 Router.post("/mq7reading", Mq7SensorController.create);
 
+// Mq135 Sensor - Routes
+Router.get("/mq135readings", Mq135SensorController.index);
+Router.get("/mq135reading/:id", Mq135SensorController.findById);
+Router.post("/mq135reading", Mq135SensorController.create);
+
 module.exports = Router;
