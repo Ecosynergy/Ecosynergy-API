@@ -16,13 +16,8 @@ class Mq7Sensor {
 
     async findById(id){
         try{
-            const reading = knex.select().where({id}).first().table(this.table);
-
-            if(reading){
-                return reading;
-            } else {
-                return null;
-            }
+            const reading = await knex.select().where({id}).first().table(this.table);
+            return reading;
         } catch(err){
             throw err;
         }
@@ -33,7 +28,7 @@ class Mq7Sensor {
             return await knex.insert({
                 value: reading.value,
                 date: reading.date
-            });
+            }).table(this.table);
         } catch(err){
             throw err;
         }

@@ -16,9 +16,13 @@ class Mq7SensorController{
         try{
             const mq7Value = req.body.mq7Value;
 
-            const response = await MQ7Sensor.create({value: mq7Value, date: new Date()});
-            if(response){
-                res.json(response);
+            if(!isNaN(mq7Value)){
+                const response = await MQ7Sensor.create({value: mq7Value, date: new Date()});
+                if(response[0] > 0){
+                    res.status(status.CREATED).json(await MQ7Sensor.findById(response[0]));
+                }
+            } else {
+                res.status(status.BAD_REQUEST).json({error: "Missing fields value"});
             }
         } catch(err){
             console.error(err);
@@ -32,7 +36,7 @@ class Mq7SensorController{
             if(isNaN(id)){
                 res.status(status.BAD_REQUEST).json({error: "Invalid field"});
             } else {
-                const reading = await MQ7Sensor.findById();
+                const reading = await MQ7Sensor.findById(id);
                 if(reading){
                     res.json(reading);
                 } else {

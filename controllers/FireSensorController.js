@@ -21,7 +21,9 @@ class FireSensorController{
                 res.status(status.BAD_REQUEST).json({error: "Missing field value"});
             } else {
                 const response = await FireSensor.create({isFire, date: new Date()});
-                res.status(status.CREATED).json(response);
+                if(response[0] > 0){
+                    res.status(status.CREATED).json(await FireSensor.findById(response[0]));
+                }
             }
         } catch(err){
             console.error(err);
@@ -36,8 +38,9 @@ class FireSensorController{
                 res.status(status.BAD_REQUEST).json({error: "Invalid ID"});
             } else {
                 const reading = await FireSensor.findById(id);
+                console.log(reading);
                 if(!reading){
-                    res.status(status.NOT_FOUND).json({error: "Not readings found"})
+                    res.status(status.NOT_FOUND).json({error: "No readings found"})
                 } else {
                     res.json(reading);
                 }

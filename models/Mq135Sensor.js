@@ -1,3 +1,4 @@
+const knex = require("../database/connection");
 const status = require("http-status");
 
 class Mq135Sensor{
@@ -16,7 +17,7 @@ class Mq135Sensor{
     async create(reading){
         try{
             return await knex.insert({
-                isFire: reading.value,
+                value: reading.value,
                 date: reading.date
             }).table(this.table);
         } catch(err){
