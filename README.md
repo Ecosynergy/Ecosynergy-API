@@ -3,12 +3,12 @@ Welcome to the documentation for the Ecosynergy API, a TCC (Final Coursework) pr
 ## Table of Contents
 1. Authentication
 2. Sensors
-   - List Readings
-   - Record Reading
+	- List Readings
+	- Record Reading
 3. Users
-    - Register User
-    - Login
-    - Update Profile
+	- Register User
+	- Login
+	- Update Profile
 
 ## Authentication
 ## Sensors
