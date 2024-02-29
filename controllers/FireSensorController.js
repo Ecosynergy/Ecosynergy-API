@@ -17,7 +17,7 @@ class FireSensorController{
     async create(req, res){
         try{
             const isFire = req.body.isFire;
-            if(!isFire){
+            if(isFire == undefined){
                 res.status(status.BAD_REQUEST).json({error: "Missing field value"});
             } else {
                 const response = await FireSensor.create({isFire, date: new Date()});
