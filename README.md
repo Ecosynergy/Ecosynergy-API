@@ -14,13 +14,13 @@ Welcome to the documentation for the Ecosynergy API, a TCC (Final Coursework) pr
 ## Sensors
 ### Fire Sensor
 #### List Readings
-**Endpoint:** GET /firereadings
+*Endpoint:* GET /firereadings
 #### Search Reading
-**Endpoint:** GET /firereading/:id
+*Endpoint:* GET /firereading/:id
 ##### URL Parameters
 **`id` (int):** The unique identifier of the sensor reading
 #### Create Reading
-**Endpoint:** POST /firereading
+*Endpoint:* POST /firereading
 ##### Request Parameters:
 **isFire:** Boolean value to indicate whether the sensor is returning true or false
 ```
@@ -30,9 +30,9 @@ Welcome to the documentation for the Ecosynergy API, a TCC (Final Coursework) pr
 ```
 ### MQ7 Sensor
 #### List Readings
-**Endpoint:** GET /mq7readings
+*Endpoint:* GET /mq7readings
 #### Search Reading
-**Endpoint:** GET /mq7reading/:id
+*Endpoint:* GET /mq7reading/:id
 ##### URL Parameters:
 **`id` (int):** The unique identifier of the sensor reading
 ##### Responses
