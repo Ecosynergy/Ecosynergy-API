@@ -1,4 +1,5 @@
 const knex = require("../database/connection");
+const PasswordToken = require("../models/PasswordToken");
 const bcrypt = require("bcryptjs");
 const status = require("http-status");
 
@@ -10,6 +11,7 @@ class User{
     constructor(){
         this.table = "users";
     }
+    
     async create(user){
         try{
             const salt = bcrypt.genSaltSync(10);
@@ -108,16 +110,8 @@ class User{
             const salt = bcrypt.genSaltSync(10);
             const newHashPassword = bcrypt.hashSync(data.password, salt);
             await knex.update({password: newHashPassword}).where({id: data.id}).table(this.table);
-            await this.setUsed(data.token);
+            await PasswordToken.setUsed(data.token);
             return {status: true};
-        } catch(err){
-            throw err;
-        }
-    }
-
-    async setUsed(token){
-        try{
-            await knex.update({ used:  true }).where({ token: token}).table("passwordtokens") ;
         } catch(err){
             throw err;
         }

@@ -75,6 +75,14 @@ class PasswordToken{
             });
         });
     }
+
+    async setUsed(token){
+        try{
+            await knex.update({ used:  true }).where({ token: token}).table(this.table);
+        } catch(err){
+            throw err;
+        }
+    }
 }
 
 module.exports = new PasswordToken();

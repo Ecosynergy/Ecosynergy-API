@@ -25,4 +25,15 @@ Router.get("/mq135readings", Mq135SensorController.index);
 Router.get("/mq135reading/:id", Mq135SensorController.findById);
 Router.post("/mq135reading", Mq135SensorController.create);
 
+// User - Routes
+Router.get("/users", UserController.index);
+Router.get("/user/:id", UserController.findUser);
+Router.post("/user", UserController.create);
+Router.put("/user/:id", UserController.edit);
+Router.delete("/user/:id", UserController.remove);
+Router.post("/recoverpassword", UserController.recoverPassword);
+Router.post("/changepassword", UserController.changePassword);
+Router.post("/login", UserController.login);
+Router.post("/validate", UserController.validate);
+
 module.exports = Router;
