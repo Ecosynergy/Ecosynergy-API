@@ -17,7 +17,7 @@ class FireSensorController{
     async create(req, res){
         try{
             const isFire = req.body.isFire;
-            if(isFire == undefined){
+            if(isFire == undefined || isFire == null){
                 res.status(status.BAD_REQUEST).json({error: "Missing field value"});
             } else {
                 const response = await FireSensor.create({isFire, date: new Date()});
@@ -34,7 +34,7 @@ class FireSensorController{
     async findById(req, res){
         try{
             const id = req.params.id;
-            if(isNaN(id)){
+            if(isNaN(id) || !id){
                 res.status(status.BAD_REQUEST).json({error: "Invalid ID"});
             } else {
                 const reading = await FireSensor.findById(id);

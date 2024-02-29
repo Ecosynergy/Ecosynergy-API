@@ -15,7 +15,7 @@ class Mq135SensorController{
     async create(req, res){
         try{
             const mq135Value = req.body.mq135Value;
-            if(!isNaN(mq135Value)){
+            if(!isNaN(mq135Value) && mq135Value){
                 const response = await Mq135Sensor.create({value: mq135Value, date: new Date()});
                 if(response[0] > 0){
                     res.status(status.CREATED).json(await Mq135Sensor.findById(response[0]));
@@ -32,7 +32,7 @@ class Mq135SensorController{
     async findById(req, res){
         try{
             const id = req.params.id;
-            if(isNaN(id)){
+            if(isNaN(id) || !id){
                 res.status(status.BAD_REQUEST).json({error: "Invalid field"});
             } else {
                 const reading = await Mq135Sensor.findById(id);
