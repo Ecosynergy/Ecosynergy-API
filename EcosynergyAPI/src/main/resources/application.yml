@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: EcosynergyAPI
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/rest_with_spring_boot?useLegacyDatetimeCode=false&serverTimezone=GMT%2B3
+    username: root
+    password: 220624And
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    # properties:
+    # hibernate:
+    # dialect: org.hibernate.dialect.MySQLDialect
+    show_sql: false
+springdoc:
+  paths-to-match: /api/**/v1/**
+  swagger-ui:
+    use-root-path: true
