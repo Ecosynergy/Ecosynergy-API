@@ -1,0 +1,503 @@
+{
+	"info": {
+		"_postman_id": "697d7dca-78dc-4dd2-933e-a0ba50c0f015",
+		"name": "Ecosynergy API",
+		"description": "Welcome to the documentation for the Ecosynergy API, a TCC (Final Coursework) project focused on managing gas emissions with sensors. This API provides functionalities to perform and retrieve readings from MQ7, MQ135, and Fire sensors. Additionally, it offers features for user management, JWT token authentication, and login functionality.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32172128"
+	},
+	"item": [
+		{
+			"name": "Sensors",
+			"item": [
+				{
+					"name": "MQ7",
+					"item": [
+						{
+							"name": "List MQ7 Sensor Readings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/mq7readings",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"mq7readings"
+									]
+								},
+								"description": "This endpoint makes an HTTP GET request to retrieve MQ7 readings from the server. The response returns a status code of 200 and the data is in JSON format. The JSON response includes an array of objects, where each object contains the 'id', 'value', and 'date' of the MQ7 reading."
+							},
+							"response": []
+						},
+						{
+							"name": "Search MQ7 Sensor Reading",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/mq7reading/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"mq7reading",
+										"1"
+									]
+								},
+								"description": "This API endpoint sends an HTTP GET request to retrieve the reading with the ID 1 from the mq7reading resource.\n\n### Response\n\n- Status: 200\n- Content-Type: application/json\n    \n\nThe response will be in JSON format and will contain the reading ID, value, and date."
+							},
+							"response": []
+						},
+						{
+							"name": "Create MQ7 Sensor Reading",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"mq7Value\": 4568\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/mq7reading",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"mq7reading"
+									]
+								},
+								"description": "## POST /mq7reading\n\nThis endpoint is used to submit an MQ7 reading.\n\n### Request Body\n\n- `mq7Value` (number) - The value of the MQ7 reading.\n    \n\n### Response\n\n- Status: 201\n- Content-Type: application/json\n- `id` (number) - The ID of the submitted reading.\n- `value` (number) - The value of the submitted reading.\n- `date` (string) - The date of the submission."
+							},
+							"response": []
+						}
+					],
+					"description": "The MQ-7 sensor is a gas sensor designed to detect concentrations of carbon monoxide (CO) in the air."
+				},
+				{
+					"name": "MQ135",
+					"item": [
+						{
+							"name": "List MQ135 Sensor Readings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/mq135readings",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"mq135readings"
+									]
+								},
+								"description": "This endpoint makes an HTTP GET request to retrieve MQ135 readings from the server. The response is in JSON format and includes an array of objects, each containing the \"id\", \"value\", and \"date\" properties. The \"id\" represents the unique identifier for the reading, \"value\" represents the MQ135 reading value, and \"date\" represents the date and time of the reading."
+							},
+							"response": []
+						},
+						{
+							"name": "Search MQ135 Sensor Reading",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/mq135reading/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"mq135reading",
+										"1"
+									]
+								},
+								"description": "This endpoint makes an HTTP GET request to retrieve the reading from the MQ135 sensor with the ID 1. The response will be in JSON format with the fields \"id\", \"value\", and \"date\". The \"id\" represents the sensor ID, \"value\" represents the reading value, and \"date\" represents the date of the reading."
+							},
+							"response": []
+						},
+						{
+							"name": "Create MQ135 Sensor Reading",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"mq135Value\": 4567\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/mq135reading",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"mq135reading"
+									]
+								},
+								"description": "This endpoint allows you to submit an HTTP POST request to {{host}}/mq135reading in order to add a new MQ135 reading.\n\n### Request Body\n\nThe request should include a raw JSON payload with the following parameter:\n\n- `mq135Value`: (number) The value of the MQ135 reading.\n    \n\n### Response\n\nUpon successful execution, the endpoint returns a response with the following details:\n\n- Status: 201\n- Content-Type: application/json\n- `id`: (number) The ID of the newly added reading.\n- `value`: (number) The value of the reading.\n- `date`: (string) The date and time of the reading."
+							},
+							"response": []
+						}
+					],
+					"description": "The MQ-135 is another gas sensor in the MQ series manufactured by Hanwei Electronics. This sensor is designed to detect a variety of gases in the air, including ammonia, sulfide, benzene vapor, and other pollutants."
+				},
+				{
+					"name": "Fire",
+					"item": [
+						{
+							"name": "List Fire Sensor Readings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/firereadings",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"firereadings"
+									]
+								},
+								"description": "This endpoint retrieves fire readings. The response will be in JSON format with an array of objects, where each object contains the properties \"id\", \"isFire\", and \"date\". The \"id\" represents the unique identifier, \"isFire\" indicates if there is a fire (0 for no fire, 1 for fire), and \"date\" represents the date of the reading."
+							},
+							"response": []
+						},
+						{
+							"name": "Search Fire Sensor Reading",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/firereading/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"firereading",
+										"1"
+									]
+								},
+								"description": "This endpoint makes an HTTP GET request to retrieve fire reading data with a specific ID. The response will be in JSON format and will include the ID, a flag indicating whether there is a fire, and the date of the reading.\n\nThe response will have the following structure:\n\n- `id` (number): The unique identifier of the fire reading.\n- `isFire` (number): A flag indicating whether there is a fire (1 for true, 0 for false).\n- `date` (string): The date of the fire reading."
+							},
+							"response": []
+						},
+						{
+							"name": "Create Fire Sensor Reading",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isFire\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/firereading",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"firereading"
+									]
+								},
+								"description": "This endpoint allows you to submit a reading to indicate the presence of a fire.\n\n### Request Body\n\n- isFire (boolean): Indicates whether there is a fire.\n    \n\n### Response\n\n- Status: 201\n- Content-Type: application/json\n- id (number): The ID of the reading.\n- isFire (number): Indicates the presence of a fire (0 for false, 1 for true).\n- date (string): The date of the reading."
+							},
+							"response": []
+						}
+					],
+					"description": "A digital output fire sensor is a device designed to detect the presence of flames or intense heat, emitting a digital signal when triggered."
+				}
+			],
+			"description": "The integration of MQ-7 (carbon monoxide), MQ-135 (multiple gases), and digital output fire sensors in industrial environments allows for monitoring emissions, detecting gas leaks, and identifying fires. This combination enables process control, emergency alerts, and report generation for more efficient and sustainable management of industrial emissions, ensuring compliance with environmental regulations and worker safety."
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Anderson Rodrigues\",\r\n    \"email\": \"and.rt@hotmail.com\",\r\n    \"password\": \"220624@And\",\r\n    \"role\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Anderson Rodrigues\",\r\n    \"email\": \"and.rt@hotmail.com\",\r\n    \"role\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/user/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/user/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/user/5",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recover Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"and.rt@hotmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}}/recoverpassword",
+							"host": [
+								"{{host}}}"
+							],
+							"path": [
+								"recoverpassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzA3Nzg2ODM2LCJleHAiOjE3MDc4NzMyMzZ9.KM8857ADGN3bljSo2lbPmqDoYKG4yT2tl3a6s_2UoSw\",\r\n    \"password\": \"220624@And\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/changepassword",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"changepassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"and.rt@hotmail.com\",\r\n    \"password\": \"220624@And\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"{{adminAuth}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/validate",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"validate"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
