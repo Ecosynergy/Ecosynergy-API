@@ -1,7 +1,7 @@
 CREATE TABLE `passwordtokens` (
-                                  `id` bigint NOT NULL AUTO_INCREMENT,
+                                  `id` BIGINT NOT NULL AUTO_INCREMENT,
                                   `token` varchar(255) NOT NULL,
-                                  `user_id` bigint NOT NULL,
+                                  `user_id` BIGINT NOT NULL,
                                   `used` tinyint(1) NOT NULL,
                                   PRIMARY KEY (`id`),
                                   KEY `passwordTokens` (`user_id`),
