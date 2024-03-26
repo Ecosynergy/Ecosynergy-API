@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "cors.originPatterns",
+      "type": "java.lang.String",
+      "description": "Description for cors.originPatterns."
+  }
+] }

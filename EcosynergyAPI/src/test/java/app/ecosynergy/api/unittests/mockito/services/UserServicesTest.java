@@ -46,7 +46,7 @@ class UserServicesTest {
         assertNotNull(result.getKey());
         assertNotNull(result.getLinks());
         assertTrue(result.toString().contains("links: [</api/user/v1/1>;rel=\"self\"]"));
-        assertEquals("User1", result.getName());
+        assertEquals("User1", result.getFullName());
         assertEquals("Email1", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
@@ -67,12 +67,12 @@ class UserServicesTest {
         when(repository.findById(entity.getId())).thenReturn(Optional.of(persisted));
 
         var result = service.create(vo);
-        System.out.println(result.getKey() + result.getName() + result.getEmail() + result.getGender() + result.getNationality());
+        System.out.println(result.getKey() + result.getFullName() + result.getEmail() + result.getGender() + result.getNationality());
         assertNotNull(result);
         assertNotNull(result.getKey());
         assertNotNull(result.getLinks());
         assertTrue(result.toString().contains("links: [</api/user/v1/1>;rel=\"self\"]"));
-        assertEquals("User1", result.getName());
+        assertEquals("User1", result.getFullName());
         assertEquals("Email1", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());

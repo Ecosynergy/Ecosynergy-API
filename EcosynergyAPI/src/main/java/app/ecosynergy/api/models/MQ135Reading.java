@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "mq7_readings")
-public class MQ7Reading implements Serializable {
+@Table(name = "mq135_readings")
+public class MQ135Reading implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -21,7 +21,7 @@ public class MQ7Reading implements Serializable {
 
     private Date date;
 
-    public MQ7Reading() {}
+    public MQ135Reading() {}
 
     public Long getId() {
         return id;
@@ -51,8 +51,8 @@ public class MQ7Reading implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MQ7Reading mq7Reading = (MQ7Reading) o;
-        return Objects.equals(id, mq7Reading.id) && Objects.equals(value, mq7Reading.value) && Objects.equals(date, mq7Reading.date);
+        MQ135Reading mq135Reading = (MQ135Reading) o;
+        return Objects.equals(id, mq135Reading.id) && Objects.equals(value, mq135Reading.value) && Objects.equals(date, mq135Reading.date);
     }
 
     @Override

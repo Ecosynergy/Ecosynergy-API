@@ -65,7 +65,7 @@ public class UserServices {
 
         User entity = repository.findById(user.getKey())
                 .orElseThrow();
-        entity.setName(user.getName());
+        entity.setFullName(user.getFullName());
         entity.setEmail(user.getEmail());
         entity.setGender(user.getGender());
         entity.setNationality(user.getNationality());

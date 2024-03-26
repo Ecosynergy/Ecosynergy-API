@@ -1,7 +1,11 @@
 package app.ecosynergy.api.mapper;
 
+import app.ecosynergy.api.data.vo.v1.FireReadingVO;
+import app.ecosynergy.api.data.vo.v1.MQ135ReadingVO;
 import app.ecosynergy.api.data.vo.v1.MQ7ReadingVO;
 import app.ecosynergy.api.data.vo.v1.UserVO;
+import app.ecosynergy.api.models.FireReading;
+import app.ecosynergy.api.models.MQ135Reading;
 import app.ecosynergy.api.models.MQ7Reading;
 import app.ecosynergy.api.models.User;
 
@@ -28,6 +32,22 @@ public class ModelMapper {
                 MQ7ReadingVO.class,
                 MQ7Reading.class
         ).addMapping(MQ7ReadingVO::getKey, MQ7Reading::setId);
+        mapper.createTypeMap(
+                MQ135Reading.class,
+                MQ135ReadingVO.class
+        ).addMapping(MQ135Reading::getId, MQ135ReadingVO::setKey);
+        mapper.createTypeMap(
+                MQ135ReadingVO.class,
+                MQ135Reading.class
+        ).addMapping(MQ135ReadingVO::getKey, MQ135Reading::setId);
+        mapper.createTypeMap(
+                FireReading.class,
+                FireReadingVO.class
+        ).addMapping(FireReading::getId, FireReadingVO::setKey);
+        mapper.createTypeMap(
+                FireReadingVO.class,
+                FireReading.class
+        ).addMapping(FireReadingVO::getKey, FireReading::setId);
     }
 
     public static <O,D> D parseObject(O origin, Class<D> destination){

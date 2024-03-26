@@ -23,7 +23,7 @@ public class ModelConverterTest {
         UserVO vo = ModelMapper.parseObject(input.mockEntity(), UserVO.class);
 
         assertEquals(Long.valueOf(0L), vo.getKey());
-        assertEquals("User0", vo.getName());
+        assertEquals("User0", vo.getFullName());
         assertEquals("Email0", vo.getEmail());
         assertEquals("Password0", vo.getPassword());
         assertEquals("Male", vo.getGender());
@@ -37,7 +37,7 @@ public class ModelConverterTest {
         List<UserVO> voList = ModelMapper.parseListObject(entityList, UserVO.class);
 
         voList.forEach(vo -> {
-            assertEquals("User" + vo.getKey(), vo.getName());
+            assertEquals("User" + vo.getKey(), vo.getFullName());
             assertEquals("Email" + vo.getKey(), vo.getEmail());
             assertEquals("Password" + vo.getKey(), vo.getPassword());
             assertEquals(vo.getKey() % 2 == 0 ? "Male" : "Female", vo.getGender());
@@ -50,7 +50,7 @@ public class ModelConverterTest {
         User vo = ModelMapper.parseObject(input.mockUserVO(), User.class);
 
         assertEquals(Long.valueOf(0L), vo.getId());
-        assertEquals("UserVO0", vo.getName());
+        assertEquals("UserVO0", vo.getFullName());
         assertEquals("Email0", vo.getEmail());
         assertEquals("Password0", vo.getPassword());
         assertEquals("Male", vo.getGender());
@@ -64,7 +64,7 @@ public class ModelConverterTest {
         List<User> voList = ModelMapper.parseListObject(entityList, User.class);
 
         voList.forEach(vo -> {
-            assertEquals("UserVO" + vo.getId(), vo.getName());
+            assertEquals("UserVO" + vo.getId(), vo.getFullName());
             assertEquals("Email" + vo.getId(), vo.getEmail());
             assertEquals("Password" + vo.getId(), vo.getPassword());
             assertEquals(vo.getId() % 2 == 0 ? "Male" : "Female", vo.getGender());

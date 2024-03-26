@@ -18,7 +18,7 @@ public class MockUser {
     public User mockEntity(Integer number){
         User entity = new User();
         entity.setId(number.longValue());
-        entity.setName("User" + number);
+        entity.setFullName("User" + number);
         entity.setEmail("Email" + number);
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
@@ -30,7 +30,7 @@ public class MockUser {
     public UserVO mockUserVO(Integer number){
         UserVO entity = new UserVO();
         entity.setKey(number.longValue());
-        entity.setName("UserVO" + number);
+        entity.setFullName("UserVO" + number);
         entity.setEmail("Email" + number);
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
