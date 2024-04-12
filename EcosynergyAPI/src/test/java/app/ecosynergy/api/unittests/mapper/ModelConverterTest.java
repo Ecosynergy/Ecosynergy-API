@@ -1,7 +1,7 @@
 package app.ecosynergy.api.unittests.mapper;
 
 import app.ecosynergy.api.data.vo.v1.UserVO;
-import app.ecosynergy.api.mapper.ModelMapper;
+import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.unittests.mapper.mocks.MockUser;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ public class ModelConverterTest {
 
     @Test
     public void parseEntityToVOTest(){
-        UserVO vo = ModelMapper.parseObject(input.mockEntity(), UserVO.class);
+        UserVO vo = DozerMapper.parseObject(input.mockEntity(), UserVO.class);
 
         assertEquals(Long.valueOf(0L), vo.getKey());
         assertEquals("User0", vo.getFullName());
@@ -34,7 +34,7 @@ public class ModelConverterTest {
     public void parseEntityListToVOList(){
         List<User> entityList = input.mockEntityList();
 
-        List<UserVO> voList = ModelMapper.parseListObject(entityList, UserVO.class);
+        List<UserVO> voList = DozerMapper.parseListObjects(entityList, UserVO.class);
 
         voList.forEach(vo -> {
             assertEquals("User" + vo.getKey(), vo.getFullName());
@@ -47,7 +47,7 @@ public class ModelConverterTest {
 
     @Test
     public void parseVOToEntity(){
-        User vo = ModelMapper.parseObject(input.mockUserVO(), User.class);
+        User vo = DozerMapper.parseObject(input.mockUserVO(), User.class);
 
         assertEquals(Long.valueOf(0L), vo.getId());
         assertEquals("UserVO0", vo.getFullName());
@@ -61,7 +61,7 @@ public class ModelConverterTest {
     public void parseVOListToEntityList(){
         List<UserVO> entityList = input.mockVOList();
 
-        List<User> voList = ModelMapper.parseListObject(entityList, User.class);
+        List<User> voList = DozerMapper.parseListObjects(entityList, User.class);
 
         voList.forEach(vo -> {
             assertEquals("UserVO" + vo.getId(), vo.getFullName());

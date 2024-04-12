@@ -4,7 +4,7 @@ import app.ecosynergy.api.controllers.FireReadingController;
 import app.ecosynergy.api.data.vo.v1.FireReadingVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
-import app.ecosynergy.api.mapper.ModelMapper;
+import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.FireReading;
 import app.ecosynergy.api.repositories.FireReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class FireReadingServices {
 
         FireReading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
-        FireReadingVO vo = ModelMapper.parseObject(reading, FireReadingVO.class);
+        FireReadingVO vo = DozerMapper.parseObject(reading, FireReadingVO.class);
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
         return vo;
     }
@@ -33,10 +33,8 @@ public class FireReadingServices {
     public List<FireReadingVO> findAll(){
         List<FireReading> readingsList = repository.findAll();
 
-        List<FireReadingVO> voList = ModelMapper.parseListObject(readingsList, FireReadingVO.class);
-        voList.forEach(vo -> {
-            vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
-        });
+        List<FireReadingVO> voList = DozerMapper.parseListObjects(readingsList, FireReadingVO.class);
+        voList.forEach(vo -> vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel()));
 
         return voList;
     }
@@ -44,9 +42,9 @@ public class FireReadingServices {
     public FireReadingVO create(FireReadingVO reading){
         if(reading == null) throw new RequiredObjectIsNullException();
 
-        FireReading readingEntity = repository.save(ModelMapper.parseObject(reading, FireReading.class));
+        FireReading readingEntity = repository.save(DozerMapper.parseObject(reading, FireReading.class));
 
-        FireReadingVO vo = ModelMapper.parseObject(readingEntity, FireReadingVO.class);
+        FireReadingVO vo = DozerMapper.parseObject(readingEntity, FireReadingVO.class);
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;

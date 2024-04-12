@@ -1,5 +1,6 @@
 package app.ecosynergy.api.controllers;
 
+import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
 import app.ecosynergy.api.services.AuthServices;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +30,21 @@ public class AuthController {
             return token;
     }
 
+    @Operation(summary = "Authenticates a user and returns a token")
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody UserVO data){
+        System.out.println(data);
+        System.out.println(data.getUserName());
+        System.out.println(data.getPassword());
+
+        if(checkIfParamsIsNotNull(data))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
+
+        UserVO userVO = service.signUp(data);
+
+        return ResponseEntity.ok(userVO);
+    }
+
     @Operation(summary = "Refresh token for authenticated user and returns a token")
     @PutMapping("/refresh/{username}")
     public ResponseEntity<?> refreshToken(@PathVariable("username") String username, @RequestHeader("Authorization") String refreshToken){
@@ -51,5 +67,10 @@ public class AuthController {
 
     private static boolean checkIfParamsIsNotNull(String username, String refreshToken) {
         return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
+    }
+
+    private boolean checkIfParamsIsNotNull(UserVO data) {
+        return data.getUserName() == null || data.getUserName().isBlank() ||
+                data.getPassword() == null || data.getPassword().isBlank();
     }
 }

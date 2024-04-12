@@ -4,10 +4,13 @@ import app.ecosynergy.api.controllers.UserController;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
-import app.ecosynergy.api.mapper.ModelMapper;
+import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class UserServices {
+public class UserServices implements UserDetailsService {
     @Autowired
     UserRepository repository;
 
@@ -26,10 +29,8 @@ public class UserServices {
     public List<UserVO> findAll(){
         logger.info("Finding all Users!");
 
-        List<UserVO> usersList = ModelMapper.parseListObject(repository.findAll(), UserVO.class);
-        usersList.forEach(user -> {
-            user.add(linkTo(methodOn(UserController.class).findById(user.getKey())).withSelfRel());
-        });
+        List<UserVO> usersList = DozerMapper.parseListObjects(repository.findAll(), UserVO.class);
+        usersList.forEach(user -> user.add(linkTo(methodOn(UserController.class).findById(user.getKey())).withSelfRel()));
 
         return usersList;
     }
@@ -42,7 +43,7 @@ public class UserServices {
         User entity = repository.findById(id)
                 .orElseThrow();
 
-        UserVO vo = ModelMapper.parseObject(entity, UserVO.class);
+        UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(id)).withSelfRel());
         return vo;
     }
@@ -50,11 +51,11 @@ public class UserServices {
     public UserVO create(UserVO user){
         if(user == null) throw new RequiredObjectIsNullException();
 
-        User entity = ModelMapper.parseObject(user, User.class);
+        User entity = DozerMapper.parseObject(user, User.class);
 
         logger.info("Creating user!");
 
-        UserVO vo = ModelMapper.parseObject(repository.save(entity), UserVO.class);
+        UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
@@ -72,7 +73,7 @@ public class UserServices {
 
         logger.info("Updating user!");
 
-        UserVO vo = ModelMapper.parseObject(repository.save(entity), UserVO.class);
+        UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
@@ -87,5 +88,18 @@ public class UserServices {
         logger.info("Deleting user: " + entity.getId());
 
         repository.delete(entity);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        logger.info("Finding one User by name " + username + "!");
+
+        var user = repository.findByUsername(username);
+
+        if(user != null){
+            return user;
+        } else {
+            throw new UsernameNotFoundException("Username " + username + " not found!");
+        }
     }
 }

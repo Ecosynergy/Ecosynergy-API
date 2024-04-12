@@ -1,16 +1,19 @@
 package app.ecosynergy.api.models;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +26,7 @@ public class User implements Serializable {
     @Column(name = "user_name", unique = true)
     private String userName;
 
-    @Column
+    @Column(name = "full_name")
     private String fullName;
 
     @Column
@@ -35,7 +38,8 @@ public class User implements Serializable {
     @Column
     private String gender;
 
-    @Column String nationality;
+    @Column
+    private String nationality;
 
     @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
@@ -57,13 +61,17 @@ public class User implements Serializable {
     private List<Permission> permissions;
 
     public List<String> getRoles(){
-        List<String> roles = new ArrayList<>();
+        if (permissions == null) {
+            return null;
+        } else {
+            List<String> roles = new ArrayList<>();
 
-        for(Permission permission : permissions){
-            roles.add(permission.getDescription());
+            for(Permission permission : permissions){
+                roles.add(permission.getDescription());
+            }
+
+            return roles;
         }
-
-        return roles;
     }
 
     public Long getId() {
@@ -98,8 +106,38 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return userName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public void setPassword(String password) {
@@ -174,5 +212,4 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(id, userName, fullName, email, password, gender, nationality, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
     }
-
 }

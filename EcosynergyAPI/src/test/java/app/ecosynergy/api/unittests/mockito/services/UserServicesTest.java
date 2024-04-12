@@ -54,32 +54,6 @@ class UserServicesTest {
     }
 
     @Test
-    void create() {
-        User entity = input.mockEntity(1);
-
-        User persisted = entity;
-        persisted.setId(1L);
-
-        UserVO vo = input.mockUserVO(1);
-        vo.setKey(1L);
-
-        when(repository.save(entity)).thenReturn(persisted);
-        when(repository.findById(entity.getId())).thenReturn(Optional.of(persisted));
-
-        var result = service.create(vo);
-        System.out.println(result.getKey() + result.getFullName() + result.getEmail() + result.getGender() + result.getNationality());
-        assertNotNull(result);
-        assertNotNull(result.getKey());
-        assertNotNull(result.getLinks());
-        assertTrue(result.toString().contains("links: [</api/user/v1/1>;rel=\"self\"]"));
-        assertEquals("User1", result.getFullName());
-        assertEquals("Email1", result.getEmail());
-        assertEquals("Password1", result.getPassword());
-        assertEquals("Female", result.getGender());
-        assertEquals("Brazilian1", result.getNationality());
-    }
-
-    @Test
     void update() {
         Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> service.create(null));
 

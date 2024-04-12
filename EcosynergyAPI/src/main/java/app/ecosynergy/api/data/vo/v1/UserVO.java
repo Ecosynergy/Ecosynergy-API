@@ -4,32 +4,35 @@ import app.ecosynergy.api.models.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.persistence.*;
+import com.github.dozermapper.core.Mapping;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 @JsonPropertyOrder("id")
-public class UserVO extends RepresentationModel<UserVO> implements Serializable {
+public class UserVO extends RepresentationModel<UserVO> implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     public UserVO(){}
 
     @JsonProperty("id")
+    @Mapping("id")
     private Long key;
 
-    @JsonIgnore
     private String userName;
 
     private String fullName;
 
     private String email;
 
-    @JsonIgnore
     private String password;
 
     private String gender;
@@ -44,7 +47,22 @@ public class UserVO extends RepresentationModel<UserVO> implements Serializable 
 
     private Boolean enabled;
 
+    @JsonIgnore
     private List<Permission> permissions;
+
+    public List<String> getRoles(){
+        if(permissions != null){
+            List<String> roles = new ArrayList<>();
+
+            for(Permission permission : permissions){
+                roles.add(permission.getDescription());
+            }
+
+            return roles;
+        } else {
+            return null;
+        }
+    }
 
     public Long getKey() {
         return key;
@@ -78,8 +96,38 @@ public class UserVO extends RepresentationModel<UserVO> implements Serializable 
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return userName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public void setPassword(String password) {
@@ -147,8 +195,8 @@ public class UserVO extends RepresentationModel<UserVO> implements Serializable 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        UserVO vo = (UserVO) o;
-        return Objects.equals(key, vo.key) && Objects.equals(userName, vo.userName) && Objects.equals(fullName, vo.fullName) && Objects.equals(email, vo.email) && Objects.equals(password, vo.password) && Objects.equals(gender, vo.gender) && Objects.equals(nationality, vo.nationality) && Objects.equals(accountNonExpired, vo.accountNonExpired) && Objects.equals(accountNonLocked, vo.accountNonLocked) && Objects.equals(credentialsNonExpired, vo.credentialsNonExpired) && Objects.equals(enabled, vo.enabled) && Objects.equals(permissions, vo.permissions);
+        UserVO userVO = (UserVO) o;
+        return Objects.equals(key, userVO.key) && Objects.equals(userName, userVO.userName) && Objects.equals(fullName, userVO.fullName) && Objects.equals(email, userVO.email) && Objects.equals(password, userVO.password) && Objects.equals(gender, userVO.gender) && Objects.equals(nationality, userVO.nationality) && Objects.equals(accountNonExpired, userVO.accountNonExpired) && Objects.equals(accountNonLocked, userVO.accountNonLocked) && Objects.equals(credentialsNonExpired, userVO.credentialsNonExpired) && Objects.equals(enabled, userVO.enabled) && Objects.equals(permissions, userVO.permissions);
     }
 
     @Override
