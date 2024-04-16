@@ -1,8 +1,6 @@
-package app.ecosynergy.api.data.vo.v1;
+package app.ecosynergy.api.integrationtests.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.dozermapper.core.Mapping;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
@@ -10,13 +8,11 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-@JsonPropertyOrder("id")
-public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implements Serializable {
+@XmlRootElement
+public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty("id")
-    @Mapping("id")
     private Long key;
     private Double value;
     private ZonedDateTime date;
@@ -50,8 +46,8 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MQ135ReadingVO mq135ReadingVO = (MQ135ReadingVO) o;
-        return Objects.equals(key, mq135ReadingVO.key) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(date, mq135ReadingVO.date);
+        MQ7ReadingVO mq7ReadingVO = (MQ7ReadingVO) o;
+        return Objects.equals(key, mq7ReadingVO.key) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(date, mq7ReadingVO.date);
     }
 
     @Override

@@ -1,8 +1,6 @@
-package app.ecosynergy.api.data.vo.v1;
+package app.ecosynergy.api.integrationtests.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.dozermapper.core.Mapping;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
@@ -10,13 +8,11 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-@JsonPropertyOrder("id")
+@XmlRootElement
 public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty("id")
-    @Mapping("id")
     private Long key;
     private Double value;
     private ZonedDateTime date;

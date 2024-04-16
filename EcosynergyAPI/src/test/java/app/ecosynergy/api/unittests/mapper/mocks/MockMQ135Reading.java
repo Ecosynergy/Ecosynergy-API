@@ -5,7 +5,6 @@ import app.ecosynergy.api.models.MQ135Reading;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MockMQ135Reading {

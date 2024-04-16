@@ -1,8 +1,6 @@
-package app.ecosynergy.api.data.vo.v1;
+package app.ecosynergy.api.integrationtests.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.dozermapper.core.Mapping;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
@@ -10,15 +8,15 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-@JsonPropertyOrder("id")
-public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implements Serializable {
+@XmlRootElement
+public class FireReadingVO extends RepresentationModel<FireReadingVO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty("id")
-    @Mapping("id")
     private Long key;
-    private Double value;
+
+    private Boolean isFire;
+
     private ZonedDateTime date;
 
     public Long getKey() {
@@ -29,12 +27,12 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         this.key = key;
     }
 
-    public Double getValue() {
-        return value;
+    public Boolean getFire() {
+        return isFire;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setFire(Boolean fire) {
+        isFire = fire;
     }
 
     public ZonedDateTime getDate() {
@@ -50,12 +48,12 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MQ135ReadingVO mq135ReadingVO = (MQ135ReadingVO) o;
-        return Objects.equals(key, mq135ReadingVO.key) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(date, mq135ReadingVO.date);
+        FireReadingVO that = (FireReadingVO) o;
+        return Objects.equals(key, that.key) && Objects.equals(isFire, that.isFire) && Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, value, date);
+        return Objects.hash(super.hashCode(), key, isFire, date);
     }
 }
