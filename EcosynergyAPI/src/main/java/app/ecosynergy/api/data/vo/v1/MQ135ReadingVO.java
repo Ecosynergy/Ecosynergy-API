@@ -6,7 +6,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @JsonPropertyOrder("id")
@@ -17,7 +17,7 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
     @JsonProperty("id")
     private Long key;
     private Double value;
-    private Date date;
+    private ZonedDateTime date;
 
     public Long getKey() {
         return key;
@@ -35,11 +35,11 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         this.value = value;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 

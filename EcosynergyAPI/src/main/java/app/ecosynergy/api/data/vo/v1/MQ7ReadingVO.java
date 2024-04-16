@@ -2,11 +2,12 @@ package app.ecosynergy.api.data.vo.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.github.dozermapper.core.Mapping;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @JsonPropertyOrder("id")
@@ -15,9 +16,10 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("id")
+    @Mapping("id")
     private Long key;
     private Double value;
-    private Date date;
+    private ZonedDateTime date;
 
     public Long getKey() {
         return key;
@@ -35,11 +37,11 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
         this.value = value;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 

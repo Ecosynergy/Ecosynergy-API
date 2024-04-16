@@ -5,6 +5,8 @@ import app.ecosynergy.api.services.MQ135ReadingServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -25,6 +27,9 @@ public class MQ135ReadingController {
 
     @PostMapping
     public MQ135ReadingVO create(@RequestBody MQ135ReadingVO reading){
+        if(reading.getDate() == null){
+            reading.setDate(ZonedDateTime.now());
+        }
         return service.create(reading);
     }
 }

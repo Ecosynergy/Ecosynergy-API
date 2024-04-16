@@ -5,6 +5,7 @@ import app.ecosynergy.api.services.MQ7ReadingServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
@@ -25,6 +26,9 @@ public class MQ7ReadingController {
 
     @PostMapping
     public MQ7ReadingVO create(@RequestBody MQ7ReadingVO reading){
+        if(reading.getDate() == null){
+            reading.setDate(ZonedDateTime.now());
+        }
         return service.create(reading);
     }
 }

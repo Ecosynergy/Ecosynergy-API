@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
@@ -17,9 +17,12 @@ public class MQ7Reading implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private Double value;
 
-    private Date date;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private ZonedDateTime date;
 
     public MQ7Reading() {}
 
@@ -39,11 +42,11 @@ public class MQ7Reading implements Serializable {
         this.value = value;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 

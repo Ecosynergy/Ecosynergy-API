@@ -1,7 +1,11 @@
 package app.ecosynergy.api;
 
+import jakarta.persistence.Temporal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.time.ZonedDateTime;
+import java.util.Date;
 //import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -29,6 +33,8 @@ public class EcosynergyApiApplication {
 //
 //		String result = passwordEncoder.encode("220624@And");
 //		System.out.println("My hash " + result);
+        System.setProperty("user.timezone", "UTC");
+        System.out.println(ZonedDateTime.now());
     }
 
 }

@@ -6,7 +6,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @JsonPropertyOrder("id")
@@ -19,7 +19,7 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
 
     private Boolean isFire;
 
-    private Date date;
+    private ZonedDateTime date;
 
     public Long getKey() {
         return key;
@@ -37,11 +37,11 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
         isFire = fire;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 

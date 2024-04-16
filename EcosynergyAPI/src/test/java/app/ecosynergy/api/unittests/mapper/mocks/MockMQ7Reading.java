@@ -3,6 +3,7 @@ package app.ecosynergy.api.unittests.mapper.mocks;
 import app.ecosynergy.api.data.vo.v1.MQ7ReadingVO;
 import app.ecosynergy.api.models.MQ7Reading;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +16,7 @@ public class MockMQ7Reading {
     public MQ7Reading mockEntity(Integer number){
         MQ7Reading entity = new MQ7Reading();
         entity.setId(number.longValue());
-        entity.setDate(new Date(number));
+        entity.setDate(ZonedDateTime.now());
         entity.setValue(number.doubleValue());
 
         return entity;
@@ -28,7 +29,7 @@ public class MockMQ7Reading {
     public MQ7ReadingVO mockVO(Integer number){
         MQ7ReadingVO vo = new MQ7ReadingVO();
         vo.setKey(number.longValue());
-        vo.setDate(new Date(number));
+        vo.setDate(ZonedDateTime.now());
         vo.setValue(number.doubleValue());
 
         return vo;

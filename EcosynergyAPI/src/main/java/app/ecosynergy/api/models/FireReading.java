@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
@@ -19,9 +19,12 @@ public class FireReading implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private Boolean isFire;
 
-    private Date date;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private ZonedDateTime date;
 
     public Long getId() {
         return id;
@@ -39,11 +42,11 @@ public class FireReading implements Serializable {
         isFire = fire;
     }
 
-    public Date getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 
