@@ -23,11 +23,6 @@ public class UserController {
         return services.findAll();
     }
 
-    @PostMapping
-    public UserVO create(@RequestBody UserVO user){
-        return services.create(user);
-    }
-
     @PutMapping
     public UserVO update(@RequestBody UserVO user){
         return services.update(user);

@@ -1,0 +1,21 @@
+INSERT INTO users (user_name,
+                   full_name,
+                   email,
+                   password,
+                   gender,
+                   nationality,
+                   account_non_expired,
+                   account_non_locked,
+                   credentials_non_expired,
+                   enabled
+) VALUES ('anderson',
+          'Anderson Rodrigues',
+          'anderson.rod.dev@gmail.com',
+          '39c64281cf07639d3cd25d805391eb56d6d29506c5ef8aa4532836f33f24b90d73696a5022e9c974',
+          'Male',
+          'Brazilian',
+          1,
+          1,
+          1,
+          1
+);

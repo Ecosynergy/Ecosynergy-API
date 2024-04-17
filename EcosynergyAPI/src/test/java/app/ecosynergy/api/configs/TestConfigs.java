@@ -11,4 +11,5 @@ public class TestConfigs {
 
     public static final String ORIGIN_LOCALHOST = "http://localhost:8080";
     public static final String ORIGIN_ECOSYNERGY = "www.ecosynergy.com";
+    public static final String ORIGIN_TEST = "www.test.com";
 }
