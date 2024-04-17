@@ -2,9 +2,6 @@ package app.ecosynergy.api.integrationtests.vo;
 
 import app.ecosynergy.api.models.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.dozermapper.core.Mapping;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +21,7 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     public UserVO(){}
 
-    private Long key;
+    private Long id;
 
     private String userName;
 
@@ -63,12 +60,12 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         }
     }
 
-    public Long getKey() {
-        return key;
+    public Long getId() {
+        return id;
     }
 
-    public void setKey(Long key) {
-        this.key = key;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUserName() {
@@ -195,11 +192,11 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserVO userVO = (UserVO) o;
-        return Objects.equals(key, userVO.key) && Objects.equals(userName, userVO.userName) && Objects.equals(fullName, userVO.fullName) && Objects.equals(email, userVO.email) && Objects.equals(password, userVO.password) && Objects.equals(gender, userVO.gender) && Objects.equals(nationality, userVO.nationality) && Objects.equals(accountNonExpired, userVO.accountNonExpired) && Objects.equals(accountNonLocked, userVO.accountNonLocked) && Objects.equals(credentialsNonExpired, userVO.credentialsNonExpired) && Objects.equals(enabled, userVO.enabled) && Objects.equals(permissions, userVO.permissions);
+        return Objects.equals(id, userVO.id) && Objects.equals(userName, userVO.userName) && Objects.equals(fullName, userVO.fullName) && Objects.equals(email, userVO.email) && Objects.equals(password, userVO.password) && Objects.equals(gender, userVO.gender) && Objects.equals(nationality, userVO.nationality) && Objects.equals(accountNonExpired, userVO.accountNonExpired) && Objects.equals(accountNonLocked, userVO.accountNonLocked) && Objects.equals(credentialsNonExpired, userVO.credentialsNonExpired) && Objects.equals(enabled, userVO.enabled) && Objects.equals(permissions, userVO.permissions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, userName, fullName, email, password, gender, nationality, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
+        return Objects.hash(super.hashCode(), id, userName, fullName, email, password, gender, nationality, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
     }
 }

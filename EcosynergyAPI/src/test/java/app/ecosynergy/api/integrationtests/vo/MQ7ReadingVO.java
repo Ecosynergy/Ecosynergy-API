@@ -13,16 +13,16 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long key;
+    private Long id;
     private Double value;
     private ZonedDateTime date;
 
     public Long getKey() {
-        return key;
+        return id;
     }
 
-    public void setKey(Long key) {
-        this.key = key;
+    public void setKey(Long id) {
+        this.id = id;
     }
 
     public Double getValue() {
@@ -47,11 +47,11 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         MQ7ReadingVO mq7ReadingVO = (MQ7ReadingVO) o;
-        return Objects.equals(key, mq7ReadingVO.key) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(date, mq7ReadingVO.date);
+        return Objects.equals(id, mq7ReadingVO.id) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(date, mq7ReadingVO.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, value, date);
+        return Objects.hash(super.hashCode(), id, value, date);
     }
 }

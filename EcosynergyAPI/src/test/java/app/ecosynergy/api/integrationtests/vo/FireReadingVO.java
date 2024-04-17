@@ -1,5 +1,6 @@
 package app.ecosynergy.api.integrationtests.vo;
 
+import com.github.dozermapper.core.Mapping;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -13,18 +14,19 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long key;
+    @Mapping("id")
+    private Long id;
 
     private Boolean isFire;
 
     private ZonedDateTime date;
 
     public Long getKey() {
-        return key;
+        return id;
     }
 
-    public void setKey(Long key) {
-        this.key = key;
+    public void setKey(Long id) {
+        this.id = id;
     }
 
     public Boolean getFire() {
@@ -49,11 +51,11 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         FireReadingVO that = (FireReadingVO) o;
-        return Objects.equals(key, that.key) && Objects.equals(isFire, that.isFire) && Objects.equals(date, that.date);
+        return Objects.equals(id, that.id) && Objects.equals(isFire, that.isFire) && Objects.equals(date, that.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, isFire, date);
+        return Objects.hash(super.hashCode(), id, isFire, date);
     }
 }

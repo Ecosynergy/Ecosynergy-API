@@ -13,16 +13,16 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long key;
+    private Long id;
     private Double value;
     private ZonedDateTime date;
 
     public Long getKey() {
-        return key;
+        return id;
     }
 
-    public void setKey(Long key) {
-        this.key = key;
+    public void setKey(Long id) {
+        this.id = id;
     }
 
     public Double getValue() {
@@ -47,11 +47,11 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         MQ135ReadingVO mq135ReadingVO = (MQ135ReadingVO) o;
-        return Objects.equals(key, mq135ReadingVO.key) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(date, mq135ReadingVO.date);
+        return Objects.equals(id, mq135ReadingVO.id) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(date, mq135ReadingVO.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, value, date);
+        return Objects.hash(super.hashCode(), id, value, date);
     }
 }
