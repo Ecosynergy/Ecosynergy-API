@@ -3,6 +3,7 @@ package app.ecosynergy.api.controllers;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
 import app.ecosynergy.api.services.AuthServices;
+import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,10 @@ public class AuthController {
     private AuthServices service;
 
     @Operation(summary = "Authenticates a user and returns a token")
-    @PostMapping("/signin")
+    @PostMapping(value = "/signin",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
     public ResponseEntity<?> signIn(@RequestBody AccountCredentialsVO data){
         if(checkIfParamsIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
@@ -31,7 +35,10 @@ public class AuthController {
     }
 
     @Operation(summary = "Authenticates a user and returns a token")
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
     public ResponseEntity<?> signUp(@RequestBody UserVO data){
         System.out.println(data);
         System.out.println(data.getUserName());
@@ -46,7 +53,10 @@ public class AuthController {
     }
 
     @Operation(summary = "Refresh token for authenticated user and returns a token")
-    @PutMapping("/refresh/{username}")
+    @PutMapping(value = "/refresh/{username}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
     public ResponseEntity<?> refreshToken(@PathVariable("username") String username, @RequestHeader("Authorization") String refreshToken){
         if(checkIfParamsIsNotNull(username, refreshToken))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
