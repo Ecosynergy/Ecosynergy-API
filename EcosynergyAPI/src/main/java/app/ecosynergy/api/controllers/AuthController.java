@@ -18,7 +18,7 @@ public class AuthController {
     @Autowired
     private AuthServices service;
 
-    @Operation(summary = "Authenticates a user and returns a token")
+    @Operation(summary = "Sign in", description = "Authenticate a user and return a token")
     @PostMapping(value = "/signin",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
@@ -28,22 +28,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
         var token = service.signIn(data);
+
         if(token == null)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid client request");
         else
             return token;
     }
 
-    @Operation(summary = "Authenticates a user and returns a token")
+    @Operation(summary = "Sign up", description = "Create a new user account")
     @PostMapping(value = "/signup",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public ResponseEntity<?> signUp(@RequestBody UserVO data){
-        System.out.println(data);
-        System.out.println(data.getUserName());
-        System.out.println(data.getPassword());
-
         if(checkIfParamsIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
@@ -52,7 +49,7 @@ public class AuthController {
         return ResponseEntity.ok(userVO);
     }
 
-    @Operation(summary = "Refresh token for authenticated user and returns a token")
+    @Operation(summary = "Refresh token", description = "Refresh an existing token for a user")
     @PutMapping(value = "/refresh/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
