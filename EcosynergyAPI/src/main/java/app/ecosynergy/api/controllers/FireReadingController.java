@@ -20,17 +20,14 @@ public class FireReadingController {
 
     @Operation(summary = "Find fire reading by ID", description = "Retrieve a fire reading by ID")
     @GetMapping(value= "/{id}",
-            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
-            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public FireReadingVO findById(@PathVariable("id") Long id){
         return service.findById(id);
     }
 
     @Operation(summary = "Get all fire readings", description = "Retrieve a list of all fire readings")
-    @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
-            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
-    )
+    @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public List<FireReadingVO> findAll(){
         return service.findAll();
     }

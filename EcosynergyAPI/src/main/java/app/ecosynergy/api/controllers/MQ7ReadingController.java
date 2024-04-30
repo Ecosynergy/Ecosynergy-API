@@ -20,17 +20,14 @@ public class MQ7ReadingController {
 
     @Operation(summary = "Find MQ7 reading by ID", description = "Retrieve an MQ7 sensor reading by ID")
     @GetMapping(value = "/{id}",
-            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
-            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ7ReadingVO findById(@PathVariable("id") Long id){
         return service.findById(id);
     }
 
     @Operation(summary = "Get all MQ7 readings", description = "Retrieve a list of all MQ7 sensor readings")
-    @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
-            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
-    )
+    @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public List<MQ7ReadingVO> findAll(){
         return service.findAll();
     }
