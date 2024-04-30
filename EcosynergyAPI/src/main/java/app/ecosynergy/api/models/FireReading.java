@@ -19,11 +19,10 @@ public class FireReading implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "is_fire")
     private Boolean isFire;
 
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime date;
 
     public Long getId() {

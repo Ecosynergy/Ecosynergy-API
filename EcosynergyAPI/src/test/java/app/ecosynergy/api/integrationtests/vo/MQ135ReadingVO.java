@@ -17,11 +17,11 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
     private Double value;
     private ZonedDateTime date;
 
-    public Long getKey() {
+    public Long getId() {
         return id;
     }
 
-    public void setKey(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,7 +1,10 @@
 package app.ecosynergy.api.data.vo.v1;
 
+import app.ecosynergy.api.deserializers.ZonedDateTimeDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.dozermapper.core.Mapping;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -19,6 +22,8 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
     @Mapping("id")
     private Long key;
     private Double value;
+
+    @JsonDeserialize(using = ZonedDateTimeDeserializer.class)
     private ZonedDateTime date;
 
     public Long getKey() {

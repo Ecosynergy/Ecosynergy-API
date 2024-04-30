@@ -1,5 +1,7 @@
 package app.ecosynergy.api.integrationtests.vo;
 
+import app.ecosynergy.api.integrationtests.deserializers.ZonedDateTimeDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -15,13 +17,14 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
 
     private Long id;
     private Double value;
+
     private ZonedDateTime date;
 
-    public Long getKey() {
+    public Long getId() {
         return id;
     }
 
-    public void setKey(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
