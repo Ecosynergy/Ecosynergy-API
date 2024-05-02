@@ -1,0 +1,39 @@
+name: Continuous Integration with Github Actions
+
+on:
+  push:
+    branches: 
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3.1.0
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'adopt'
+        cache: maven
+        
+    - name: Build Application JAR
+      working-directory: ./EcosynergyAPI
+      run: mvn clean package -DskipTests
+
+    - name: Docker Compose Build
+      working-directory: ./
+      run: docker compose build
+
+    - name: Push to Docker Hub
+      run: |
+        docker tag ${{ secrets.DOCKER_USERNAME }}/ecosynergy-api:latest ${{ secrets.DOCKER_USERNAME }}/ecosynergy-api:${{ github.run_id }}
+        
+        docker push ${{ secrets.DOCKER_USERNAME }}/ecosynergy-api:${{ github.run_id }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/ecosynergy-api:latest
