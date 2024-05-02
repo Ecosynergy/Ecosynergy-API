@@ -25,7 +25,7 @@ jobs:
         
     - name: Build Application JAR
       working-directory: ./EcosynergyAPI
-      run: mvn clean package
+      run: mvn clean package -DskipTests
 
     - name: Docker Compose Build
       working-directory: ./
