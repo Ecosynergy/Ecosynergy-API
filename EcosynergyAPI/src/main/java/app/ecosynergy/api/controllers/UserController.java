@@ -22,7 +22,7 @@ public class UserController {
     UserServices services;
 
     @Operation(summary = "Find user by ID", description = "Retrieve a user by ID")
-    @GetMapping(value = "/{id}",
+    @GetMapping(value = "/findId/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public UserVO findById(@PathVariable(name = "id") Long id){
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @Operation(summary = "Find user by Username", description = "Retrieve a user by Username")
-    @GetMapping(value = "/{username}",
+    @GetMapping(value = "/findUsername/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public UserVO findByUsername(@PathVariable(name = "username") String username){
