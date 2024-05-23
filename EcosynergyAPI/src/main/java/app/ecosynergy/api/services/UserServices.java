@@ -125,6 +125,22 @@ public class UserServices implements UserDetailsService {
         repository.delete(entity);
     }
 
+    public UserVO recoverPassword(UserVO user){
+        if(user == null) throw new RequiredObjectIsNullException();
+
+        logger.info("Recovering password");
+
+        User entity = repository.findById(user.getKey())
+                .orElseThrow(() -> new ResourceNotFoundException(""));
+
+        entity.setPassword(user.getPassword());
+
+        UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
+        vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
+
+        return vo;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("Finding one User by name " + username + "!");

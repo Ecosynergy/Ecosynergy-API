@@ -67,4 +67,13 @@ public class UserController {
         services.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Recovery Password", description = "Recovery a user password")
+    @PostMapping(value = "/recoverPassword",
+                produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+                consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
+    public UserVO recoverPassword(@RequestBody UserVO user){
+        return services.recoverPassword(user);
+    }
 }
