@@ -17,8 +17,13 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -132,7 +137,7 @@ public class UserServices implements UserDetailsService {
 
         User entity = repository.findByUsername(user.getUserName());
 
-        entity.setPassword(user.getPassword());
+        entity.setPassword(passwordEncode(user.getPassword()));
 
         UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
@@ -151,5 +156,22 @@ public class UserServices implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("Username " + username + " not found!");
         }
+    }
+
+    private String passwordEncode(String password){
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+
+        Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder(
+                "",
+                8,
+                185000,
+                Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256
+        );
+
+        encoders.put("pbkdf2", pbkdf2PasswordEncoder);
+        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
+        passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
+
+        return passwordEncoder.encode(password);
     }
 }
