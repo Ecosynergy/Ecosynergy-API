@@ -126,12 +126,11 @@ public class UserServices implements UserDetailsService {
     }
 
     public UserVO recoverPassword(UserVO user){
-        if(user == null) throw new RequiredObjectIsNullException();
+        if(user.getUserName() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
 
         logger.info("Recovering password");
 
-        User entity = repository.findById(user.getKey())
-                .orElseThrow(() -> new ResourceNotFoundException(""));
+        User entity = repository.findByUsername(user.getUserName());
 
         entity.setPassword(user.getPassword());
 
