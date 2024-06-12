@@ -35,12 +35,6 @@ public class AuthController {
             return token;
     }
 
-    @Operation(summary = "Verify Email", description = "Verify user email with token")
-    @PostMapping(value = "/verifyEmail")
-    public ResponseEntity<?> verifyEmail(@RequestParam String token){
-        return service.verifyEmail(token);
-    }
-
     @Operation(summary = "Sign up", description = "Create a new user account", tags = {"Authentication Endpoint"})
     @PostMapping(value = "/signup",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
