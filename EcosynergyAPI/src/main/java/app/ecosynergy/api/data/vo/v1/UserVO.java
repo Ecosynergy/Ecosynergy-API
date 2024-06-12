@@ -50,6 +50,10 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     @JsonIgnore
     private List<Permission> permissions;
 
+    private Boolean emailVerified;
+
+    private String verificationToken;
+
     public List<String> getRoles(){
         if(permissions != null){
             List<String> roles = new ArrayList<>();
@@ -190,17 +194,33 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         this.permissions = permissions;
     }
 
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserVO userVO = (UserVO) o;
-        return Objects.equals(key, userVO.key) && Objects.equals(userName, userVO.userName) && Objects.equals(fullName, userVO.fullName) && Objects.equals(email, userVO.email) && Objects.equals(password, userVO.password) && Objects.equals(gender, userVO.gender) && Objects.equals(nationality, userVO.nationality) && Objects.equals(accountNonExpired, userVO.accountNonExpired) && Objects.equals(accountNonLocked, userVO.accountNonLocked) && Objects.equals(credentialsNonExpired, userVO.credentialsNonExpired) && Objects.equals(enabled, userVO.enabled) && Objects.equals(permissions, userVO.permissions);
+        return Objects.equals(getKey(), userVO.getKey()) && Objects.equals(getUserName(), userVO.getUserName()) && Objects.equals(getFullName(), userVO.getFullName()) && Objects.equals(getEmail(), userVO.getEmail()) && Objects.equals(getPassword(), userVO.getPassword()) && Objects.equals(getGender(), userVO.getGender()) && Objects.equals(getNationality(), userVO.getNationality()) && Objects.equals(isAccountNonExpired(), userVO.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), userVO.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), userVO.isCredentialsNonExpired()) && Objects.equals(isEnabled(), userVO.isEnabled()) && Objects.equals(getPermissions(), userVO.getPermissions()) && Objects.equals(getEmailVerified(), userVO.getEmailVerified()) && Objects.equals(getVerificationToken(), userVO.getVerificationToken());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, userName, fullName, email, password, gender, nationality, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
+        return Objects.hash(super.hashCode(), getKey(), getUserName(), getFullName(), getEmail(), getPassword(), getGender(), getNationality(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getPermissions(), getEmailVerified(), getVerificationToken());
     }
 }

@@ -18,7 +18,7 @@ public class AuthController {
     @Autowired
     private AuthServices service;
 
-    @Operation(summary = "Sign in", description = "Authenticate a user and return a token")
+    @Operation(summary = "Sign in", description = "Authenticate a user and return a token", tags = {"Authentication Endpoint"})
     @PostMapping(value = "/signin",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
@@ -35,7 +35,13 @@ public class AuthController {
             return token;
     }
 
-    @Operation(summary = "Sign up", description = "Create a new user account")
+    @Operation(summary = "Verify Email", description = "Verify user email with token")
+    @PostMapping(value = "/verifyEmail")
+    public ResponseEntity<?> verifyEmail(@RequestParam String token){
+        return service.verifyEmail(token);
+    }
+
+    @Operation(summary = "Sign up", description = "Create a new user account", tags = {"Authentication Endpoint"})
     @PostMapping(value = "/signup",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
@@ -51,8 +57,7 @@ public class AuthController {
 
     @Operation(summary = "Refresh token", description = "Refresh an existing token for a user")
     @PutMapping(value = "/refresh/{username}",
-            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
-            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public ResponseEntity<?> refreshToken(@PathVariable("username") String username, @RequestHeader("Authorization") String refreshToken){
         if(checkIfParamsIsNotNull(username, refreshToken))

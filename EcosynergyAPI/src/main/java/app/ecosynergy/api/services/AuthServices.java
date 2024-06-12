@@ -8,7 +8,9 @@ import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
+import app.ecosynergy.api.security.jwt.VerificationTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,7 +36,10 @@ public class AuthServices {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository repository;
+    private UserRepository repository;
+
+    @Autowired
+    private EmailService emailService;
 
     public ResponseEntity<?> signIn(AccountCredentialsVO data){
         try{
@@ -46,6 +51,14 @@ public class AuthServices {
             );
 
             var user = repository.findByUsername(username);
+
+            if(user != null && !user.getEmailVerified()){
+                String newVerificationToken = VerificationTokenProvider.generateVerificationToken();
+                user.setVerificationToken(newVerificationToken);
+                repository.save(user);
+                emailService.sendVerificationEmail(user.getEmail(), newVerificationToken);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Email not verified");
+            }
 
             var tokenResponse = new TokenVO();
 
@@ -67,11 +80,17 @@ public class AuthServices {
 
         user.setPassword(passwordEncode(currentPassword));
         user.setEnabled(true);
+        user.setEmailVerified(false);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
 
+        String verificationToken = VerificationTokenProvider.generateVerificationToken();
+        user.setVerificationToken(verificationToken);
+
         User entity = repository.save(DozerMapper.parseObject(user, User.class));
+
+        emailService.sendVerificationEmail(user.getEmail(), verificationToken);
 
         UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
 
@@ -107,5 +126,18 @@ public class AuthServices {
         passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
 
         return passwordEncoder.encode(password);
+    }
+
+    public ResponseEntity<?> verifyEmail(String token) {
+        User user = repository.findByVerificationToken(token);
+
+        if (user != null) {
+            user.setEmailVerified(true);
+            user.setVerificationToken(null);
+            repository.save(user);
+            return ResponseEntity.ok("Email verified successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token");
+        }
     }
 }
