@@ -106,6 +106,7 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return userName;
     }
