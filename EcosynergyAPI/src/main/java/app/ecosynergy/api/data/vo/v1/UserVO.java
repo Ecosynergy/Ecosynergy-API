@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-@JsonPropertyOrder("id")
+@JsonPropertyOrder({"id", "username"})
 public class UserVO extends RepresentationModel<UserVO> implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -27,6 +27,7 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     @Mapping("id")
     private Long key;
 
+    @JsonProperty("username")
     private String userName;
 
     private String fullName;
