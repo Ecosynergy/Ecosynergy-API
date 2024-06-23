@@ -38,27 +38,41 @@ public class AuthServices {
 
     public ResponseEntity<?> signIn(AccountCredentialsVO data){
         try{
-            var username = data.getUsername();
+            var loginIdentifier = data.getIdentifier();
             var password = data.getPassword();
+            User user;
 
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
+            try{
+                user = repository.findByUsername(loginIdentifier);
 
-            var user = repository.findByUsername(username);
+                if(user != null){
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(user.getUserName(), password)
+                    );
+                } else {
+                    throw new UsernameNotFoundException("Username " + loginIdentifier + " not found");
+                }
+            } catch (UsernameNotFoundException ex){
+                user = repository.findByEmail(loginIdentifier);
+                if(user != null){
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(user.getUserName(), password)
+                    );
+                }
+            }
 
             var tokenResponse = new TokenVO();
 
             if(user != null){
-                tokenResponse = tokenProvider.createAccessToken(username, user.getRoles());
+                tokenResponse = tokenProvider.createAccessToken(user.getUserName(), user.getRoles());
             } else {
-                throw new UsernameNotFoundException("Username " + username + " not found!");
+                throw new UsernameNotFoundException("User not found with username/email: " + loginIdentifier);
             }
 
             return ResponseEntity.ok(tokenResponse);
 
         } catch (Exception e){
-            throw new BadCredentialsException("Invalid username/password supplied!");
+            throw new BadCredentialsException("Invalid username/email or password supplied!");
         }
     }
 

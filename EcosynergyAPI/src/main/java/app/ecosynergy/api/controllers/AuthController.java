@@ -67,7 +67,7 @@ public class AuthController {
     }
 
     private static boolean checkIfParamsIsNotNull(AccountCredentialsVO data) {
-        return data == null || data.getUsername() == null || data.getUsername().isBlank() ||
+        return data == null || data.getIdentifier() == null || data.getIdentifier().isBlank() ||
                 data.getPassword() == null || data.getPassword().isBlank();
     }
 
@@ -75,7 +75,7 @@ public class AuthController {
         return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
     }
 
-    private boolean checkIfParamsIsNotNull(UserVO data) {
+    private static boolean checkIfParamsIsNotNull(UserVO data) {
         return data.getUserName() == null || data.getUserName().isBlank() ||
                 data.getPassword() == null || data.getPassword().isBlank();
     }
