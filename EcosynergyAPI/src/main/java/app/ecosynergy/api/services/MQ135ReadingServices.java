@@ -72,6 +72,7 @@ public class MQ135ReadingServices {
     }
 
     public long countAllReadings(){
-        return repository.count();
+        long count = repository.count();
+        return Math.max(count, 1L);
     }
 }
