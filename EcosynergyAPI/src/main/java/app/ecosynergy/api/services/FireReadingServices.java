@@ -8,9 +8,13 @@ import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.FireReading;
 import app.ecosynergy.api.repositories.FireReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -19,6 +23,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class FireReadingServices {
     @Autowired
     private FireReadingRepository repository;
+
+    @Autowired
+    private PagedResourcesAssembler<FireReadingVO> assembler;
 
     public FireReadingVO findById(Long id){
         if(id == null) throw new RequiredObjectIsNullException();
@@ -30,13 +37,27 @@ public class FireReadingServices {
         return vo;
     }
 
-    public List<FireReadingVO> findAll(){
-        List<FireReading> readingsList = repository.findAll();
+    public PagedModel<EntityModel<FireReadingVO>> findAll(Pageable pageable){
+        Page<FireReading> readingsPage = repository.findAll(pageable);
 
-        List<FireReadingVO> voList = DozerMapper.parseListObjects(readingsList, FireReadingVO.class);
-        voList.forEach(vo -> vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel()));
+        Page<FireReadingVO> voPage = readingsPage.map(r -> DozerMapper.parseObject(r, FireReadingVO.class));
+        voPage.map(vo -> {
+            try{
+                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
 
-        return voList;
+        Link link = linkTo(methodOn(FireReadingController.class)
+                .findAll(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort().toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
     }
 
     public FireReadingVO create(FireReadingVO reading){
@@ -48,5 +69,9 @@ public class FireReadingServices {
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
+    }
+
+    public long countAllReadings(){
+        return repository.count();
     }
 }

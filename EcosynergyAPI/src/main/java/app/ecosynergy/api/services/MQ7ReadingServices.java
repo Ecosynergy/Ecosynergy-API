@@ -8,9 +8,13 @@ import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.MQ7Reading;
 import app.ecosynergy.api.repositories.MQ7ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -19,6 +23,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class MQ7ReadingServices {
     @Autowired
     private MQ7ReadingRepository repository;
+
+    @Autowired
+    private PagedResourcesAssembler<MQ7ReadingVO> assembler;
 
     public MQ7ReadingVO findById(Long id){
         if(id == null) throw new RequiredObjectIsNullException();
@@ -30,13 +37,26 @@ public class MQ7ReadingServices {
         return vo;
     }
 
-    public List<MQ7ReadingVO> findAll(){
-        List<MQ7Reading> readingsList = repository.findAll();
+    public PagedModel<EntityModel<MQ7ReadingVO>> findAll(Pageable pageable){
+        Page<MQ7Reading> readingsPage = repository.findAll(pageable);
+        Page<MQ7ReadingVO> voPage = readingsPage.map(r -> DozerMapper.parseObject(r, MQ7ReadingVO.class));
 
-        List<MQ7ReadingVO> voList = DozerMapper.parseListObjects(readingsList, MQ7ReadingVO.class);
-        voList.forEach(vo -> vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel()));
+        voPage.map(vo -> {
+          try{
+              return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
+          } catch (Exception e){
+              throw new RuntimeException(e);
+          }
+        });
 
-        return voList;
+        Link link = linkTo(methodOn(MQ7ReadingController.class)
+                .findAll(pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort().toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
     }
 
     public MQ7ReadingVO create(MQ7ReadingVO reading){
@@ -48,5 +68,9 @@ public class MQ7ReadingServices {
         vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
+    }
+
+    public long countAllReadings(){
+        return repository.count();
     }
 }

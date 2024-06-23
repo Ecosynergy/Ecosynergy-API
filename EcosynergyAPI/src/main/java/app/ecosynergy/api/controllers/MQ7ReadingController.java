@@ -6,10 +6,15 @@ import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @Tag(name = "MQ7 Sensor Readings Endpoint")
 @RestController
@@ -28,8 +33,18 @@ public class MQ7ReadingController {
 
     @Operation(summary = "Get all MQ7 readings", description = "Retrieve a list of all MQ7 sensor readings")
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
-    public List<MQ7ReadingVO> findAll(){
-        return service.findAll();
+    public ResponseEntity<PagedModel<EntityModel<MQ7ReadingVO>>> findAll(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction
+    ){
+        if(limit == null)  limit = (int) service.countAllReadings();
+
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "date"));
+
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @Operation(summary = "Create a new MQ7 reading", description = "Create a new MQ7 sensor reading with the provided data")

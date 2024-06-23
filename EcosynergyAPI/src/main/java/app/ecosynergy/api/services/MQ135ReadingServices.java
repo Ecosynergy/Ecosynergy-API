@@ -8,9 +8,13 @@ import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.MQ135Reading;
 import app.ecosynergy.api.repositories.MQ135ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -19,6 +23,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class MQ135ReadingServices {
     @Autowired
     private MQ135ReadingRepository repository;
+
+    @Autowired
+    private PagedResourcesAssembler<MQ135ReadingVO> assembler;
 
     public MQ135ReadingVO findById(Long id){
         if(id == null) throw new RequiredObjectIsNullException();
@@ -30,13 +37,27 @@ public class MQ135ReadingServices {
         return vo;
     }
 
-    public List<MQ135ReadingVO> findAll(){
-        List<MQ135Reading> readingsList = repository.findAll();
+    public PagedModel<EntityModel<MQ135ReadingVO>> findAll(Pageable pageable){
+        Page<MQ135Reading> readingsPage = repository.findAll(pageable);
 
-        List<MQ135ReadingVO> voList = DozerMapper.parseListObjects(readingsList, MQ135ReadingVO.class);
-        voList.forEach(vo -> vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel()));
+        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> DozerMapper.parseObject(r, MQ135ReadingVO.class));
+        voPage.map(vo -> {
+            try{
+                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
 
-        return voList;
+        Link link = linkTo(methodOn(MQ135ReadingController.class)
+                .findAll(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    pageable.getSort().toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
     }
 
     public MQ135ReadingVO create(MQ135ReadingVO reading){
@@ -48,5 +69,9 @@ public class MQ135ReadingServices {
         vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
+    }
+
+    public long countAllReadings(){
+        return repository.count();
     }
 }
