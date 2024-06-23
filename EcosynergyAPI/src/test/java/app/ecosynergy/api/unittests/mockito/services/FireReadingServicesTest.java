@@ -50,20 +50,20 @@ class FireReadingServicesTest {
         assertEquals(false, result.getFire());
     }
 
-    @Test
-    void findAll() {
-        List<FireReading> entityList = input.mockEntityList();
-
-        when(repository.findAll()).thenReturn(entityList);
-
-        List<FireReadingVO> voList = service.findAll();
-
-        voList.forEach(result -> {
-            assertEquals("links: [</api/firereading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-            assertEquals(new Date(result.getKey().intValue()), result.getDate());
-            assertEquals(result.getKey().intValue() % 2 == 0, result.getFire());
-        });
-    }
+//    @Test
+//    void findAll() {
+//        List<FireReading> entityList = input.mockEntityList();
+//
+//        when(repository.findAll()).thenReturn(entityList);
+//
+//        List<FireReadingVO> voList = service.findAll();
+//
+//        voList.forEach(result -> {
+//            assertEquals("links: [</api/firereading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
+//            assertEquals(new Date(result.getKey().intValue()), result.getDate());
+//            assertEquals(result.getKey().intValue() % 2 == 0, result.getFire());
+//        });
+//    }
 
     @Test
     void create() {

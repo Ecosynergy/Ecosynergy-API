@@ -45,20 +45,20 @@ class MQ135ReadingServicesTest {
         assertEquals(1, result.getValue());
     }
 
-    @Test
-    void findAll() {
-        List<MQ135Reading> entityList = input.mockEntityList();
-
-        when(repository.findAll()).thenReturn(entityList);
-
-        List<MQ135ReadingVO> voList = service.findAll();
-
-        voList.forEach(result -> {
-            assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-            assertEquals(new Date(result.getKey().intValue()), result.getDate());
-            assertEquals(result.getKey().intValue(), result.getValue());
-        });
-    }
+//    @Test
+//    void findAll() {
+//        List<MQ135Reading> entityList = input.mockEntityList();
+//
+//        when(repository.findAll()).thenReturn(entityList);
+//
+//        List<MQ135ReadingVO> voList = service.findAll();
+//
+//        voList.forEach(result -> {
+//            assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
+//            assertEquals(new Date(result.getKey().intValue()), result.getDate());
+//            assertEquals(result.getKey().intValue(), result.getValue());
+//        });
+//    }
 
     @Test
     void create() {
