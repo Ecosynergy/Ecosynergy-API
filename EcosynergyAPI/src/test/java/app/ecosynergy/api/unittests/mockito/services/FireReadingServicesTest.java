@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,7 @@ class FireReadingServicesTest {
         FireReading reading = input.mockEntity(1);
 
         when(repository.findById(reading.getId())).thenReturn(Optional.of(reading));
-        FireReadingVO result = service.findById(reading.getId());
+        FireReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/firereading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
         assertEquals(new Date(1), result.getDate());
@@ -76,7 +77,7 @@ class FireReadingServicesTest {
 
         when(repository.save(entity)).thenReturn(persisted);
 
-        FireReadingVO result = service.create(vo);
+        FireReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertEquals("links: [</api/firereading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
         assertEquals(new Date(1), result.getDate());
         assertEquals(false, result.getFire());

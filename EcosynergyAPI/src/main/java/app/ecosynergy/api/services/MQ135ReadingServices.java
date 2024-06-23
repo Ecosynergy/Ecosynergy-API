@@ -16,6 +16,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -27,23 +29,28 @@ public class MQ135ReadingServices {
     @Autowired
     private PagedResourcesAssembler<MQ135ReadingVO> assembler;
 
-    public MQ135ReadingVO findById(Long id){
+    public MQ135ReadingVO findById(Long id, ZoneId zoneId){
         if(id == null) throw new RequiredObjectIsNullException();
 
         MQ135Reading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         MQ135ReadingVO vo = DozerMapper.parseObject(reading, MQ135ReadingVO.class);
-        vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
     }
 
-    public PagedModel<EntityModel<MQ135ReadingVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<MQ135ReadingVO>> findAll(Pageable pageable, ZoneId zoneId){
         Page<MQ135Reading> readingsPage = repository.findAll(pageable);
 
-        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> DozerMapper.parseObject(r, MQ135ReadingVO.class));
+        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
+            MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
+            vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+            return vo;
+        });
         voPage.map(vo -> {
             try{
-                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
+                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
             } catch (Exception e){
                 throw new RuntimeException(e);
             }
@@ -53,20 +60,22 @@ public class MQ135ReadingServices {
                 .findAll(
                     pageable.getPageNumber(),
                     pageable.getPageSize(),
-                    pageable.getSort().toString()
+                    pageable.getSort().toString(),
+                    zoneId.toString()
                 ))
                 .withSelfRel();
 
         return assembler.toModel(voPage, link);
     }
 
-    public MQ135ReadingVO create(MQ135ReadingVO reading){
+    public MQ135ReadingVO create(MQ135ReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 
         MQ135Reading readingEntity = repository.save(DozerMapper.parseObject(reading, MQ135Reading.class));
 
         MQ135ReadingVO vo = DozerMapper.parseObject(readingEntity, MQ135ReadingVO.class);
-        vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 
         return vo;
     }

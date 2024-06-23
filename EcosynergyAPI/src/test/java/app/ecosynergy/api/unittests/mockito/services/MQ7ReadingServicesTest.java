@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +40,7 @@ class MQ7ReadingServicesTest {
         MQ7Reading reading = input.mockEntity(1);
 
         when(repository.findById(reading.getId())).thenReturn(Optional.of(reading));
-        MQ7ReadingVO result = service.findById(reading.getId());
+        MQ7ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/mq7reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
         assertEquals(new Date(1), result.getDate());
@@ -72,7 +73,7 @@ class MQ7ReadingServicesTest {
 
         when(repository.save(entity)).thenReturn(persisted);
 
-        MQ7ReadingVO result = service.create(vo);
+        MQ7ReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertEquals("links: [</api/mq7reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
         assertEquals(new Date(1), result.getDate());
         assertEquals(1, result.getValue());

@@ -16,6 +16,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -27,23 +29,28 @@ public class MQ7ReadingServices {
     @Autowired
     private PagedResourcesAssembler<MQ7ReadingVO> assembler;
 
-    public MQ7ReadingVO findById(Long id){
+    public MQ7ReadingVO findById(Long id, ZoneId zoneId){
         if(id == null) throw new RequiredObjectIsNullException();
 
         MQ7Reading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         MQ7ReadingVO vo = DozerMapper.parseObject(reading, MQ7ReadingVO.class);
-        vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.setDate(reading.getDate().withZoneSameInstant(zoneId));
+        vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
     }
 
-    public PagedModel<EntityModel<MQ7ReadingVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<MQ7ReadingVO>> findAll(Pageable pageable, ZoneId zoneId){
         Page<MQ7Reading> readingsPage = repository.findAll(pageable);
-        Page<MQ7ReadingVO> voPage = readingsPage.map(r -> DozerMapper.parseObject(r, MQ7ReadingVO.class));
+        Page<MQ7ReadingVO> voPage = readingsPage.map(r -> {
+            MQ7ReadingVO vo = DozerMapper.parseObject(r, MQ7ReadingVO.class);
+            vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+            return vo;
+        });
 
         voPage.map(vo -> {
           try{
-              return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
+              return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
           } catch (Exception e){
               throw new RuntimeException(e);
           }
@@ -52,20 +59,22 @@ public class MQ7ReadingServices {
         Link link = linkTo(methodOn(MQ7ReadingController.class)
                 .findAll(pageable.getPageNumber(),
                         pageable.getPageSize(),
-                        pageable.getSort().toString()
+                        pageable.getSort().toString(),
+                        zoneId.toString()
                 ))
                 .withSelfRel();
 
         return assembler.toModel(voPage, link);
     }
 
-    public MQ7ReadingVO create(MQ7ReadingVO reading){
+    public MQ7ReadingVO create(MQ7ReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 
         MQ7Reading readingEntity = repository.save(DozerMapper.parseObject(reading, MQ7Reading.class));
 
         MQ7ReadingVO vo = DozerMapper.parseObject(readingEntity, MQ7ReadingVO.class);
-        vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 
         return vo;
     }

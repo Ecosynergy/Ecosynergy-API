@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,7 @@ class MQ135ReadingServicesTest {
         MQ135Reading reading = input.mockEntity(1);
 
         when(repository.findById(reading.getId())).thenReturn(Optional.of(reading));
-        MQ135ReadingVO result = service.findById(reading.getId());
+        MQ135ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/mq135reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
         assertEquals(new Date(1), result.getDate());
@@ -71,7 +72,7 @@ class MQ135ReadingServicesTest {
 
         when(repository.save(entity)).thenReturn(persisted);
 
-        MQ135ReadingVO result = service.create(vo);
+        MQ135ReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
         assertEquals(new Date(1), result.getDate());
         assertEquals(1, result.getValue());

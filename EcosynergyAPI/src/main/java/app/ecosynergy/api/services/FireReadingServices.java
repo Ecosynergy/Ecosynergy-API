@@ -16,6 +16,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -27,23 +29,29 @@ public class FireReadingServices {
     @Autowired
     private PagedResourcesAssembler<FireReadingVO> assembler;
 
-    public FireReadingVO findById(Long id){
+    public FireReadingVO findById(Long id, ZoneId zoneId){
         if(id == null) throw new RequiredObjectIsNullException();
 
         FireReading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         FireReadingVO vo = DozerMapper.parseObject(reading, FireReadingVO.class);
-        vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
     }
 
-    public PagedModel<EntityModel<FireReadingVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<FireReadingVO>> findAll(Pageable pageable, ZoneId zoneId){
         Page<FireReading> readingsPage = repository.findAll(pageable);
 
-        Page<FireReadingVO> voPage = readingsPage.map(r -> DozerMapper.parseObject(r, FireReadingVO.class));
+        Page<FireReadingVO> voPage = readingsPage.map(r -> {
+            FireReadingVO vo = DozerMapper.parseObject(r, FireReadingVO.class);
+            vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+            return vo;
+        });
+
         voPage.map(vo -> {
             try{
-                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
             } catch (Exception e){
                 throw new RuntimeException(e);
             }
@@ -53,20 +61,22 @@ public class FireReadingServices {
                 .findAll(
                         pageable.getPageNumber(),
                         pageable.getPageSize(),
-                        pageable.getSort().toString()
+                        pageable.getSort().toString(),
+                        zoneId.toString()
                 ))
                 .withSelfRel();
 
         return assembler.toModel(voPage, link);
     }
 
-    public FireReadingVO create(FireReadingVO reading){
+    public FireReadingVO create(FireReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 
         FireReading readingEntity = repository.save(DozerMapper.parseObject(reading, FireReading.class));
 
         FireReadingVO vo = DozerMapper.parseObject(readingEntity, FireReadingVO.class);
-        vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 
         return vo;
     }
