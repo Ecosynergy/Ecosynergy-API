@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-@JsonPropertyOrder("id")
+@JsonPropertyOrder({"id", "fire"})
 public class FireReadingVO extends RepresentationModel<FireReadingVO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -19,6 +19,7 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
     @Mapping("id")
     private Long key;
 
+    @JsonProperty("fire")
     private Boolean isFire;
 
     private ZonedDateTime date;
