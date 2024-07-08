@@ -3,7 +3,7 @@ package app.ecosynergy.api;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.time.ZonedDateTime;
+//import java.time.ZonedDateTime;
 //import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -29,11 +29,8 @@ public class EcosynergyApiApplication {
 //		DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
 //		passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
 //
-//		String result = passwordEncoder.encode("admin123");
+//		String result = passwordEncoder.encode("GabrielBen");
 //		System.out.println("My hash " + result);
-
-        System.setProperty("user.timezone", "UTC");
-        System.out.println(ZonedDateTime.now());
     }
 
 }

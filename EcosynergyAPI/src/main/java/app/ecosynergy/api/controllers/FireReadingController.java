@@ -44,6 +44,8 @@ public class FireReadingController {
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ){
+        page--;
+
         if(limit == null) limit = (int) service.countAllReadings();
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
