@@ -1,6 +1,5 @@
 package app.ecosynergy.api.unittests.mockito.services;
 
-import app.ecosynergy.api.controllers.MQ7ReadingController;
 import app.ecosynergy.api.data.vo.v1.MQ7ReadingVO;
 import app.ecosynergy.api.models.MQ7Reading;
 import app.ecosynergy.api.repositories.MQ7ReadingRepository;
@@ -14,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -43,7 +41,7 @@ class MQ7ReadingServicesTest {
         MQ7ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/mq7reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
-        assertEquals(new Date(1), result.getDate());
+        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(1, result.getValue());
     }
 
@@ -57,7 +55,7 @@ class MQ7ReadingServicesTest {
 //
 //        voList.forEach(result -> {
 //            assertEquals("links: [</api/mq7reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-//            assertEquals(new Date(result.getKey().intValue()), result.getDate());
+//            assertEquals(new Date(result.getKey().intValue()), result.getTimestamp());
 //            assertEquals(result.getKey().intValue(), result.getValue());
 //        });
 //    }
@@ -75,7 +73,7 @@ class MQ7ReadingServicesTest {
 
         MQ7ReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertEquals("links: [</api/mq7reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-        assertEquals(new Date(1), result.getDate());
+        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(1, result.getValue());
     }
 }

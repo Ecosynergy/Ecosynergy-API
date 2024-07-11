@@ -35,7 +35,7 @@ public class MQ135ReadingServices {
         MQ135Reading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         MQ135ReadingVO vo = DozerMapper.parseObject(reading, MQ135ReadingVO.class);
-        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
     }
@@ -45,7 +45,7 @@ public class MQ135ReadingServices {
 
         Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
             MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
-            vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+            vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
             return vo;
         });
         voPage.map(vo -> {
@@ -74,7 +74,7 @@ public class MQ135ReadingServices {
         MQ135Reading readingEntity = repository.save(DozerMapper.parseObject(reading, MQ135Reading.class));
 
         MQ135ReadingVO vo = DozerMapper.parseObject(readingEntity, MQ135ReadingVO.class);
-        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 
         return vo;

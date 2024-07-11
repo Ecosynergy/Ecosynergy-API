@@ -15,7 +15,7 @@ public class MockFireReading {
     public FireReading mockEntity(Integer number){
         FireReading entity = new FireReading();
         entity.setId(number.longValue());
-        entity.setDate(ZonedDateTime.now());
+        entity.setTimestamp(ZonedDateTime.now());
         entity.setFire(number % 2 == 0);
 
         return entity;
@@ -28,7 +28,7 @@ public class MockFireReading {
     public FireReadingVO mockVO(Integer number){
         FireReadingVO vo = new FireReadingVO();
         vo.setKey(number.longValue());
-        vo.setDate(ZonedDateTime.now());
+        vo.setTimestamp(ZonedDateTime.now());
         vo.setFire(number % 2 == 0);
 
         return vo;

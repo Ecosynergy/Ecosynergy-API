@@ -51,7 +51,7 @@ public class MQ135ReadingController {
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "date"));
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
         ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
 
@@ -65,7 +65,7 @@ public class MQ135ReadingController {
     public MQ135ReadingVO create(@RequestBody MQ135ReadingVO reading,
                                  @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ){
-        reading.setDate(ZonedDateTime.now());
+        reading.setTimestamp(ZonedDateTime.now());
 
         ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
 

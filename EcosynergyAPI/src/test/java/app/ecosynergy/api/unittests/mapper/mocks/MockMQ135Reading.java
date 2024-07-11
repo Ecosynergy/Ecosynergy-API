@@ -15,7 +15,7 @@ public class MockMQ135Reading {
     public MQ135Reading mockEntity(Integer number){
         MQ135Reading entity = new MQ135Reading();
         entity.setId(number.longValue());
-        entity.setDate(ZonedDateTime.now());
+        entity.setTimestamp(ZonedDateTime.now());
         entity.setValue(number.doubleValue());
 
         return entity;
@@ -28,7 +28,7 @@ public class MockMQ135Reading {
     public MQ135ReadingVO mockVO(Integer number){
         MQ135ReadingVO vo = new MQ135ReadingVO();
         vo.setKey(number.longValue());
-        vo.setDate(ZonedDateTime.now());
+        vo.setTimestamp(ZonedDateTime.now());
         vo.setValue(number.doubleValue());
 
         return vo;

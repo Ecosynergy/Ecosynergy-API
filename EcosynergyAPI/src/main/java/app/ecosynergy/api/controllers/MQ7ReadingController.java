@@ -50,7 +50,7 @@ public class MQ7ReadingController {
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "date"));
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
         ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
         return ResponseEntity.ok(service.findAll(pageable,zoneId));
@@ -63,7 +63,7 @@ public class MQ7ReadingController {
     public MQ7ReadingVO create(@RequestBody MQ7ReadingVO reading,
                                @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ){
-        reading.setDate(ZonedDateTime.now());
+        reading.setTimestamp(ZonedDateTime.now());
 
         ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
 

@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +41,7 @@ class MQ135ReadingServicesTest {
         MQ135ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/mq135reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
-        assertEquals(new Date(1), result.getDate());
+        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(1, result.getValue());
     }
 
@@ -56,7 +55,7 @@ class MQ135ReadingServicesTest {
 //
 //        voList.forEach(result -> {
 //            assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-//            assertEquals(new Date(result.getKey().intValue()), result.getDate());
+//            assertEquals(new Date(result.getKey().intValue()), result.getTimestamp());
 //            assertEquals(result.getKey().intValue(), result.getValue());
 //        });
 //    }
@@ -74,7 +73,7 @@ class MQ135ReadingServicesTest {
 
         MQ135ReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-        assertEquals(new Date(1), result.getDate());
+        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(1, result.getValue());
     }
 }

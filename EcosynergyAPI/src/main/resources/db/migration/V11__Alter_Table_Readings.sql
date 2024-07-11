@@ -1,0 +1,3 @@
+ALTER TABLE mq135_readings CHANGE COLUMN date timestamp TIMESTAMP NOT NULL;
+ALTER TABLE mq7_readings CHANGE COLUMN date timestamp TIMESTAMP NOT NULL;
+ALTER TABLE fire_readings CHANGE COLUMN date timestamp TIMESTAMP NOT NULL;

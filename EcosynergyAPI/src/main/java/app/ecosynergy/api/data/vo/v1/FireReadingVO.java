@@ -22,7 +22,7 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
     @JsonProperty("fire")
     private Boolean isFire;
 
-    private ZonedDateTime date;
+    private ZonedDateTime timestamp;
 
     public Long getKey() {
         return key;
@@ -40,12 +40,12 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
         isFire = fire;
     }
 
-    public ZonedDateTime getDate() {
-        return date;
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -54,11 +54,11 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         FireReadingVO that = (FireReadingVO) o;
-        return Objects.equals(key, that.key) && Objects.equals(isFire, that.isFire) && Objects.equals(date, that.date);
+        return Objects.equals(key, that.key) && Objects.equals(isFire, that.isFire) && Objects.equals(timestamp, that.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, isFire, date);
+        return Objects.hash(super.hashCode(), key, isFire, timestamp);
     }
 }

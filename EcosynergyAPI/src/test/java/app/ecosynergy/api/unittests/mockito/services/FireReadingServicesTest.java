@@ -1,15 +1,10 @@
 package app.ecosynergy.api.unittests.mockito.services;
 
 import app.ecosynergy.api.data.vo.v1.FireReadingVO;
-import app.ecosynergy.api.data.vo.v1.MQ135ReadingVO;
 import app.ecosynergy.api.models.FireReading;
-import app.ecosynergy.api.models.MQ135Reading;
 import app.ecosynergy.api.repositories.FireReadingRepository;
-import app.ecosynergy.api.repositories.MQ135ReadingRepository;
 import app.ecosynergy.api.services.FireReadingServices;
-import app.ecosynergy.api.services.MQ135ReadingServices;
 import app.ecosynergy.api.unittests.mapper.mocks.MockFireReading;
-import app.ecosynergy.api.unittests.mapper.mocks.MockMQ135Reading;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +41,7 @@ class FireReadingServicesTest {
         FireReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/firereading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
-        assertEquals(new Date(1), result.getDate());
+        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(false, result.getFire());
     }
 
@@ -61,7 +55,7 @@ class FireReadingServicesTest {
 //
 //        voList.forEach(result -> {
 //            assertEquals("links: [</api/firereading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-//            assertEquals(new Date(result.getKey().intValue()), result.getDate());
+//            assertEquals(new Date(result.getKey().intValue()), result.getTimestamp());
 //            assertEquals(result.getKey().intValue() % 2 == 0, result.getFire());
 //        });
 //    }
@@ -79,7 +73,7 @@ class FireReadingServicesTest {
 
         FireReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertEquals("links: [</api/firereading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-        assertEquals(new Date(1), result.getDate());
+        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(false, result.getFire());
     }
 }

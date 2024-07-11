@@ -21,8 +21,7 @@ public class MQ7Reading implements Serializable {
     private Double value;
 
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private ZonedDateTime date;
+    private ZonedDateTime timestamp;
 
     public MQ7Reading() {}
 
@@ -42,12 +41,12 @@ public class MQ7Reading implements Serializable {
         this.value = value;
     }
 
-    public ZonedDateTime getDate() {
-        return date;
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -55,11 +54,11 @@ public class MQ7Reading implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MQ7Reading mq7Reading = (MQ7Reading) o;
-        return Objects.equals(id, mq7Reading.id) && Objects.equals(value, mq7Reading.value) && Objects.equals(date, mq7Reading.date);
+        return Objects.equals(id, mq7Reading.id) && Objects.equals(value, mq7Reading.value) && Objects.equals(timestamp, mq7Reading.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value, date);
+        return Objects.hash(id, value, timestamp);
     }
 }

@@ -23,7 +23,7 @@ public class FireReading implements Serializable {
     private Boolean isFire;
 
     @Column
-    private ZonedDateTime date;
+    private ZonedDateTime timestamp;
 
     public Long getId() {
         return id;
@@ -41,12 +41,12 @@ public class FireReading implements Serializable {
         isFire = fire;
     }
 
-    public ZonedDateTime getDate() {
-        return date;
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -54,11 +54,11 @@ public class FireReading implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FireReading that = (FireReading) o;
-        return Objects.equals(id, that.id) && Objects.equals(isFire, that.isFire) && Objects.equals(date, that.date);
+        return Objects.equals(id, that.id) && Objects.equals(isFire, that.isFire) && Objects.equals(timestamp, that.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isFire, date);
+        return Objects.hash(id, isFire, timestamp);
     }
 }

@@ -35,7 +35,7 @@ public class FireReadingServices {
         FireReading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         FireReadingVO vo = DozerMapper.parseObject(reading, FireReadingVO.class);
-        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
     }
@@ -45,7 +45,7 @@ public class FireReadingServices {
 
         Page<FireReadingVO> voPage = readingsPage.map(r -> {
             FireReadingVO vo = DozerMapper.parseObject(r, FireReadingVO.class);
-            vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+            vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
             return vo;
         });
 
@@ -75,7 +75,7 @@ public class FireReadingServices {
         FireReading readingEntity = repository.save(DozerMapper.parseObject(reading, FireReading.class));
 
         FireReadingVO vo = DozerMapper.parseObject(readingEntity, FireReadingVO.class);
-        vo.setDate(vo.getDate().withZoneSameInstant(zoneId));
+        vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 
         return vo;
