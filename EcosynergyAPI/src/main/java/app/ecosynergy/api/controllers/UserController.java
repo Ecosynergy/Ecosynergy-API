@@ -40,7 +40,7 @@ public class UserController {
     @Operation(summary = "Get all users", description = "Retrieve a list of all users")
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<PagedModel<EntityModel<UserVO>>> findAll(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", defaultValue = "20") Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
     ){

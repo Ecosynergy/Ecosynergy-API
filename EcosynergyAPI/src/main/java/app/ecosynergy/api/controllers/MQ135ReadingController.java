@@ -40,7 +40,7 @@ public class MQ135ReadingController {
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public ResponseEntity<PagedModel<EntityModel<MQ135ReadingVO>>> findAll(
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
             @RequestHeader(value = "Time-Zone", required = false) String timeZone
