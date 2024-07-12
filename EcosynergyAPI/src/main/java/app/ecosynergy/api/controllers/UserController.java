@@ -44,6 +44,8 @@ public class UserController {
             @RequestParam(value = "limit", defaultValue = "20") Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
     ){
+        page--;
+
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "fullName"));
