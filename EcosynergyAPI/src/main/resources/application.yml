@@ -10,12 +10,12 @@ spring:
     name: EcosynergyAPI
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://ecosynergy-database.cz2qyuyusvdl.us-east-1.rds.amazonaws.com/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=GMT%2B3
+    url: jdbc:mysql://ecosynergy-database.cz2qyuyusvdl.us-east-1.rds.amazonaws.com/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: admin
     password: GabrielBen123#
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://127.0.0.1:3306/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=GMT%2B3
+#    url: jdbc:mysql://127.0.0.1:3306/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
 #    username: root
 #    password: 220624And
   jpa:
@@ -35,6 +35,8 @@ spring:
 #          starttls:
 #            enable: true
 springdoc:
-  paths-to-match: /api/**/v1/**
+  paths-to-match:
+    - /auth/**
+    - /api/**/v1/**
   swagger-ui:
     use-root-path: true

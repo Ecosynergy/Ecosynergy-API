@@ -6,6 +6,11 @@ security:
       secret-key: 53cr37
       expire-length: 3600000
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ecosynergy?useTimezone=true&serverTimezone=UTC
+    username: root
+    password: 220624And
   jpa:
     open-in-view: false
     hibernate:
@@ -15,7 +20,9 @@ spring:
        dialect: org.hibernate.dialect.MySQLDialect
     show_sql: false
 springdoc:
-  paths-to-match: /api/**/v1/**
+  paths-to-match:
+    - /auth/**
+    - /api/**/v1/**
   swagger-ui:
     use-root-path: true
 server:
