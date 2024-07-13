@@ -1,7 +1,5 @@
 package app.ecosynergy.api.integrationtests.vo;
 
-import app.ecosynergy.api.integrationtests.deserializers.ZonedDateTimeDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import org.springframework.hateoas.RepresentationModel;
 

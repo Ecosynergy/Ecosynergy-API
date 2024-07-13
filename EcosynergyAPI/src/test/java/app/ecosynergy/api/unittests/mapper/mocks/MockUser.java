@@ -18,11 +18,16 @@ public class MockUser {
     public User mockEntity(Integer number){
         User entity = new User();
         entity.setId(number.longValue());
+        entity.setUserName("user" + number);
         entity.setFullName("User" + number);
         entity.setEmail("Email" + number);
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
         entity.setNationality("Brazilian" + number);
+        entity.setEnabled(true);
+        entity.setAccountNonExpired(true);
+        entity.setAccountNonLocked(true);
+        entity.setCredentialsNonExpired(true);
 
         return entity;
     }
@@ -30,11 +35,16 @@ public class MockUser {
     public UserVO mockUserVO(Integer number){
         UserVO entity = new UserVO();
         entity.setKey(number.longValue());
-        entity.setFullName("UserVO" + number);
+        entity.setUserName("user" + number);
+        entity.setFullName("User" + number);
         entity.setEmail("Email" + number);
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
         entity.setNationality("Brazilian" + number);
+        entity.setEnabled(true);
+        entity.setAccountNonExpired(true);
+        entity.setAccountNonLocked(true);
+        entity.setCredentialsNonExpired(true);
 
         return entity;
     }

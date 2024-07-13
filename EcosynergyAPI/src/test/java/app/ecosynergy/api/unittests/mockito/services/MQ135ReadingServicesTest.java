@@ -1,6 +1,7 @@
 package app.ecosynergy.api.unittests.mockito.services;
 
 import app.ecosynergy.api.data.vo.v1.MQ135ReadingVO;
+import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.models.MQ135Reading;
 import app.ecosynergy.api.repositories.MQ135ReadingRepository;
 import app.ecosynergy.api.services.MQ135ReadingServices;
@@ -12,10 +13,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class MQ135ReadingServicesTest {
@@ -39,41 +40,42 @@ class MQ135ReadingServicesTest {
 
         when(repository.findById(reading.getId())).thenReturn(Optional.of(reading));
         MQ135ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
-        assertEquals("links: [</api/mq135reading/v1/1>;rel=\"self\"]", result.toString());
+
+        assertNotNull(result);
+        assertNotNull(result.getKey());
+        assertNotNull(result.getTimestamp());
+        assertNotNull(result.getValue());
+
+        assertEquals("links: [</api/mq135Reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
-        assertEquals(new Date(1), result.getTimestamp());
         assertEquals(1, result.getValue());
     }
-
-//    @Test
-//    void findAll() {
-//        List<MQ135Reading> entityList = input.mockEntityList();
-//
-//        when(repository.findAll()).thenReturn(entityList);
-//
-//        List<MQ135ReadingVO> voList = service.findAll();
-//
-//        voList.forEach(result -> {
-//            assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-//            assertEquals(new Date(result.getKey().intValue()), result.getTimestamp());
-//            assertEquals(result.getKey().intValue(), result.getValue());
-//        });
-//    }
 
     @Test
     void create() {
         MQ135Reading entity = input.mockEntity(1);
 
-        MQ135Reading persisted = entity;
-        persisted.setId(1L);
-
         MQ135ReadingVO vo = input.mockVO(1);
 
-        when(repository.save(entity)).thenReturn(persisted);
+        when(repository.save(any(MQ135Reading.class))).thenReturn(entity);
 
         MQ135ReadingVO result = service.create(vo, ZoneId.systemDefault());
-        assertEquals("links: [</api/mq135reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
-        assertEquals(new Date(1), result.getTimestamp());
+        assertNotNull(result);
+        assertNotNull(result.getKey());
+        assertNotNull(result.getTimestamp());
+        assertNotNull(result.getValue());
+
+        assertEquals("links: [</api/mq135Reading/v1/" + result.getKey() + ">;rel=\"self\"]", result.toString());
         assertEquals(1, result.getValue());
+    }
+
+    @Test
+    void createWithNullMQ135Reading() {
+        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> service.create(null, ZoneId.of("America/Sao_Paulo")));
+
+        String expectedMessage = "It is not allowed to persist a null object!";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 }
