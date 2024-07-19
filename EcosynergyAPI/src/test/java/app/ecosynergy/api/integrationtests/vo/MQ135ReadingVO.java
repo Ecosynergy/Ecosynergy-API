@@ -15,7 +15,7 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
 
     private Long id;
     private Double value;
-    private ZonedDateTime date;
+    private ZonedDateTime timestamp;
 
     public Long getId() {
         return id;
@@ -33,12 +33,12 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         this.value = value;
     }
 
-    public ZonedDateTime getDate() {
-        return date;
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -47,11 +47,11 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         MQ135ReadingVO mq135ReadingVO = (MQ135ReadingVO) o;
-        return Objects.equals(id, mq135ReadingVO.id) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(date, mq135ReadingVO.date);
+        return Objects.equals(id, mq135ReadingVO.id) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(timestamp, mq135ReadingVO.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, value, date);
+        return Objects.hash(super.hashCode(), id, value, timestamp);
     }
 }

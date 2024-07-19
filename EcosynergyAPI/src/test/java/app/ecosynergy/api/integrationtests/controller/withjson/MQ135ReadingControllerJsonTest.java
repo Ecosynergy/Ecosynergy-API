@@ -3,9 +3,9 @@ package app.ecosynergy.api.integrationtests.controller.withjson;
 import app.ecosynergy.api.configs.TestConfigs;
 import app.ecosynergy.api.integrationtests.testcontainers.AbstractIntegrationTest;
 import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
-import app.ecosynergy.api.integrationtests.vo.MQ7ReadingVO;
+import app.ecosynergy.api.integrationtests.vo.MQ135ReadingVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
-import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperMQ7ReadingVO;
+import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperMQ135ReadingVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
@@ -23,17 +23,17 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
+public class MQ135ReadingControllerJsonTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
     private static ObjectMapper objectMapper;
 
     private static Integer countReadings;
 
-    private static MQ7ReadingVO mq7Reading;
+    private static MQ135ReadingVO mq135Reading;
 
     @BeforeAll
     static void setup(){
@@ -41,7 +41,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.registerModule(new JavaTimeModule());
 
-        mq7Reading = new MQ7ReadingVO();
+        mq135Reading = new MQ135ReadingVO();
     }
 
     @Test
@@ -64,7 +64,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-                .setBasePath("/api/mq7Reading/v1")
+                .setBasePath("/api/mq135Reading/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -79,7 +79,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
         String content = given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .body(mq7Reading)
+                .body(mq135Reading)
                 .when()
                 .post()
                 .then()
@@ -88,14 +88,14 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        mq7Reading = objectMapper.readValue(content, MQ7ReadingVO.class);
+        mq135Reading = objectMapper.readValue(content, MQ135ReadingVO.class);
 
-        assertNotNull(mq7Reading);
-        assertNotNull(mq7Reading.getId());
-        assertNotNull(mq7Reading.getTimestamp());
-        assertNotNull(mq7Reading.getValue());
+        assertNotNull(mq135Reading);
+        assertNotNull(mq135Reading.getId());
+        assertNotNull(mq135Reading.getTimestamp());
+        assertNotNull(mq135Reading.getValue());
 
-        assertEquals(6578.0, mq7Reading.getValue());
+        assertEquals(6578.0, mq135Reading.getValue());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
-                .body(mq7Reading)
+                .body(mq135Reading)
                 .when()
                 .post()
                 .then()
@@ -124,7 +124,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
         String content = given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", mq7Reading.getId())
+                .pathParam("id", mq135Reading.getId())
                 .when()
                 .get("{id}")
                 .then()
@@ -133,16 +133,16 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        MQ7ReadingVO resultVO = objectMapper.readValue(content, MQ7ReadingVO.class);
+        MQ135ReadingVO resultVO = objectMapper.readValue(content, MQ135ReadingVO.class);
 
         assertNotNull(resultVO);
         assertNotNull(resultVO.getId());
         assertNotNull(resultVO.getTimestamp());
         assertNotNull(resultVO.getValue());
 
-        assertEquals(mq7Reading.getValue(), resultVO.getValue());
-        assertEquals(mq7Reading.getId(), resultVO.getId());
-        assertEquals(mq7Reading.getTimestamp(), resultVO.getTimestamp());
+        assertEquals(mq135Reading.getId(), resultVO.getId());
+        assertEquals(mq135Reading.getValue(), resultVO.getValue());
+        assertEquals(mq135Reading.getTimestamp(), resultVO.getTimestamp());
     }
 
     @Test
@@ -152,7 +152,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
-                .pathParam("id", mq7Reading.getId())
+                .pathParam("id", mq135Reading.getId())
                 .when()
                 .get("{id}")
                 .then()
@@ -164,7 +164,7 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(content);
         assertEquals("Invalid CORS request", content);
     }
-    
+
     @Test
     @Order(6)
     public void testFindAll() throws JsonProcessingException {
@@ -179,23 +179,23 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        WrapperMQ7ReadingVO wrapper = objectMapper.readValue(content, WrapperMQ7ReadingVO.class);
+        WrapperMQ135ReadingVO wrapper = objectMapper.readValue(content, WrapperMQ135ReadingVO.class);
 
-        List<MQ7ReadingVO> mq7Readings = wrapper.getEmbedded().getMQ7Readings();
+        List<MQ135ReadingVO> mq135Readings = wrapper.getEmbedded().getMQ135Readings();
 
-        assertNotNull(mq7Readings);
+        assertNotNull(mq135Readings);
 
-        mq7Readings.forEach(reading -> {
-            assertNotNull(mq7Reading.getId());
-            assertNotNull(mq7Reading.getTimestamp());
-            assertNotNull(mq7Reading.getValue());
+        mq135Readings.forEach(reading -> {
+            assertNotNull(mq135Reading.getId());
+            assertNotNull(mq135Reading.getTimestamp());
+            assertNotNull(mq135Reading.getValue());
 
-            assertEquals(mq7Reading.getId(), reading.getId());
-            assertEquals(mq7Reading.getTimestamp(), reading.getTimestamp());
-            assertEquals(mq7Reading.getValue(), reading.getValue());
+            assertEquals(mq135Reading.getId(), reading.getId());
+            assertEquals(mq135Reading.getTimestamp(), reading.getTimestamp());
+            assertEquals(mq135Reading.getValue(), reading.getValue());
         });
 
-        countReadings = mq7Readings.size();
+        countReadings = mq135Readings.size();
     }
 
     @Test
@@ -233,12 +233,12 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
 
         assertNotNull(content);
 
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/mq7Reading/v1/" + mq7Reading.getId() + "\"}}}"));
+        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/mq135Reading/v1/" + mq135Reading.getId() + "\"}}}"));
 
         assertTrue(content.contains("\"page\":{\"size\":5,\"totalElements\":" + countReadings + ",\"totalPages\":1,\"number\":0}}"));
     }
 
     private void mockReading(){
-        mq7Reading.setValue(6578.0);
+        mq135Reading.setValue(6578.0);
     }
 }

@@ -1,11 +1,13 @@
-package app.ecosynergy.api.integrationtests.controller.withjson;
+package app.ecosynergy.api.integrationtests.controller.withxml;
 
 import app.ecosynergy.api.configs.TestConfigs;
 import app.ecosynergy.api.integrationtests.testcontainers.AbstractIntegrationTest;
 import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.UserVO;
-import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperUserVO;
+import app.ecosynergy.api.integrationtests.vo.pagedmodels.PagedModelUser;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -14,7 +16,7 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserControllerJsonTest extends AbstractIntegrationTest {
+public class UserControllerXmlTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
-    private static ObjectMapper objectMapper;
+    private static XmlMapper xmlMapper;
 
     private static Integer countUsers;
 
@@ -34,9 +36,11 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
 
     @BeforeAll
     public static void setup() {
-        objectMapper = new ObjectMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-
+        xmlMapper = new XmlMapper();
+        xmlMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        xmlMapper.registerModule(new JavaTimeModule());
+        xmlMapper.registerModule(new Jackson2HalModule());
+        
         user = new UserVO();
     }
 
@@ -47,7 +51,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         String accessToken = given()
                 .basePath("/auth/signin")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .body(credentials)
                 .when()
                 .post()
@@ -72,8 +77,9 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     public void testFindById() throws IOException {
         String result = given()
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", 2)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
+                .pathParam("id", 3)
                 .when()
                 .get("findId/{id}")
                 .then()
@@ -82,7 +88,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
         
-        user = objectMapper.readValue(result, UserVO.class);
+        user = xmlMapper.readValue(result, UserVO.class);
 
         assertNotNull(user);
         assertNotNull(user.getId());
@@ -96,10 +102,10 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertTrue(user.getAccountNonExpired());
         assertTrue(user.getAccountNonLocked());
 
-        assertEquals(2, user.getId());
-        assertEquals("testecontainerjson", user.getUsername());
-        assertEquals("Anderson Rodrigues JSON", user.getFullName());
-        assertEquals("testecontainerjson@gmail.com", user.getEmail());
+        assertEquals(3, user.getId());
+        assertEquals("testecontainerxml", user.getUsername());
+        assertEquals("Anderson Rodrigues XML", user.getFullName());
+        assertEquals("testecontainerxml@gmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
         assertTrue(user.getAccountNonExpired());
@@ -113,9 +119,10 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     public void testFindByIdWithWrongOrigin(){
         var content = given()
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
-                .pathParam("id", 2)
+                .pathParam("id", 3)
                 .when()
                 .get("findId/{id}")
                 .then()
@@ -131,10 +138,11 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     @Test
     @Order(4)
     public void testUpdate() throws IOException {
-        user.setEmail("and.rt@hotmail.com");
+        user.setEmail("andiin@hotmail.com");
         String result = given()
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .body(user)
                 .when()
                 .put()
@@ -144,7 +152,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        user = objectMapper.readValue(result, UserVO.class);
+        user = xmlMapper.readValue(result, UserVO.class);
 
         assertNotNull(user);
         assertNotNull(user.getId());
@@ -158,10 +166,10 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertTrue(user.getAccountNonExpired());
         assertTrue(user.getAccountNonLocked());
 
-        assertEquals(2, user.getId());
-        assertEquals("testecontainerjson", user.getUsername());
-        assertEquals("Anderson Rodrigues JSON", user.getFullName());
-        assertEquals("and.rt@hotmail.com", user.getEmail());
+        assertEquals(3, user.getId());
+        assertEquals("testecontainerxml", user.getUsername());
+        assertEquals("Anderson Rodrigues XML", user.getFullName());
+        assertEquals("andiin@hotmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
         assertTrue(user.getAccountNonExpired());
@@ -176,7 +184,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         user.setEmail("anderson.rod.dev@gmail.com");
         String content = given()
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
                 .body(user)
                 .when()
@@ -195,7 +204,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     @Order(6)
     public void testFindAll() throws IOException {
         var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
                 .get()
@@ -205,9 +215,9 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        WrapperUserVO wrapper = objectMapper.readValue(content, WrapperUserVO.class);
+        PagedModelUser pagedModel = xmlMapper.readValue(content, PagedModelUser.class);
 
-        List<UserVO> users = wrapper.getEmbedded().getUserVOList();
+        List<UserVO> users = pagedModel.getContent();
 
         assertNotNull(users);
 
@@ -231,7 +241,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     @Order(7)
     public void testFindAllWithWrongOrigin() {
         var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
                 .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
@@ -251,7 +262,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     @Order(8)
     public void testHATEOAS() {
         var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .queryParams("page", 1, "limit", 10, "direction", "asc")
                 .when()
                 .get()
@@ -263,12 +275,11 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
 
         assertNotNull(content);
 
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1/findId/1\"}}}"));
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1/findId/2\"}}}"));
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1/findId/3\"}}}"));
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1/findId/4\"}}}"));
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1?page=0&limit=10&direction=fullName%3A%20ASC\"}}"));
-        assertTrue(content.contains("\"page\":{\"size\":10,\"totalElements\":" + countUsers + ",\"totalPages\":1,\"number\":0}}"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/findId/1</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/findId/3</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/findId/4</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1?page=0&amp;limit=10&amp;direction=fullName%3A%20ASC</href></links>"));
+        assertTrue(content.contains("<page><size>10</size><totalElements>" + countUsers + "</totalElements><totalPages>1</totalPages><number>0</number></page>"));
     }
 
     @Test
@@ -276,7 +287,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     public void testDeleteWithWrongOrigin(){
         String content = given()
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
                 .pathParam("id", user.getId())
                 .when()
@@ -295,7 +307,8 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     @Order(10)
     public void testDelete(){
         given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .pathParam("id", user.getId())
                 .when()
                 .delete("{id}")

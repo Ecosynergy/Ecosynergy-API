@@ -11,22 +11,22 @@ public class AccountCredentialsVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String username;
+    private String identifier;
     private String password;
 
-    public AccountCredentialsVO(String username, String password) {
-        this.username = username;
+    public AccountCredentialsVO(String identifier, String password) {
+        this.identifier = identifier;
         this.password = password;
     }
 
     public AccountCredentialsVO() {}
 
-    public String getUsername() {
-        return username;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getPassword() {
@@ -42,11 +42,11 @@ public class AccountCredentialsVO implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountCredentialsVO that = (AccountCredentialsVO) o;
-        return Objects.equals(username, that.username) && Objects.equals(password, that.password);
+        return Objects.equals(identifier, that.identifier) && Objects.equals(password, that.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password);
+        return Objects.hash(identifier, password);
     }
 }

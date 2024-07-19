@@ -22,7 +22,7 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     private Long id;
 
-    private String userName;
+    private String username;
 
     private String fullName;
 
@@ -53,12 +53,8 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFullName() {
@@ -88,7 +84,7 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     @Override
     public String getUsername() {
-        return userName;
+        return username;
     }
 
     @Override
@@ -177,11 +173,11 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserVO userVO = (UserVO) o;
-        return Objects.equals(id, userVO.id) && Objects.equals(userName, userVO.userName) && Objects.equals(fullName, userVO.fullName) && Objects.equals(email, userVO.email) && Objects.equals(password, userVO.password) && Objects.equals(gender, userVO.gender) && Objects.equals(nationality, userVO.nationality) && Objects.equals(accountNonExpired, userVO.accountNonExpired) && Objects.equals(accountNonLocked, userVO.accountNonLocked) && Objects.equals(credentialsNonExpired, userVO.credentialsNonExpired) && Objects.equals(enabled, userVO.enabled) && Objects.equals(permissions, userVO.permissions);
+        return Objects.equals(id, userVO.id) && Objects.equals(username, userVO.username) && Objects.equals(fullName, userVO.fullName) && Objects.equals(email, userVO.email) && Objects.equals(password, userVO.password) && Objects.equals(gender, userVO.gender) && Objects.equals(nationality, userVO.nationality) && Objects.equals(accountNonExpired, userVO.accountNonExpired) && Objects.equals(accountNonLocked, userVO.accountNonLocked) && Objects.equals(credentialsNonExpired, userVO.credentialsNonExpired) && Objects.equals(enabled, userVO.enabled) && Objects.equals(permissions, userVO.permissions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, userName, fullName, email, password, gender, nationality, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
+        return Objects.hash(super.hashCode(), id, username, fullName, email, password, gender, nationality, accountNonExpired, accountNonLocked, credentialsNonExpired, enabled, permissions);
     }
 }

@@ -5,6 +5,8 @@ import app.ecosynergy.api.integrationtests.testcontainers.AbstractIntegrationTes
 import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.FireReadingVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
+import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperFireReadingVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -13,12 +15,11 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.DeserializationFeature;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,19 +30,16 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
     private static ObjectMapper objectMapper;
 
-    private static FireReadingVO fireReading;
-    private static ZonedDateTime dateTime;
+    private static Integer countReadings;
 
+    private static FireReadingVO fireReading;
     @BeforeAll
     static void setup(){
         objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.registerModule(new JavaTimeModule());
 
-        SimpleModule module = new SimpleModule();
-
-        objectMapper.registerModule(module);
         fireReading = new FireReadingVO();
-        dateTime = ZonedDateTime.now();
     }
 
     @Test
@@ -64,7 +62,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
         specification = new RequestSpecBuilder()
                 .addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-                .setBasePath("/api/firereading/v1")
+                .setBasePath("/api/fireReading/v1")
                 .setPort(TestConfigs.SERVER_PORT)
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -88,13 +86,14 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        System.out.println(content);
-
         fireReading = objectMapper.readValue(content, FireReadingVO.class);
 
         assertNotNull(fireReading);
+        assertNotNull(fireReading.getId());
+        assertNotNull(fireReading.getTimestamp());
+        assertNotNull(fireReading.getFire());
+
         assertTrue(fireReading.getFire());
-        assertEquals(dateTime, fireReading.getDate());
     }
 
     @Test
@@ -123,6 +122,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
         String content = given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .header("Time-Zone", "America/Sao_Paulo")
                 .pathParam("id", fireReading.getId())
                 .when()
                 .get("{id}")
@@ -135,9 +135,13 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
         FireReadingVO resultVO = objectMapper.readValue(content, FireReadingVO.class);
 
         assertNotNull(resultVO);
-        assertTrue(resultVO.getFire());
+        assertNotNull(resultVO.getId());
+        assertNotNull(resultVO.getTimestamp());
+        assertNotNull(resultVO.getFire());
+
         assertEquals(fireReading.getId(), resultVO.getId());
-        assertEquals(fireReading.getDate(), resultVO.getDate());
+        assertEquals(fireReading.getTimestamp(), resultVO.getTimestamp());
+        assertTrue(resultVO.getFire());
     }
 
     @Test
@@ -162,14 +166,46 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(6)
-    public void testDeleteWithWrongOrigin(){
-        String content = given()
-                .spec(specification)
+    public void testFindAll() throws JsonProcessingException {
+        var content = given().spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .queryParams("page", 1, "limit", 5, "direction", "asc")
+                .when()
+                .get()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .asString();
+
+        WrapperFireReadingVO wrapper = objectMapper.readValue(content, WrapperFireReadingVO.class);
+
+        List<FireReadingVO> fireReadings = wrapper.getEmbedded().getFireReadingVOList();
+
+        assertNotNull(fireReadings);
+
+        fireReadings.forEach(reading -> {
+            assertNotNull(fireReading.getId());
+            assertNotNull(fireReading.getTimestamp());
+            assertNotNull(fireReading.getFire());
+
+            assertEquals(fireReading.getId(), reading.getId());
+            assertEquals(fireReading.getTimestamp(), reading.getTimestamp());
+            assertTrue(reading.getFire());
+        });
+
+        countReadings = fireReadings.size();
+    }
+
+    @Test
+    @Order(7)
+    public void testFindAllWithWrongOrigin() {
+        var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
-                .pathParam("id", fireReading.getId())
+                .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
-                .delete("{id}")
+                .get()
                 .then()
                 .statusCode(403)
                 .extract()
@@ -181,23 +217,27 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Order(7)
-    public void testDelete(){
-        String content = given()
-                .spec(specification)
+    @Order(8)
+    public void testHATEOAS() {
+        var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .pathParam("id", fireReading.getId())
+                .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
-                .delete("{id}")
+                .get()
                 .then()
-                .statusCode(204)
+                .statusCode(200)
                 .extract()
                 .body()
                 .asString();
+
+        assertNotNull(content);
+
+        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/fireReading/v1/" + fireReading.getId() + "\"}}}"));
+
+        assertTrue(content.contains("\"page\":{\"size\":5,\"totalElements\":" + countReadings + ",\"totalPages\":1,\"number\":0}}"));
     }
 
     private void mockReading(){
         fireReading.setFire(true);
-        fireReading.setDate(dateTime);
     }
 }

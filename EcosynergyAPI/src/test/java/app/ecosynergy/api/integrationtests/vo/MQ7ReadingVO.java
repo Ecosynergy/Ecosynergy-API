@@ -16,7 +16,7 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
     private Long id;
     private Double value;
 
-    private ZonedDateTime date;
+    private ZonedDateTime timestamp;
 
     public Long getId() {
         return id;
@@ -34,12 +34,12 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
         this.value = value;
     }
 
-    public ZonedDateTime getDate() {
-        return date;
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -48,11 +48,11 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         MQ7ReadingVO mq7ReadingVO = (MQ7ReadingVO) o;
-        return Objects.equals(id, mq7ReadingVO.id) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(date, mq7ReadingVO.date);
+        return Objects.equals(id, mq7ReadingVO.id) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(timestamp, mq7ReadingVO.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, value, date);
+        return Objects.hash(super.hashCode(), id, value, timestamp);
     }
 }

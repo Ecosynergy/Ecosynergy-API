@@ -1,4 +1,4 @@
-package app.ecosynergy.api.integrationtests.controller.withjson;
+package app.ecosynergy.api.integrationtests.controller.withxml;
 
 import app.ecosynergy.api.configs.TestConfigs;
 import app.ecosynergy.api.integrationtests.testcontainers.AbstractIntegrationTest;
@@ -7,9 +7,11 @@ import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.UserVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,16 +19,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuthControllerJsonTest extends AbstractIntegrationTest {
-    private static ObjectMapper objectMapper;
+public class AuthControllerXmlTest extends AbstractIntegrationTest {
+    private static XmlMapper xmlMapper;
 
     private static TokenVO tokenVO;
     private static UserVO user;
 
     @BeforeAll
     public static void setUp(){
-        objectMapper = new ObjectMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        xmlMapper = new XmlMapper();
+        xmlMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        xmlMapper.registerModule(new JavaTimeModule());
+        xmlMapper.registerModule(new Jackson2HalModule());
 
         user = new UserVO();
     }
@@ -39,7 +43,8 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
         String response = given()
                 .basePath("/auth/signup")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .body(user)
                 .when()
                 .post()
@@ -49,7 +54,7 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        UserVO vo = objectMapper.readValue(response, UserVO.class);
+        UserVO vo = xmlMapper.readValue(response, UserVO.class);
 
         assertNotNull(vo);
         assertNotNull(vo.getId());
@@ -72,7 +77,8 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
         tokenVO = given()
                 .basePath("/auth/signin")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .body(credentials)
                 .when()
                 .post()
@@ -92,7 +98,8 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
         tokenVO = given()
                 .basePath("/auth/refresh")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_XML)
+                .accept(TestConfigs.CONTENT_TYPE_XML)
                 .pathParam("username", tokenVO.getUsername())
                 .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + tokenVO.getRefreshToken())
                 .when()
@@ -108,9 +115,9 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
     }
 
     private void mockUser(){
-        user.setUsername("testejson");
+        user.setUsername("testexml");
         user.setFullName("Fulano da Silva");
-        user.setEmail("testejson@gmail.com");
+        user.setEmail("testexml@gmail.com");
         user.setPassword("admin123");
         user.setGender("Male");
         user.setNationality("Brazilian");

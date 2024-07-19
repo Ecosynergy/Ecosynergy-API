@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Tag(name = "Fire Readings Endpoint")
 @RestController
@@ -64,7 +65,7 @@ public class FireReadingController {
     public FireReadingVO create(@RequestBody FireReadingVO reading,
                                 @RequestHeader(value = "Time-Zone", required = false) String timeZone
     ){
-        reading.setTimestamp(ZonedDateTime.now());
+        reading.setTimestamp(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS));
 
         ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) :ZoneId.of("UTC");
 
