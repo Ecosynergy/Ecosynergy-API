@@ -17,6 +17,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("test")
 public class UserControllerXmlTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
     private static XmlMapper xmlMapper;
