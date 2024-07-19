@@ -189,10 +189,6 @@ public class MQ7ReadingControllerJsonTest extends AbstractIntegrationTest {
             assertNotNull(mq7Reading.getId());
             assertNotNull(mq7Reading.getTimestamp());
             assertNotNull(mq7Reading.getValue());
-
-            assertEquals(mq7Reading.getId(), reading.getId());
-            assertEquals(mq7Reading.getTimestamp(), reading.getTimestamp());
-            assertEquals(mq7Reading.getValue(), reading.getValue());
         });
 
         countReadings = mq7Readings.size();

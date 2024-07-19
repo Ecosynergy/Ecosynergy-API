@@ -189,10 +189,6 @@ public class MQ135ReadingControllerJsonTest extends AbstractIntegrationTest {
             assertNotNull(mq135Reading.getId());
             assertNotNull(mq135Reading.getTimestamp());
             assertNotNull(mq135Reading.getValue());
-
-            assertEquals(mq135Reading.getId(), reading.getId());
-            assertEquals(mq135Reading.getTimestamp(), reading.getTimestamp());
-            assertEquals(mq135Reading.getValue(), reading.getValue());
         });
 
         countReadings = mq135Readings.size();

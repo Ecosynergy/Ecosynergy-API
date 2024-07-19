@@ -1,24 +1,23 @@
-package app.ecosynergy.api.integrationtests.controller.withjson;
+package app.ecosynergy.api.integrationtests.controller.withyml;
 
 import app.ecosynergy.api.configs.TestConfigs;
+import app.ecosynergy.api.integrationtests.controller.withyml.mapper.YmlMapper;
 import app.ecosynergy.api.integrationtests.testcontainers.AbstractIntegrationTest;
 import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.FireReadingVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
-import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperFireReadingVO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import app.ecosynergy.api.integrationtests.vo.pagedmodels.PagedModelFireReading;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.config.EncoderConfig;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -26,19 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
+public class FireReadingControllerYmlTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
-    private static ObjectMapper objectMapper;
+    private static YmlMapper mapper;
 
     private static Integer countReadings;
 
     private static FireReadingVO fireReading;
     @BeforeAll
     static void setup(){
-        objectMapper = new ObjectMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.registerModule(new JavaTimeModule());
-
+        mapper = new YmlMapper();
         fireReading = new FireReadingVO();
     }
 
@@ -47,17 +43,23 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     public void authorization(){
         AccountCredentialsVO credentials = new AccountCredentialsVO("anderson", "admin123");
         String accessToken = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
                 .basePath("/auth/signin")
                 .port(TestConfigs.SERVER_PORT)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .body(credentials)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
+                .body(credentials, mapper)
                 .when()
                 .post()
                 .then()
                 .statusCode(200)
                 .extract()
                 .body()
-                .as(TokenVO.class)
+                .as(TokenVO.class, mapper)
                 .getAccessToken();
 
         specification = new RequestSpecBuilder()
@@ -71,22 +73,26 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(2)
-    public void testCreate() throws IOException {
+    public void testCreate() {
         mockReading();
 
-        String content = given()
+        fireReading = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
-                .body(fireReading)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
+                .body(fireReading, mapper)
                 .when()
                 .post()
                 .then()
                 .statusCode(200)
                 .extract()
                 .body()
-                .asString();
-
-        fireReading = objectMapper.readValue(content, FireReadingVO.class);
+                .as(FireReadingVO.class, mapper);
 
         assertNotNull(fireReading);
         assertNotNull(fireReading.getId());
@@ -100,10 +106,16 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     @Order(3)
     public void testCreateWithWrongOrigin(){
         String content = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
-                .body(fireReading)
+                .body(fireReading, mapper)
                 .when()
                 .post()
                 .then()
@@ -118,10 +130,16 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(4)
-    public void testFindById() throws IOException {
-        String content = given()
+    public void testFindById() {
+        FireReadingVO resultVO = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
                 .header("Time-Zone", "America/Sao_Paulo")
                 .pathParam("id", fireReading.getId())
                 .when()
@@ -130,9 +148,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .asString();
-
-        FireReadingVO resultVO = objectMapper.readValue(content, FireReadingVO.class);
+                .as(FireReadingVO.class, mapper);
 
         assertNotNull(resultVO);
         assertNotNull(resultVO.getId());
@@ -148,8 +164,14 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     @Order(5)
     public void testFindByIdWithWrongOrigin(){
         String content = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
                 .spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
                 .pathParam("id", fireReading.getId())
                 .when()
@@ -166,9 +188,16 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(6)
-    public void testFindAll() throws JsonProcessingException {
-        var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+    public void testFindAll() {
+        PagedModelFireReading pagedModel = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
+                .spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
                 .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
                 .get()
@@ -176,11 +205,9 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
                 .statusCode(200)
                 .extract()
                 .body()
-                .asString();
+                .as(PagedModelFireReading.class, mapper);
 
-        WrapperFireReadingVO wrapper = objectMapper.readValue(content, WrapperFireReadingVO.class);
-
-        List<FireReadingVO> fireReadings = wrapper.getEmbedded().getFireReadingVOList();
+        List<FireReadingVO> fireReadings = pagedModel.getContent();
 
         assertNotNull(fireReadings);
 
@@ -196,8 +223,15 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     @Test
     @Order(7)
     public void testFindAllWithWrongOrigin() {
-        var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+        var content = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
+                .spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
                 .header(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_TEST)
                 .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
@@ -215,8 +249,15 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     @Test
     @Order(8)
     public void testHATEOAS() {
-        var content = given().spec(specification)
-                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+        var content = given()
+                .config(RestAssuredConfig.config()
+                        .encoderConfig(EncoderConfig.encoderConfig()
+                                .encodeContentTypeAs(TestConfigs.CONTENT_TYPE_YAML, ContentType.TEXT)
+                        )
+                )
+                .spec(specification)
+                .contentType(TestConfigs.CONTENT_TYPE_YAML)
+                .accept(TestConfigs.CONTENT_TYPE_YAML)
                 .queryParams("page", 1, "limit", 5, "direction", "asc")
                 .when()
                 .get()
@@ -228,9 +269,9 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
         assertNotNull(content);
 
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/fireReading/v1/" + fireReading.getId() + "\"}}}"));
-
-        assertTrue(content.contains("\"page\":{\"size\":5,\"totalElements\":" + countReadings + ",\"totalPages\":1,\"number\":0}}"));
+        assertTrue(content.contains("links:- rel: \"self\"href: \"http://localhost:8888/api/fireReading/v1/" + fireReading.getId() + "\""));
+        assertTrue(content.contains("links:- rel: \"self\"href: \"http://localhost:8888/api/fireReading/v1?page=0&limit=5&direction=timestamp%3A%20ASC\""));
+        assertTrue(content.contains("page:size: 5totalElements: " + countReadings + "totalPages: 1number: 0"));
     }
 
     private void mockReading(){
