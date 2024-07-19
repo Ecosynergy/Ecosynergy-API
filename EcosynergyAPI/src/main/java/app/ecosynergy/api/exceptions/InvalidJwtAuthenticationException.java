@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.Serial;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
 public class InvalidJwtAuthenticationException extends AuthenticationException {
     @Serial
     private static final long serialVersionUID = 1L;

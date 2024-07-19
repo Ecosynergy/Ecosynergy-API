@@ -12,7 +12,11 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://localhost:8888");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:80");
+        config.addAllowedOrigin("www.ecosynergy.com.br");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
