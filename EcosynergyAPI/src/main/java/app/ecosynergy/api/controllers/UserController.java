@@ -54,11 +54,11 @@ public class UserController {
     }
 
     @Operation(summary = "Update user", description = "Update an existing user")
-    @PutMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+    @PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO update(@RequestBody UserVO user){
-        return services.update(user);
+    public UserVO update(@PathVariable Long id, @RequestBody UserVO user){
+        return services.update(id, user);
     }
 
     @Operation(summary = "Delete user", description = "Delete a user by ID")

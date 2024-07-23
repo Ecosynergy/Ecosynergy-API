@@ -101,11 +101,12 @@ public class UserServices implements UserDetailsService {
         return vo;
     }
 
-    public UserVO update(UserVO user){
+    public UserVO update(Long id, UserVO user){
         if(user == null) throw new RequiredObjectIsNullException();
 
-        User entity = repository.findById(user.getKey())
-                .orElseThrow();
+        User entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
+
         entity.setUserName(user.getUserName() != null ? user.getUserName() : entity.getUserName());
         entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
         entity.setEmail(user.getEmail() != null ? user.getEmail() : entity.getEmail());
