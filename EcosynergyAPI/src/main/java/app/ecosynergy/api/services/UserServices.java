@@ -106,6 +106,7 @@ public class UserServices implements UserDetailsService {
 
         User entity = repository.findById(user.getKey())
                 .orElseThrow();
+        entity.setUserName(user.getUserName() != null ? user.getUserName() : entity.getUserName());
         entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
         entity.setEmail(user.getEmail() != null ? user.getEmail() : entity.getEmail());
         entity.setGender(user.getGender() != null ? user.getGender() : entity.getGender());

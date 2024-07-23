@@ -97,7 +97,6 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(user.getUsername());
         assertNotNull(user.getFullName());
         assertNotNull(user.getEmail());
-        assertNotNull(user.getPassword());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
         assertTrue(user.getEnabled());
@@ -161,7 +160,6 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(user.getUsername());
         assertNotNull(user.getFullName());
         assertNotNull(user.getEmail());
-        assertNotNull(user.getPassword());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
         assertTrue(user.getEnabled());
@@ -228,7 +226,6 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
             assertNotNull(u.getUsername());
             assertNotNull(u.getFullName());
             assertNotNull(u.getEmail());
-            assertNotNull(u.getPassword());
             assertNotNull(u.getGender());
             assertNotNull(u.getNationality());
             assertTrue(u.getEnabled());

@@ -58,7 +58,6 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(vo.getUsername());
         assertNotNull(vo.getFullName());
         assertNotNull(vo.getEmail());
-        assertNotNull(vo.getPassword());
         assertNotNull(vo.getGender());
         assertNotNull(vo.getNationality());
         assertTrue(vo.getEnabled());

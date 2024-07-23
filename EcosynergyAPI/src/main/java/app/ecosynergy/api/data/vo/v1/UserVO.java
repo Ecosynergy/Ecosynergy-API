@@ -2,6 +2,7 @@ package app.ecosynergy.api.data.vo.v1;
 
 import app.ecosynergy.api.models.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.dozermapper.core.Mapping;
@@ -34,18 +35,23 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String gender;
 
     private String nationality;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonExpired;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonLocked;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean credentialsNonExpired;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean enabled;
 
     @JsonIgnore

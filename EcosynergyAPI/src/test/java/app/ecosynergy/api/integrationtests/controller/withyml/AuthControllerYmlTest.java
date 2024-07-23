@@ -62,7 +62,6 @@ public class AuthControllerYmlTest extends AbstractIntegrationTest {
         assertNotNull(response.getUsername());
         assertNotNull(response.getFullName());
         assertNotNull(response.getEmail());
-        assertNotNull(response.getPassword());
         assertNotNull(response.getGender());
         assertNotNull(response.getNationality());
         assertTrue(response.getEnabled());

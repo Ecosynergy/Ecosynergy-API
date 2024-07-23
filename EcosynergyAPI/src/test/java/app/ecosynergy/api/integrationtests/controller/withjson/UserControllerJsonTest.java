@@ -91,7 +91,6 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(user.getUsername());
         assertNotNull(user.getFullName());
         assertNotNull(user.getEmail());
-        assertNotNull(user.getPassword());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
         assertTrue(user.getEnabled());
@@ -134,6 +133,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     @Order(4)
     public void testUpdate() throws IOException {
         user.setEmail("and.rt@hotmail.com");
+        user.setUsername("testecontainerjson1");
         String result = given()
                 .spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
@@ -153,7 +153,6 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(user.getUsername());
         assertNotNull(user.getFullName());
         assertNotNull(user.getEmail());
-        assertNotNull(user.getPassword());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
         assertTrue(user.getEnabled());
@@ -161,7 +160,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertTrue(user.getAccountNonLocked());
 
         assertEquals(2, user.getId());
-        assertEquals("testecontainerjson", user.getUsername());
+        assertEquals("testecontainerjson1", user.getUsername());
         assertEquals("Anderson Rodrigues JSON", user.getFullName());
         assertEquals("and.rt@hotmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
@@ -218,7 +217,6 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
             assertNotNull(u.getUsername());
             assertNotNull(u.getFullName());
             assertNotNull(u.getEmail());
-            assertNotNull(u.getPassword());
             assertNotNull(u.getGender());
             assertNotNull(u.getNationality());
             assertTrue(u.getEnabled());
