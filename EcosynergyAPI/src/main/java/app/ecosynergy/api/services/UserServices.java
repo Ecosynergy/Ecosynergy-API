@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -86,6 +87,20 @@ public class UserServices implements UserDetailsService {
         UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
         return vo;
+    }
+
+    public List<UserVO> findByUsernameContaining(String username) {
+        if(username == null) throw new RequiredObjectIsNullException();
+
+        logger.info("Searching Users by Username!");
+
+        List<User> entities = repository.findByUsernameContaining(username);
+
+        return entities.stream().map(entity -> {
+            UserVO userVO = DozerMapper.parseObject(entity, UserVO.class);
+            userVO.add(linkTo(methodOn(UserController.class).findById(userVO.getKey())).withSelfRel());
+            return userVO;
+        }).toList();
     }
 
     public UserVO create(UserVO user){

@@ -14,6 +14,8 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "User Endpoint")
 @RestController
 @RequestMapping("/api/user/v1")
@@ -35,6 +37,14 @@ public class UserController {
     )
     public UserVO findByUsername(@PathVariable(name = "username") String username){
         return services.findByUsername(username);
+    }
+
+    @Operation(summary = "Search Users by Username", description = "Retrieve users by Username")
+    @GetMapping(value = "/search/{username}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
+    public List<UserVO> searchUserByUsername(@PathVariable(name = "username") String username){
+        return services.findByUsernameContaining(username);
     }
 
     @Operation(summary = "Get all users", description = "Retrieve a list of all users")
