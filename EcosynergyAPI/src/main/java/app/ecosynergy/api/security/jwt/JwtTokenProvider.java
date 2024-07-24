@@ -6,6 +6,7 @@ import app.ecosynergy.api.exceptions.InvalidJwtAuthenticationException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -105,7 +106,12 @@ public class JwtTokenProvider {
         Algorithm alg = Algorithm.HMAC256(secretKey.getBytes());
         JWTVerifier verifier = JWT.require(alg).build();
 
-        return verifier.verify(token);
+        try {
+            return verifier.verify(token);
+        } catch (SignatureVerificationException e) {
+            throw new InvalidJwtAuthenticationException("Invalid JWT signature");
+        }
+
     }
 
     public String resolveToken(HttpServletRequest request){

@@ -1,9 +1,6 @@
 package app.ecosynergy.api.exceptions.handler;
 
-import app.ecosynergy.api.exceptions.ExceptionResponse;
-import app.ecosynergy.api.exceptions.InvalidJwtAuthenticationException;
-import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
-import app.ecosynergy.api.exceptions.ResourceNotFoundException;
+import app.ecosynergy.api.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -72,5 +69,18 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         );
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public final ResponseEntity<ExceptionResponse> handleResourceAlreadyExistsException(
+            ResourceAlreadyExistsException ex, WebRequest request
+    ) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 }

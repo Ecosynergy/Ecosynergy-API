@@ -30,9 +30,9 @@ public class MQ7ReadingController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ7ReadingVO findById(@PathVariable("id") Long id,
-                                 @RequestHeader(value = "Time-Zone", required = false) String timeZone
+                                 @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
     ){
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
+        ZoneId zoneId = ZoneId.of(timeZone);
 
         return service.findById(id, zoneId);
     }
