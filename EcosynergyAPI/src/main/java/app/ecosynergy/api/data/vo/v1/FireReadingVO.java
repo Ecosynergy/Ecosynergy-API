@@ -19,6 +19,8 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
     @Mapping("id")
     private Long key;
 
+    private String teamHandle;
+
     @JsonProperty("fire")
     private Boolean isFire;
 
@@ -30,6 +32,14 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
 
     public void setKey(Long key) {
         this.key = key;
+    }
+
+    public String getTeamHandle() {
+        return teamHandle;
+    }
+
+    public void setTeamHandle(String teamHandle) {
+        this.teamHandle = teamHandle;
     }
 
     public Boolean getFire() {
@@ -54,11 +64,11 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         FireReadingVO that = (FireReadingVO) o;
-        return Objects.equals(key, that.key) && Objects.equals(isFire, that.isFire) && Objects.equals(timestamp, that.timestamp);
+        return Objects.equals(getKey(), that.getKey()) && Objects.equals(getTeamHandle(), that.getTeamHandle()) && Objects.equals(isFire, that.isFire) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, isFire, timestamp);
+        return Objects.hash(super.hashCode(), getKey(), getTeamHandle(), isFire, getTimestamp());
     }
 }

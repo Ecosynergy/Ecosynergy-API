@@ -6,6 +6,7 @@ import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.MQ7Reading;
+import app.ecosynergy.api.models.Team;
 import app.ecosynergy.api.repositories.MQ7ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -27,14 +27,18 @@ public class MQ7ReadingServices {
     private MQ7ReadingRepository repository;
 
     @Autowired
+    private TeamService teamService;
+
+    @Autowired
     private PagedResourcesAssembler<MQ7ReadingVO> assembler;
 
     public MQ7ReadingVO findById(Long id, ZoneId zoneId){
         if(id == null) throw new RequiredObjectIsNullException();
 
-        MQ7Reading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        MQ7Reading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         MQ7ReadingVO vo = DozerMapper.parseObject(reading, MQ7ReadingVO.class);
+        vo.setTeamHandle(reading.getTeam().getHandle());
         vo.setTimestamp(reading.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
@@ -44,6 +48,7 @@ public class MQ7ReadingServices {
         Page<MQ7Reading> readingsPage = repository.findAll(pageable);
         Page<MQ7ReadingVO> voPage = readingsPage.map(r -> {
             MQ7ReadingVO vo = DozerMapper.parseObject(r, MQ7ReadingVO.class);
+            vo.setTeamHandle(r.getTeam().getHandle());
             vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
             return vo;
         });
@@ -70,9 +75,17 @@ public class MQ7ReadingServices {
     public MQ7ReadingVO create(MQ7ReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 
-        MQ7Reading readingEntity = repository.save(DozerMapper.parseObject(reading, MQ7Reading.class));
+        Team team = DozerMapper.parseObject(
+                teamService.findByHandle(reading.getTeamHandle(), zoneId),
+                Team.class
+        );
+
+        MQ7Reading readingEntity = DozerMapper.parseObject(reading, MQ7Reading.class);
+        readingEntity.setTeam(team);
+        readingEntity = repository.save(readingEntity);
 
         MQ7ReadingVO vo = DozerMapper.parseObject(readingEntity, MQ7ReadingVO.class);
+        vo.setTeamHandle(readingEntity.getTeam().getHandle());
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 

@@ -246,6 +246,7 @@ public class FireReadingControllerXmlTest extends AbstractIntegrationTest {
     }
 
     private void mockReading(){
+        fireReading.setTeamHandle("ecosynergyofc");
         fireReading.setFire(true);
     }
 }

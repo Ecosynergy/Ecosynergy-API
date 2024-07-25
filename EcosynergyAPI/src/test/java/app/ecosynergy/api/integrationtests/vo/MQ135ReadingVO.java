@@ -14,6 +14,7 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    private String teamHandle;
     private Double value;
     private ZonedDateTime timestamp;
 
@@ -23,6 +24,14 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTeamHandle() {
+        return teamHandle;
+    }
+
+    public void setTeamHandle(String teamHandle) {
+        this.teamHandle = teamHandle;
     }
 
     public Double getValue() {
@@ -46,12 +55,12 @@ public class MQ135ReadingVO extends RepresentationModel<MQ135ReadingVO> implemen
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MQ135ReadingVO mq135ReadingVO = (MQ135ReadingVO) o;
-        return Objects.equals(id, mq135ReadingVO.id) && Objects.equals(value, mq135ReadingVO.value) && Objects.equals(timestamp, mq135ReadingVO.timestamp);
+        MQ135ReadingVO that = (MQ135ReadingVO) o;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getTeamHandle(), that.getTeamHandle()) && Objects.equals(getValue(), that.getValue()) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, value, timestamp);
+        return Objects.hash(super.hashCode(), getId(), getTeamHandle(), getValue(), getTimestamp());
     }
 }

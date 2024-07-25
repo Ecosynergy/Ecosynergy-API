@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -88,6 +89,7 @@ public class TeamService {
 
     public TeamVO findByHandle(String teamHandle, ZoneId zoneId) {
         if(teamHandle == null) throw new RequiredObjectIsNullException();
+        teamHandle = teamHandle.toLowerCase(Locale.ROOT);
 
         Optional<Team> teamOpt = teamRepository.findByHandleWithMembers(teamHandle);
 
@@ -104,7 +106,7 @@ public class TeamService {
     public List<TeamVO> findByHandleContaining(String teamHandle, ZoneId zoneId) {
         if(teamHandle == null) throw new RequiredObjectIsNullException();
 
-        List<Team> teams = teamRepository.findByHandleContaining(teamHandle);
+        List<Team> teams = teamRepository.findByHandleContaining(teamHandle.toLowerCase(Locale.ROOT));
 
         return teams.stream().map(team -> {
             TeamVO teamVO = convertToVO(team);
@@ -118,6 +120,8 @@ public class TeamService {
     @Transactional(rollbackFor = Exception.class)
     public TeamVO create(TeamVO team, ZoneId zoneId) {
         if(team == null) throw new RequiredObjectIsNullException();
+
+        team.setHandle(team.getHandle().toLowerCase(Locale.ROOT));
 
         boolean isHandlerExists = teamRepository.findByHandleWithMembers(team.getHandle()).isPresent();
         if(isHandlerExists) throw new ResourceAlreadyExistsException("A team with the given handle already exists: " + team.getHandle());
@@ -151,6 +155,8 @@ public class TeamService {
     @Transactional(rollbackFor = Exception.class)
     public TeamVO update(Long teamId, TeamVO updatedTeamVO, ZoneId zoneId) {
         if(teamId == null || updatedTeamVO == null) throw new RequiredObjectIsNullException();
+
+        updatedTeamVO.setHandle(updatedTeamVO.getHandle().toLowerCase(Locale.ROOT));
 
         Team existingTeam = teamRepository.findByIdWithMembers(teamId).orElseThrow(() -> new ResourceNotFoundException("Team not found with ID: " + teamId));
 

@@ -246,6 +246,7 @@ public class MQ7ReadingControllerXmlTest extends AbstractIntegrationTest {
     }
 
     private void mockReading(){
+        mq7Reading.setTeamHandle("ecosynergyofc");
         mq7Reading.setValue(6578.0);
     }
 }

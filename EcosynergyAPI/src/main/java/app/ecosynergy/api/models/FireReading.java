@@ -19,6 +19,10 @@ public class FireReading implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_handle", referencedColumnName = "handle")
+    private Team team;
+
     @Column(name = "is_fire")
     private Boolean isFire;
 
@@ -31,6 +35,14 @@ public class FireReading implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public Boolean getFire() {
@@ -54,11 +66,11 @@ public class FireReading implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FireReading that = (FireReading) o;
-        return Objects.equals(id, that.id) && Objects.equals(isFire, that.isFire) && Objects.equals(timestamp, that.timestamp);
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getTeam(), that.getTeam()) && Objects.equals(isFire, that.isFire) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isFire, timestamp);
+        return Objects.hash(getId(), getTeam(), isFire, getTimestamp());
     }
 }

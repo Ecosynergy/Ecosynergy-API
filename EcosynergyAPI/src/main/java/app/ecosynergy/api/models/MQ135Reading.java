@@ -17,6 +17,10 @@ public class MQ135Reading implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_handle", referencedColumnName = "handle")
+    private Team team;
+
     @Column
     private Double value;
 
@@ -31,6 +35,14 @@ public class MQ135Reading implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public Double getValue() {
@@ -53,12 +65,12 @@ public class MQ135Reading implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MQ135Reading mq135Reading = (MQ135Reading) o;
-        return Objects.equals(id, mq135Reading.id) && Objects.equals(value, mq135Reading.value) && Objects.equals(timestamp, mq135Reading.timestamp);
+        MQ135Reading that = (MQ135Reading) o;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getTeam(), that.getTeam()) && Objects.equals(getValue(), that.getValue()) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value, timestamp);
+        return Objects.hash(getId(), getTeam(), getValue(), getTimestamp());
     }
 }

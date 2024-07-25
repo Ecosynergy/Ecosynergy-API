@@ -2,6 +2,7 @@ package app.ecosynergy.api.unittests.mapper.mocks;
 
 import app.ecosynergy.api.data.vo.v1.FireReadingVO;
 import app.ecosynergy.api.models.FireReading;
+import app.ecosynergy.api.models.Team;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -13,8 +14,12 @@ public class MockFireReading {
     }
 
     public FireReading mockEntity(Integer number){
+        Team team = new Team();
+        team.setHandle("ecosynergyofc");
+
         FireReading entity = new FireReading();
         entity.setId(number.longValue());
+        entity.setTeam(team);
         entity.setTimestamp(ZonedDateTime.now());
         entity.setFire(number % 2 == 0);
 
@@ -28,6 +33,7 @@ public class MockFireReading {
     public FireReadingVO mockVO(Integer number){
         FireReadingVO vo = new FireReadingVO();
         vo.setKey(number.longValue());
+        vo.setTeamHandle("ecosynergyofc");
         vo.setTimestamp(ZonedDateTime.now());
         vo.setFire(number % 2 == 0);
 

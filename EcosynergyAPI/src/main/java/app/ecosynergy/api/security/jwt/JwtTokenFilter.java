@@ -15,7 +15,6 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class JwtTokenFilter extends GenericFilterBean {
 

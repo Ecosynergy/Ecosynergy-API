@@ -18,6 +18,9 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
     @JsonProperty("id")
     @Mapping("id")
     private Long key;
+
+    private String teamHandle;
+
     private Double value;
 
     private ZonedDateTime timestamp;
@@ -28,6 +31,14 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
 
     public void setKey(Long key) {
         this.key = key;
+    }
+
+    public String getTeamHandle() {
+        return teamHandle;
+    }
+
+    public void setTeamHandle(String teamHandle) {
+        this.teamHandle = teamHandle;
     }
 
     public Double getValue() {
@@ -51,12 +62,12 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MQ7ReadingVO mq7ReadingVO = (MQ7ReadingVO) o;
-        return Objects.equals(key, mq7ReadingVO.key) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(timestamp, mq7ReadingVO.timestamp);
+        MQ7ReadingVO that = (MQ7ReadingVO) o;
+        return Objects.equals(getKey(), that.getKey()) && Objects.equals(getTeamHandle(), that.getTeamHandle()) && Objects.equals(getValue(), that.getValue()) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), key, value, timestamp);
+        return Objects.hash(super.hashCode(), getKey(), getTeamHandle(), getValue(), getTimestamp());
     }
 }

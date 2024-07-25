@@ -14,8 +14,8 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
     private static final long serialVersionUID = 1L;
 
     private Long id;
+    private String teamHandle;
     private Double value;
-
     private ZonedDateTime timestamp;
 
     public Long getId() {
@@ -24,6 +24,14 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTeamHandle() {
+        return teamHandle;
+    }
+
+    public void setTeamHandle(String teamHandle) {
+        this.teamHandle = teamHandle;
     }
 
     public Double getValue() {
@@ -47,12 +55,12 @@ public class MQ7ReadingVO extends RepresentationModel<MQ7ReadingVO> implements S
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MQ7ReadingVO mq7ReadingVO = (MQ7ReadingVO) o;
-        return Objects.equals(id, mq7ReadingVO.id) && Objects.equals(value, mq7ReadingVO.value) && Objects.equals(timestamp, mq7ReadingVO.timestamp);
+        MQ7ReadingVO that = (MQ7ReadingVO) o;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getTeamHandle(), that.getTeamHandle()) && Objects.equals(getValue(), that.getValue()) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, value, timestamp);
+        return Objects.hash(super.hashCode(), getId(), getTeamHandle(), getValue(), getTimestamp());
     }
 }

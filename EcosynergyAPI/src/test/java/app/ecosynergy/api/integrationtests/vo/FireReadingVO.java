@@ -14,9 +14,8 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
     private static final long serialVersionUID = 1L;
 
     private Long id;
-
     private Boolean isFire;
-
+    private String teamHandle;
     private ZonedDateTime timestamp;
 
     public Long getId() {
@@ -25,6 +24,14 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTeamHandle() {
+        return teamHandle;
+    }
+
+    public void setTeamHandle(String teamHandle) {
+        this.teamHandle = teamHandle;
     }
 
     public Boolean getFire() {
@@ -49,11 +56,11 @@ public class FireReadingVO extends RepresentationModel<FireReadingVO> implements
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         FireReadingVO that = (FireReadingVO) o;
-        return Objects.equals(id, that.id) && Objects.equals(isFire, that.isFire) && Objects.equals(timestamp, that.timestamp);
+        return Objects.equals(getId(), that.getId()) && Objects.equals(isFire, that.isFire) && Objects.equals(getTeamHandle(), that.getTeamHandle()) && Objects.equals(getTimestamp(), that.getTimestamp());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, isFire, timestamp);
+        return Objects.hash(super.hashCode(), getId(), isFire, getTeamHandle(), getTimestamp());
     }
 }

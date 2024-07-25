@@ -1,10 +1,13 @@
 package app.ecosynergy.api.unittests.mockito.services;
 
 import app.ecosynergy.api.data.vo.v1.MQ7ReadingVO;
+import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
+import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.MQ7Reading;
 import app.ecosynergy.api.repositories.MQ7ReadingRepository;
 import app.ecosynergy.api.services.MQ7ReadingServices;
+import app.ecosynergy.api.services.TeamService;
 import app.ecosynergy.api.unittests.mapper.mocks.MockMQ7Reading;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,9 @@ class MQ7ReadingServicesTest {
     private MQ7ReadingServices service;
 
     @Mock
+    private TeamService teamService;
+
+    @Mock
     private MQ7ReadingRepository repository;
     
     @BeforeEach
@@ -38,10 +44,12 @@ class MQ7ReadingServicesTest {
     void findById() {
         MQ7Reading reading = input.mockEntity(1);
 
-        when(repository.findById(reading.getId())).thenReturn(Optional.of(reading));
+        when(repository.findByIdWithTeam(reading.getId())).thenReturn(Optional.of(reading));
+
         MQ7ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
         assertEquals("links: [</api/mq7Reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
+        assertNotNull(result.getTeamHandle());
         assertNotNull(result.getTimestamp());
         assertEquals(1, result.getValue());
     }
@@ -54,12 +62,14 @@ class MQ7ReadingServicesTest {
         MQ7ReadingVO vo = input.mockVO(1);
         vo.setKey(1L);
 
+        when(teamService.findByHandle(any(String.class), any(ZoneId.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
         when(repository.save(any(MQ7Reading.class))).thenReturn(entity);
 
         var result = service.create(vo, ZoneId.systemDefault());
 
         assertNotNull(result);
         assertNotNull(result.getKey());
+        assertNotNull(result.getTeamHandle());
         assertNotNull(result.getTimestamp());
         assertNotNull(result.getValue());
 

@@ -92,6 +92,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
         assertNotNull(fireReading);
         assertNotNull(fireReading.getId());
+        assertNotNull(fireReading.getTeamHandle());
         assertNotNull(fireReading.getTimestamp());
         assertNotNull(fireReading.getFire());
 
@@ -138,6 +139,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
         assertNotNull(resultVO);
         assertNotNull(resultVO.getId());
+        assertNotNull(resultVO.getTeamHandle());
         assertNotNull(resultVO.getTimestamp());
         assertNotNull(resultVO.getFire());
 
@@ -188,6 +190,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
         fireReadings.forEach(reading -> {
             assertNotNull(fireReading.getId());
+            assertNotNull(fireReading.getTeamHandle());
             assertNotNull(fireReading.getTimestamp());
             assertNotNull(fireReading.getFire());
         });
@@ -236,6 +239,7 @@ public class FireReadingControllerJsonTest extends AbstractIntegrationTest {
     }
 
     private void mockReading(){
+        fireReading.setTeamHandle("ecosynergyofc");
         fireReading.setFire(true);
     }
 }

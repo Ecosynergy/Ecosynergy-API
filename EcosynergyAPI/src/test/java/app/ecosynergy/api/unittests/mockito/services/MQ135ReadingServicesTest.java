@@ -1,10 +1,13 @@
 package app.ecosynergy.api.unittests.mockito.services;
 
 import app.ecosynergy.api.data.vo.v1.MQ135ReadingVO;
+import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
+import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.MQ135Reading;
 import app.ecosynergy.api.repositories.MQ135ReadingRepository;
 import app.ecosynergy.api.services.MQ135ReadingServices;
+import app.ecosynergy.api.services.TeamService;
 import app.ecosynergy.api.unittests.mapper.mocks.MockMQ135Reading;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +29,9 @@ class MQ135ReadingServicesTest {
     private MQ135ReadingServices service;
 
     @Mock
+    private TeamService teamService;
+
+    @Mock
     private MQ135ReadingRepository repository;
     
     @BeforeEach
@@ -38,11 +44,12 @@ class MQ135ReadingServicesTest {
     void findById() {
         MQ135Reading reading = input.mockEntity(1);
 
-        when(repository.findById(reading.getId())).thenReturn(Optional.of(reading));
+        when(repository.findByIdWithTeam(reading.getId())).thenReturn(Optional.of(reading));
         MQ135ReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
 
         assertNotNull(result);
         assertNotNull(result.getKey());
+        assertNotNull(result.getTeamHandle());
         assertNotNull(result.getTimestamp());
         assertNotNull(result.getValue());
 
@@ -57,11 +64,13 @@ class MQ135ReadingServicesTest {
 
         MQ135ReadingVO vo = input.mockVO(1);
 
+        when(teamService.findByHandle(any(String.class), any(ZoneId.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
         when(repository.save(any(MQ135Reading.class))).thenReturn(entity);
 
         MQ135ReadingVO result = service.create(vo, ZoneId.systemDefault());
         assertNotNull(result);
         assertNotNull(result.getKey());
+        assertNotNull(result.getTeamHandle());
         assertNotNull(result.getTimestamp());
         assertNotNull(result.getValue());
 

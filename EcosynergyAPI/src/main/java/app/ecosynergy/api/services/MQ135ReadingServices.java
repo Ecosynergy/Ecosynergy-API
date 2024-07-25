@@ -6,6 +6,7 @@ import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.MQ135Reading;
+import app.ecosynergy.api.models.Team;
 import app.ecosynergy.api.repositories.MQ135ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,14 +28,18 @@ public class MQ135ReadingServices {
     private MQ135ReadingRepository repository;
 
     @Autowired
+    private TeamService teamService;
+
+    @Autowired
     private PagedResourcesAssembler<MQ135ReadingVO> assembler;
 
     public MQ135ReadingVO findById(Long id, ZoneId zoneId){
         if(id == null) throw new RequiredObjectIsNullException();
 
-        MQ135Reading reading = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        MQ135Reading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         MQ135ReadingVO vo = DozerMapper.parseObject(reading, MQ135ReadingVO.class);
+        vo.setTeamHandle(reading.getTeam().getHandle());
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
         return vo;
@@ -45,6 +50,7 @@ public class MQ135ReadingServices {
 
         Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
             MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
+            vo.setTeamHandle(r.getTeam().getHandle());
             vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
             return vo;
         });
@@ -71,9 +77,17 @@ public class MQ135ReadingServices {
     public MQ135ReadingVO create(MQ135ReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 
-        MQ135Reading readingEntity = repository.save(DozerMapper.parseObject(reading, MQ135Reading.class));
+        Team team = DozerMapper.parseObject(
+                teamService.findByHandle(reading.getTeamHandle(), zoneId),
+                Team.class
+        );
+
+        MQ135Reading readingEntity = DozerMapper.parseObject(reading, MQ135Reading.class);
+        readingEntity.setTeam(team);
+        readingEntity = repository.save(readingEntity);
 
         MQ135ReadingVO vo = DozerMapper.parseObject(readingEntity, MQ135ReadingVO.class);
+        vo.setTeamHandle(readingEntity.getTeam().getHandle());
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
         vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
 

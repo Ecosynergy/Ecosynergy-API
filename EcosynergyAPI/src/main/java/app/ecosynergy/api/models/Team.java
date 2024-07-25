@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "teams")
+@Table(name = "teams", uniqueConstraints = @UniqueConstraint(columnNames = "handle"))
 public class Team implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -19,7 +19,7 @@ public class Team implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(name="handle", unique = true, nullable = false)
     private String handle;
 
     @Column
@@ -53,9 +53,9 @@ public class Team implements Serializable {
     public Team() {
     }
 
-    public Team(Long id, String handler , String name, String description, ZonedDateTime createdAt, ZonedDateTime updatedAt, Set<TeamMember> teamMembers) {
+    public Team(Long id, String handle, String name, String description, ZonedDateTime createdAt, ZonedDateTime updatedAt, Set<TeamMember> teamMembers) {
         this.id = id;
-        this.handle = handler;
+        this.handle = handle;
         this.name = name;
         this.description = description;
         this.createdAt = createdAt;
