@@ -12,6 +12,9 @@ public interface MQ7ReadingRepository extends JpaRepository<MQ7Reading, Long> {
     @Query("SELECT r FROM MQ7Reading r JOIN FETCH r.team WHERE r.id = :id")
     Optional<MQ7Reading> findByIdWithTeam(Long id);
 
+    @Query("SELECT r FROM MQ7Reading r JOIN FETCH r.team t WHERE t.handle = :teamHandle")
+    Page<MQ7Reading> findByTeamHandle(String teamHandle, Pageable pageable);
+
     @Query("SELECT r FROM MQ7Reading r JOIN FETCH r.team")
     Page<MQ7Reading> findAllWithTeam(Pageable pageable);
 }

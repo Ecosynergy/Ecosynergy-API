@@ -74,6 +74,35 @@ public class MQ135ReadingServices {
         return assembler.toModel(voPage, link);
     }
 
+    public PagedModel<EntityModel<MQ135ReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable, ZoneId zoneId){
+        Page<MQ135Reading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
+
+        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
+            MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
+            vo.setTeamHandle(r.getTeam().getHandle());
+            vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
+            return vo;
+        });
+        voPage.map(vo -> {
+            try{
+                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
+        Link link = linkTo(methodOn(MQ135ReadingController.class)
+                .findAll(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort().toString(),
+                        zoneId.toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
+    }
+
     public MQ135ReadingVO create(MQ135ReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 

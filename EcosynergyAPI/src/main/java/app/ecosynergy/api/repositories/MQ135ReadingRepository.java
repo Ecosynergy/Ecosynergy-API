@@ -12,6 +12,9 @@ public interface MQ135ReadingRepository extends JpaRepository<MQ135Reading, Long
     @Query("SELECT r FROM MQ135Reading r JOIN FETCH r.team WHERE r.id = :id")
     Optional<MQ135Reading> findByIdWithTeam(Long id);
 
+    @Query("SELECT r FROM MQ135Reading r JOIN FETCH r.team t WHERE t.handle = :teamHandle")
+    Page<MQ135Reading> findByTeamHandle(String teamHandle, Pageable pageable);
+
     @Query("SELECT r FROM MQ135Reading r JOIN FETCH r.team")
     Page<MQ135Reading> findAllWithTeam(Pageable pageable);
 }

@@ -59,6 +59,31 @@ public class MQ135ReadingController {
         return ResponseEntity.ok(service.findAll(pageable, zoneId));
     }
 
+    @Operation(summary = "Get MQ135 readings by team handle", description = "Retrieve a list of MQ135 readings by team handle")
+    @GetMapping(
+            value = "/team/{teamHandle}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
+    public ResponseEntity<PagedModel<EntityModel<MQ135ReadingVO>>> findByTeamHandle (
+            @PathVariable("teamHandle") String teamHandle,
+            @RequestParam(value = "page", defaultValue = "1") Integer page,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
+            @RequestHeader(value = "Time-Zone", required = false) String timeZone
+    ){
+        page--;
+
+        if(limit == null) limit = (int) service.countAllReadings();
+
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
+
+        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) :ZoneId.of("UTC");
+
+        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable, zoneId));
+    }
+
     @Operation(summary = "Create a new MQ135 reading", description = "Create a new MQ135 sensor reading with the provided data")
     @PostMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}

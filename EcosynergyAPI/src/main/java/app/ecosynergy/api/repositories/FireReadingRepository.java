@@ -12,6 +12,9 @@ public interface FireReadingRepository extends JpaRepository<FireReading, Long> 
     @Query("SELECT r FROM FireReading r LEFT JOIN FETCH r.team WHERE r.id =:id")
     Optional<FireReading> findByIdWithTeam(Long id);
 
+    @Query("SELECT r FROM FireReading r JOIN FETCH r.team t WHERE t.handle = :teamHandle")
+    Page<FireReading> findByTeamHandle(String teamHandle, Pageable pageable);
+
     @Query("SELECT r FROM FireReading r JOIN FETCH r.team")
     Page<FireReading> findAllWithTeam(Pageable pageable);
 }

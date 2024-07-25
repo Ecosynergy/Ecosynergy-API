@@ -75,6 +75,36 @@ public class FireReadingServices {
         return assembler.toModel(voPage, link);
     }
 
+    public PagedModel<EntityModel<FireReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable, ZoneId zoneId){
+        Page<FireReading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
+
+        Page<FireReadingVO> voPage = readingsPage.map(r -> {
+            FireReadingVO vo = DozerMapper.parseObject(r, FireReadingVO.class);
+            vo.setTeamHandle(r.getTeam().getHandle());
+            vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(zoneId));
+            return vo;
+        });
+
+        voPage.map(vo -> {
+            try{
+                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey(), zoneId.toString())).withSelfRel());
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        });
+
+        Link link = linkTo(methodOn(FireReadingController.class)
+                .findAll(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort().toString(),
+                        zoneId.toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
+    }
+
     public FireReadingVO create(FireReadingVO reading, ZoneId zoneId){
         if(reading == null) throw new RequiredObjectIsNullException();
 
