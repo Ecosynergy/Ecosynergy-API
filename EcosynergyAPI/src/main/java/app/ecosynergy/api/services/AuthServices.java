@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -79,6 +80,7 @@ public class AuthServices {
     public UserVO signUp(UserVO user){
         String currentPassword = user.getPassword();
 
+        user.setUserName(user.getUserName().toLowerCase(Locale.ROOT));
         user.setPassword(passwordEncode(currentPassword));
         user.setEnabled(true);
         user.setAccountNonExpired(true);

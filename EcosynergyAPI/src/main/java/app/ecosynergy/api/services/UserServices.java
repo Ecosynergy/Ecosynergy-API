@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -122,7 +123,7 @@ public class UserServices implements UserDetailsService {
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
 
-        entity.setUserName(user.getUserName() != null ? user.getUserName() : entity.getUserName());
+        entity.setUserName(user.getUserName() != null ? user.getUserName().toLowerCase(Locale.ROOT) : entity.getUserName());
         entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
         entity.setEmail(user.getEmail() != null ? user.getEmail() : entity.getEmail());
         entity.setGender(user.getGender() != null ? user.getGender() : entity.getGender());
