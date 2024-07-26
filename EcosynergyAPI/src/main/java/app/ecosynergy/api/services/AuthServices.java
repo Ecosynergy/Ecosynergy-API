@@ -4,6 +4,7 @@ import app.ecosynergy.api.controllers.UserController;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
 import app.ecosynergy.api.data.vo.v1.security.TokenVO;
+import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
@@ -86,6 +87,14 @@ public class AuthServices {
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
+
+        boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
+
+        if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with username '" + user.getUserName() + "' already exists");
+
+        isAlreadyExists = repository.existsByEmail(user.getEmail());
+
+        if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with email '" + user.getEmail() + "' already exists");
 
         User entity = repository.save(DozerMapper.parseObject(user, User.class));
 
