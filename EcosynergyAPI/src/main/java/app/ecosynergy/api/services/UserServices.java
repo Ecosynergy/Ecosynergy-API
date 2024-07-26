@@ -78,6 +78,21 @@ public class UserServices implements UserDetailsService {
         return vo;
     }
 
+    public UserVO findByEmail(String email) {
+        if(email == null) throw new RequiredObjectIsNullException();
+
+        logger.info("Finding User by Email!");
+
+        User entity = repository.findByEmail(email);
+
+        if(entity == null) throw new ResourceNotFoundException("User not found with given E-mail: " + email);
+
+        UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
+        vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
+
+        return vo;
+    }
+
     public UserVO findByUsername(String username){
         if(username == null) throw new RequiredObjectIsNullException();
 

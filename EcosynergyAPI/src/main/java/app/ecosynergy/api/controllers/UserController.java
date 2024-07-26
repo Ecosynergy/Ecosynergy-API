@@ -27,15 +27,23 @@ public class UserController {
     @GetMapping(value = "/findId/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO findById(@PathVariable(name = "id") Long id){
+    public UserVO findById(@PathVariable("id") Long id){
         return services.findById(id);
+    }
+
+    @Operation(summary = "Find user by Email", description = "Retrieve a user by Email")
+    @GetMapping(value = "/findEmail/{email}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
+    public UserVO findByEmail(@PathVariable("email") String email) {
+        return services.findByEmail(email);
     }
 
     @Operation(summary = "Find user by Username", description = "Retrieve a user by Username")
     @GetMapping(value = "/findUsername/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO findByUsername(@PathVariable(name = "username") String username){
+    public UserVO findByUsername(@PathVariable("username") String username){
         return services.findByUsername(username);
     }
 
@@ -43,7 +51,7 @@ public class UserController {
     @GetMapping(value = "/search/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public List<UserVO> searchUserByUsername(@PathVariable(name = "username") String username){
+    public List<UserVO> searchUserByUsername(@PathVariable("username") String username){
         return services.findByUsernameContaining(username);
     }
 
@@ -75,7 +83,7 @@ public class UserController {
     @DeleteMapping(value = "/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id){
         services.delete(id);
         return ResponseEntity.noContent().build();
     }
