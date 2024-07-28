@@ -16,6 +16,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:8888");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:80");
+        config.addAllowedOrigin("https://ecosynergy.com");
         config.addAllowedOrigin("www.ecosynergy.com.br");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
