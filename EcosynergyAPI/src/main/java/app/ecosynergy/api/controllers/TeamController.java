@@ -1,5 +1,6 @@
 package app.ecosynergy.api.controllers;
 
+import app.ecosynergy.api.models.TeamMember;
 import app.ecosynergy.api.util.MediaType;
 import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.models.TeamMemberId;
@@ -120,13 +121,34 @@ public class TeamController {
     public ResponseEntity<TeamVO> addMember(
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
+            @RequestBody TeamMember teamMember,
             @RequestHeader(value = "Time-Zone", defaultValue = "UTC", required = false) String timeZone
     ){
         ZoneId zoneId = ZoneId.of(timeZone);
 
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
-        TeamVO team = teamService.addMember(teamMemberId, zoneId);
+        TeamVO team = teamService.addMember(teamMemberId, teamMember.getRole(), zoneId);
+
+        return ResponseEntity.ok(team);
+    }
+
+    @PutMapping(
+            value = "/{teamId}/user/{userId}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
+    public ResponseEntity<TeamVO> updateMemberRole(
+            @PathVariable("teamId") Long teamId,
+            @PathVariable("userId") Long userId,
+            @RequestBody TeamMember teamMember,
+            @RequestHeader(value = "Time-Zone", defaultValue = "UTC", required = false) String timeZone
+    ){
+        ZoneId zoneId = ZoneId.of(timeZone);
+
+        TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
+
+        TeamVO team = teamService.updateMemberRole(teamMemberId, teamMember.getRole(), zoneId);
 
         return ResponseEntity.ok(team);
     }

@@ -25,13 +25,18 @@ public class TeamMember implements Serializable {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
     public TeamMember() {
     }
 
-    public TeamMember(TeamMemberId id, Team team, User user) {
+    public TeamMember(TeamMemberId id, Team team, User user, Role role) {
         this.id = id;
         this.team = team;
         this.user = user;
+        this.role = role;
     }
 
     public TeamMemberId getId() {
@@ -56,6 +61,14 @@ public class TeamMember implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     @Override

@@ -1,15 +1,13 @@
 package app.ecosynergy.api.services;
 
 import app.ecosynergy.api.controllers.TeamController;
+import app.ecosynergy.api.data.vo.v1.MemberRoleVO;
 import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
-import app.ecosynergy.api.models.Team;
-import app.ecosynergy.api.models.TeamMember;
-import app.ecosynergy.api.models.TeamMemberId;
-import app.ecosynergy.api.models.User;
+import app.ecosynergy.api.models.*;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
 import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.repositories.UserRepository;
@@ -24,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -128,22 +123,21 @@ public class TeamService {
 
         Team teamEntity = teamRepository.save(DozerMapper.parseObject(team, Team.class));
 
-        Set<User> users = team.getMembers().stream()
-                .map(userId -> userRepository.findById(userId)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + userId)))
-                .collect(Collectors.toSet());
+        Set<TeamMember> teamMembers = team.getMembers().stream().map(memberRoleVO -> {
+            User user = userRepository.findById(memberRoleVO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + memberRoleVO.getId()));
 
-        users.forEach(user -> {
             TeamMemberId teamMemberId = new TeamMemberId(teamEntity.getId(), user.getId());
-
             TeamMember teamMember = new TeamMember();
             teamMember.setId(teamMemberId);
             teamMember.setTeam(teamEntity);
             teamMember.setUser(user);
+            teamMember.setRole(Role.valueOf(memberRoleVO.getRole().toUpperCase()));
 
-            teamEntity.getTeamMembers().add(teamMember);
-        });
+            return teamMember;
+        }).collect(Collectors.toSet());
 
+        teamEntity.setTeamMembers(teamMembers);
         teamEntity.setCreatedAt(teamEntity.getCreatedAt().withZoneSameInstant(zoneId));
         teamEntity.setUpdatedAt(teamEntity.getUpdatedAt().withZoneSameInstant(zoneId));
 
@@ -180,8 +174,8 @@ public class TeamService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeamVO addMember(TeamMemberId teamMemberId, ZoneId zoneId) {
-        if(teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null) throw new RequiredObjectIsNullException();
+    public TeamVO addMember(TeamMemberId teamMemberId, Role role, ZoneId zoneId) {
+        if(teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || role == null) throw new RequiredObjectIsNullException();
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
         Optional<User> userOpt = userRepository.findById(teamMemberId.getUserId());
@@ -205,6 +199,7 @@ public class TeamService {
         teamMember.setId(teamMemberId);
         teamMember.setTeam(team);
         teamMember.setUser(user);
+        teamMember.setRole(role);
 
         team.getTeamMembers().add(teamMember);
         teamRepository.save(team);
@@ -216,12 +211,44 @@ public class TeamService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public TeamVO updateMemberRole(TeamMemberId teamMemberId, Role newRole, ZoneId zoneId) {
+        if (teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || newRole == null) throw new RequiredObjectIsNullException();
+
+        Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
+        Optional<User> userOpt = userRepository.findById(teamMemberId.getUserId());
+
+        if (teamOpt.isEmpty()) {
+            throw new ResourceNotFoundException("Team not found with the given ID: " + teamMemberId.getTeamId());
+        }
+        if (userOpt.isEmpty()) {
+            throw new ResourceNotFoundException("User not found with the given ID: " + teamMemberId.getUserId());
+        }
+
+        Team team = teamOpt.get();
+        User user = userOpt.get();
+
+        TeamMember teamMember = team.getTeamMembers().stream()
+                .filter(tm -> tm.getUser().equals(user))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("User is not a member of this team"));
+
+        teamMember.setRole(newRole);
+
+        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(zoneId));
+        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(zoneId));
+
+        teamRepository.save(team);
+
+        return convertToVO(team);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void removeMember(TeamMemberId teamMemberId) {
         Team team = teamRepository.findById(teamMemberId.getTeamId())
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found with the given ID: " + teamMemberId.getTeamId()));
 
         TeamMember teamMember = teamMemberRepository.findById(teamMemberId)
-                .orElseThrow(() -> new ResourceNotFoundException("TeamMember not found with the given IDs: teamId=" + teamMemberId.getTeamId() + ", userId=" + teamMemberId.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Team Member not found with the given IDs: teamId=" + teamMemberId.getTeamId() + ", userId=" + teamMemberId.getUserId()));
 
         team.getTeamMembers().remove(teamMember);
 
@@ -229,6 +256,8 @@ public class TeamService {
 
         teamRepository.save(team);
     }
+
+
 
     @Transactional(readOnly = true)
     public List<TeamVO> findTeamsByUserId(Long userId, ZoneId zoneId) {
@@ -257,10 +286,14 @@ public class TeamService {
         teamVO.setCreatedAt(team.getCreatedAt());
         teamVO.setUpdatedAt(team.getUpdatedAt());
 
-        Set<Long> memberIds = team.getTeamMembers().stream()
-                .map(tm -> tm.getUser().getId())
-                .collect(Collectors.toSet());
-        teamVO.setMembers(memberIds);
+        Set<MemberRoleVO> memberRoleVOs = new HashSet<>();
+
+        team.getTeamMembers().forEach(tm -> {
+            MemberRoleVO memberRoleVO = new MemberRoleVO(tm.getUser().getId(), tm.getRole().toString());
+            memberRoleVOs.add(memberRoleVO);
+        });
+
+        teamVO.setMembers(memberRoleVOs);
 
         teamVO.add(linkTo(methodOn(TeamController.class).findById(teamVO.getKey(), teamVO.getCreatedAt().getZone().toString())).withSelfRel());
 

@@ -31,7 +31,7 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
 
     private ZonedDateTime updatedAt;
 
-    private Set<Long> members;
+    private Set<MemberRoleVO> members;
 
     public Long getKey() {
         return key;
@@ -81,11 +81,11 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
         this.updatedAt = updatedAt;
     }
 
-    public Set<Long> getMembers() {
+    public Set<MemberRoleVO> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<Long> members) {
+    public void setMembers(Set<MemberRoleVO> members) {
         this.members = members;
     }
 
@@ -93,12 +93,13 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         TeamVO teamVO = (TeamVO) o;
-        return Objects.equals(getKey(), teamVO.getKey()) && Objects.equals(handle, teamVO.handle) && Objects.equals(getName(), teamVO.getName()) && Objects.equals(getDescription(), teamVO.getDescription()) && Objects.equals(getCreatedAt(), teamVO.getCreatedAt()) && Objects.equals(getUpdatedAt(), teamVO.getUpdatedAt()) && Objects.equals(getMembers(), teamVO.getMembers());
+        return Objects.equals(getKey(), teamVO.getKey()) && Objects.equals(getHandle(), teamVO.getHandle()) && Objects.equals(getName(), teamVO.getName()) && Objects.equals(getDescription(), teamVO.getDescription()) && Objects.equals(getCreatedAt(), teamVO.getCreatedAt()) && Objects.equals(getUpdatedAt(), teamVO.getUpdatedAt()) && Objects.equals(getMembers(), teamVO.getMembers());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getKey(), handle, getName(), getDescription(), getCreatedAt(), getUpdatedAt(), getMembers());
+        return Objects.hash(super.hashCode(), getKey(), getHandle(), getName(), getDescription(), getCreatedAt(), getUpdatedAt(), getMembers());
     }
 }
