@@ -6,6 +6,7 @@ import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.UserVO;
 import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperUserVO;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -38,6 +39,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
     public static void setup() {
         objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        objectMapper.registerModule(new JavaTimeModule());
 
         user = new UserVO();
     }
@@ -93,6 +95,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(user.getEmail());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
+        assertNotNull(user.getTimeZone());
         assertTrue(user.getEnabled());
         assertTrue(user.getAccountNonExpired());
         assertTrue(user.getAccountNonLocked());
@@ -156,6 +159,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(user.getEmail());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
+        assertNotNull(user.getTimeZone());
         assertTrue(user.getEnabled());
         assertTrue(user.getAccountNonExpired());
         assertTrue(user.getAccountNonLocked());
@@ -221,6 +225,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
             assertNotNull(u.getEmail());
             assertNotNull(u.getGender());
             assertNotNull(u.getNationality());
+            assertNotNull(u.getTimeZone());
             assertTrue(u.getEnabled());
             assertTrue(u.getAccountNonExpired());
             assertTrue(u.getAccountNonLocked());

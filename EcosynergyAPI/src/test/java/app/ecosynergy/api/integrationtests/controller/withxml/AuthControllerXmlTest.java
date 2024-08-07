@@ -5,14 +5,20 @@ import app.ecosynergy.api.integrationtests.testcontainers.AbstractIntegrationTes
 import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.UserVO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.io.IOException;
+import java.time.ZoneId;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,26 +34,33 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
     private static UserVO user;
 
     @BeforeAll
-    public static void setUp(){
+    public static void setup(){
         xmlMapper = new XmlMapper();
         xmlMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         xmlMapper.registerModule(new JavaTimeModule());
-        xmlMapper.registerModule(new Jackson2HalModule());
 
         user = new UserVO();
     }
 
     @Test
     @Order(1)
-    void testSignup() throws JsonProcessingException {
+    void testSignup() throws IOException {
         mockUser();
 
-        String response = given()
+        byte[] xml = xmlMapper.writeValueAsBytes(user);
+
+        RequestSpecification specification = new RequestSpecBuilder()
+                .addFilter(new RequestLoggingFilter(LogDetail.ALL))
+                .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+                .build();
+
+        var response = given()
+                .spec(specification)
                 .basePath("/auth/signup")
                 .port(TestConfigs.SERVER_PORT)
                 .contentType(TestConfigs.CONTENT_TYPE_XML)
                 .accept(TestConfigs.CONTENT_TYPE_XML)
-                .body(user)
+                .body(xml)
                 .when()
                 .post()
                 .then()
@@ -56,6 +69,7 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
+        response = response.replaceAll("<links>.*?</links>", "");
         UserVO vo = xmlMapper.readValue(response, UserVO.class);
 
         assertNotNull(vo);
@@ -65,6 +79,7 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(vo.getEmail());
         assertNotNull(vo.getGender());
         assertNotNull(vo.getNationality());
+        assertNotNull(vo.getTimeZone());
         assertTrue(vo.getEnabled());
         assertTrue(vo.getAccountNonExpired());
         assertTrue(vo.getAccountNonLocked());
@@ -74,7 +89,6 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
     @Order(2)
     void testSignin() {
         AccountCredentialsVO credentials = new AccountCredentialsVO(user.getUsername(), user.getPassword());
-        System.out.println(user.getUsername() + " " + user.getPassword());
         tokenVO = given()
                 .basePath("/auth/signin")
                 .port(TestConfigs.SERVER_PORT)
@@ -122,5 +136,6 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
         user.setPassword("admin123");
         user.setGender("Male");
         user.setNationality("Brazilian");
+        user.setTimeZone(ZoneId.of("UTC"));
     }
 }

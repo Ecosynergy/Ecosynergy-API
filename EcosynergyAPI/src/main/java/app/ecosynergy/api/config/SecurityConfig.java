@@ -1,5 +1,6 @@
 package app.ecosynergy.api.config;
 
+import app.ecosynergy.api.security.SecurityProperties;
 import app.ecosynergy.api.security.jwt.JwtTokenFilter;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,6 @@ import java.util.Map;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         Map<String, PasswordEncoder> encoders = new HashMap<>();
@@ -47,8 +47,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider tokenProvider) throws Exception {
-        JwtTokenFilter customFilter = new JwtTokenFilter(tokenProvider);
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenProvider tokenProvider, SecurityProperties securityProperties) throws Exception {
+        JwtTokenFilter customFilter = new JwtTokenFilter(tokenProvider, securityProperties);
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping
+            http://dozermapper.github.io/schema/bean-mapping.xsd">
+
+    <configuration>
+        <custom-converters>
+            <converter type="app.ecosynergy.api.converter.ZoneIdConverter">
+                <class-a>java.time.ZoneId</class-a>
+                <class-b>java.lang.String</class-b>
+            </converter>
+        </custom-converters>
+    </configuration>
+
+    <mapping>
+        <class-a>app.ecosynergy.api.models.User</class-a>
+        <class-b>app.ecosynergy.api.data.vo.v1.UserVO</class-b>
+        <field custom-converter="app.ecosynergy.api.converter.ZoneIdConverter">
+            <a>timeZone</a>
+            <b>timeZone</b>
+        </field>
+    </mapping>
+</mappings>

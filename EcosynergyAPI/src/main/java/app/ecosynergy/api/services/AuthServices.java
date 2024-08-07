@@ -10,6 +10,7 @@ import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,14 +30,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class AuthServices {
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository repository;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository repository;
+    public AuthServices(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository) {
+        this.tokenProvider = tokenProvider;
+        this.authenticationManager = authenticationManager;
+        this.repository = repository;
+    }
 
     public ResponseEntity<?> signIn(AccountCredentialsVO data){
         try{

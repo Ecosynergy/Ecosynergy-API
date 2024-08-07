@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +31,10 @@ public class MQ135ReadingController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ135ReadingVO findById(@PathVariable("id") Long id,
-                                   @RequestHeader(value = "Time-Zone", required = false) String timeZone
+                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
 
-        return service.findById(id, zoneId);
+        return service.findById(id, authHeader);
     }
 
     @Operation(summary = "Get all MQ135 readings", description = "Retrieve a list of all MQ135 sensor readings")
@@ -44,7 +44,7 @@ public class MQ135ReadingController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(value = "Time-Zone", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
         page--;
 
@@ -54,9 +54,7 @@ public class MQ135ReadingController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
-
-        return ResponseEntity.ok(service.findAll(pageable, zoneId));
+        return ResponseEntity.ok(service.findAll(pageable, authHeader));
     }
 
     @Operation(summary = "Get MQ135 readings by team handle", description = "Retrieve a list of MQ135 readings by team handle")
@@ -69,7 +67,7 @@ public class MQ135ReadingController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(value = "Time-Zone", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
         page--;
 
@@ -79,9 +77,7 @@ public class MQ135ReadingController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) :ZoneId.of("UTC");
-
-        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable, zoneId));
+        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable, authHeader));
     }
 
     @Operation(summary = "Create a new MQ135 reading", description = "Create a new MQ135 sensor reading with the provided data")
@@ -89,12 +85,10 @@ public class MQ135ReadingController {
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ135ReadingVO create(@RequestBody MQ135ReadingVO reading,
-                                 @RequestHeader(value = "Time-Zone", required = false) String timeZone
+                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
         reading.setTimestamp(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS));
 
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
-
-        return service.create(reading, zoneId);
+        return service.create(reading, authHeader);
     }
 }

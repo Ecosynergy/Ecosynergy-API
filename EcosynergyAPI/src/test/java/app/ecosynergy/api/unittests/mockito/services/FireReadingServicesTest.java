@@ -8,14 +8,15 @@ import app.ecosynergy.api.models.FireReading;
 import app.ecosynergy.api.repositories.FireReadingRepository;
 import app.ecosynergy.api.services.FireReadingServices;
 import app.ecosynergy.api.services.TeamService;
+import app.ecosynergy.api.services.UserServices;
 import app.ecosynergy.api.unittests.mapper.mocks.MockFireReading;
+import app.ecosynergy.api.unittests.mapper.mocks.MockUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +26,8 @@ import static org.mockito.Mockito.when;
 class FireReadingServicesTest {
     MockFireReading input;
 
+    MockUser userInput;
+
     @InjectMocks
     private FireReadingServices service;
 
@@ -32,11 +35,15 @@ class FireReadingServicesTest {
     private TeamService teamService;
 
     @Mock
+    private UserServices userServices;
+
+    @Mock
     private FireReadingRepository repository;
     
     @BeforeEach
     void setupMocks(){
         input = new MockFireReading();
+        userInput = new MockUser();
         MockitoAnnotations.openMocks(this);
     }
 
@@ -44,9 +51,10 @@ class FireReadingServicesTest {
     void findById() {
         FireReading reading = input.mockEntity(1);
 
+        when(userServices.findByAccessToken(any(String.class))).thenReturn(userInput.mockUserVO());
         when(repository.findByIdWithTeam(reading.getId())).thenReturn(Optional.of(reading));
 
-        FireReadingVO result = service.findById(reading.getId(), ZoneId.systemDefault());
+        FireReadingVO result = service.findById(reading.getId(), "");
 
         assertNotNull(result.getTeamHandle());
         assertNotNull(result.getTimestamp());
@@ -63,10 +71,11 @@ class FireReadingServicesTest {
         FireReadingVO vo = input.mockVO(1);
         vo.setKey(1L);
 
-        when(teamService.findByHandle(any(String.class), any(ZoneId.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
+        when(userServices.findByAccessToken(any(String.class))).thenReturn(userInput.mockUserVO());
+        when(teamService.findByHandle(any(String.class), any(String.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
         when(repository.save(any(FireReading.class))).thenReturn(entity);
 
-        FireReadingVO result = service.create(vo, ZoneId.systemDefault());
+        FireReadingVO result = service.create(vo, "");
 
         assertNotNull(result);
         assertNotNull(result.getKey());
@@ -80,7 +89,7 @@ class FireReadingServicesTest {
 
     @Test
     void createWithNullFireReading() {
-        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> service.create(null, ZoneId.of("America/Sao_Paulo")));
+        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> service.create(null, ""));
 
         String expectedMessage = "It is not allowed to persist a null object!";
         String actualMessage = exception.getMessage();

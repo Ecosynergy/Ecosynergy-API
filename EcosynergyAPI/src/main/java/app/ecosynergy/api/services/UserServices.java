@@ -8,7 +8,10 @@ import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
+import app.ecosynergy.api.security.jwt.JwtTokenProvider;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -34,13 +37,18 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class UserServices implements UserDetailsService {
-    @Autowired
-    UserRepository repository;
-
-    @Autowired
-    PagedResourcesAssembler<UserVO> assembler;
+    private final UserRepository repository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PagedResourcesAssembler<UserVO> assembler;
 
     private static final Logger logger = Logger.getLogger(UserServices.class.getName());
+
+    @Autowired
+    public UserServices(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, PagedResourcesAssembler<UserVO> assembler) {
+        this.repository = repository;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.assembler = assembler;
+    }
 
     public PagedModel<EntityModel<UserVO>> findAll(Pageable pageable){
         logger.info("Finding all Users!");
@@ -106,6 +114,14 @@ public class UserServices implements UserDetailsService {
         return vo;
     }
 
+    public UserVO findByAccessToken(String accessToken) {
+        String token = jwtTokenProvider.resolveToken(accessToken);
+
+        DecodedJWT decodedJWT = jwtTokenProvider.decodedToken(token);
+
+        return findByUsername(decodedJWT.getSubject());
+    }
+
     public List<UserVO> findByUsernameContaining(String username) {
         if(username == null) throw new RequiredObjectIsNullException();
 
@@ -152,6 +168,7 @@ public class UserServices implements UserDetailsService {
         entity.setEmail(user.getEmail() != null ? user.getEmail() : entity.getEmail());
         entity.setGender(user.getGender() != null ? user.getGender() : entity.getGender());
         entity.setNationality(user.getNationality() != null ? user.getNationality() : entity.getNationality());
+        entity.setTimeZone(user.getTimeZone() != null ? user.getTimeZone() : entity.getTimeZone());
 
         logger.info("Updating user!");
 

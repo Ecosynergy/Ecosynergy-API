@@ -6,6 +6,7 @@ import app.ecosynergy.api.exceptions.InvalidJwtAuthenticationException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -107,7 +108,7 @@ public class JwtTokenProvider {
         }
     }
 
-    private DecodedJWT decodedToken(String token) {
+    public DecodedJWT decodedToken(String token) {
         Algorithm alg = Algorithm.HMAC256(secretKey.getBytes());
         JWTVerifier verifier = JWT.require(alg).build();
 
@@ -115,6 +116,8 @@ public class JwtTokenProvider {
             return verifier.verify(token);
         } catch (SignatureVerificationException e) {
             throw new InvalidJwtAuthenticationException("Invalid JWT signature");
+        } catch (JWTDecodeException e) {
+            throw new InvalidJwtAuthenticationException("Error Decoding Token");
         }
 
     }
@@ -122,6 +125,14 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
 
+        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+            return bearerToken.substring("Bearer ".length());
+        }
+
+        return null;
+    }
+
+    public String resolveToken(String bearerToken){
         if(bearerToken != null && bearerToken.startsWith("Bearer ")){
             return bearerToken.substring("Bearer ".length());
         }

@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -57,6 +58,9 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     @JsonIgnore
     private List<Permission> permissions;
 
+    private ZoneId timeZone;
+
+    @JsonIgnore
     public List<String> getRoles(){
         if(permissions != null){
             List<String> roles = new ArrayList<>();
@@ -104,6 +108,7 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
@@ -198,17 +203,25 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         this.permissions = permissions;
     }
 
+    public ZoneId getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(ZoneId timeZone) {
+        this.timeZone = timeZone;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserVO userVO = (UserVO) o;
-        return Objects.equals(getKey(), userVO.getKey()) && Objects.equals(getUserName(), userVO.getUserName()) && Objects.equals(getFullName(), userVO.getFullName()) && Objects.equals(getEmail(), userVO.getEmail()) && Objects.equals(getPassword(), userVO.getPassword()) && Objects.equals(getGender(), userVO.getGender()) && Objects.equals(getNationality(), userVO.getNationality()) && Objects.equals(isAccountNonExpired(), userVO.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), userVO.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), userVO.isCredentialsNonExpired()) && Objects.equals(isEnabled(), userVO.isEnabled()) && Objects.equals(getPermissions(), userVO.getPermissions());
+        return Objects.equals(getKey(), userVO.getKey()) && Objects.equals(getUserName(), userVO.getUserName()) && Objects.equals(getFullName(), userVO.getFullName()) && Objects.equals(getEmail(), userVO.getEmail()) && Objects.equals(getPassword(), userVO.getPassword()) && Objects.equals(getGender(), userVO.getGender()) && Objects.equals(getNationality(), userVO.getNationality()) && Objects.equals(isAccountNonExpired(), userVO.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), userVO.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), userVO.isCredentialsNonExpired()) && Objects.equals(isEnabled(), userVO.isEnabled()) && Objects.equals(getPermissions(), userVO.getPermissions()) && Objects.equals(getTimeZone(), userVO.getTimeZone());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getKey(), getUserName(), getFullName(), getEmail(), getPassword(), getGender(), getNationality(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getPermissions());
+        return Objects.hash(super.hashCode(), getKey(), getUserName(), getFullName(), getEmail(), getPassword(), getGender(), getNationality(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getPermissions(), getTimeZone());
     }
 }

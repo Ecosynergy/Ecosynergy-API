@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +31,9 @@ public class MQ7ReadingController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ7ReadingVO findById(@PathVariable("id") Long id,
-                                 @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
+                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        return service.findById(id, zoneId);
+        return service.findById(id, authHeader);
     }
 
     @Operation(summary = "Get all MQ7 readings", description = "Retrieve a list of all MQ7 sensor readings")
@@ -43,7 +42,7 @@ public class MQ7ReadingController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(value = "Time-Zone", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
         page--;
 
@@ -53,8 +52,7 @@ public class MQ7ReadingController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
-        return ResponseEntity.ok(service.findAll(pageable,zoneId));
+        return ResponseEntity.ok(service.findAll(pageable, authHeader));
     }
 
     @Operation(summary = "Get MQ7 readings by team handle", description = "Retrieve a list of MQ7 readings by team handle")
@@ -67,7 +65,7 @@ public class MQ7ReadingController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(value = "Time-Zone", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
         page--;
 
@@ -77,9 +75,7 @@ public class MQ7ReadingController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) :ZoneId.of("UTC");
-
-        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable, zoneId));
+        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable, authHeader));
     }
 
     @Operation(summary = "Create a new MQ7 reading", description = "Create a new MQ7 sensor reading with the provided data")
@@ -87,12 +83,10 @@ public class MQ7ReadingController {
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ7ReadingVO create(@RequestBody MQ7ReadingVO reading,
-                               @RequestHeader(value = "Time-Zone", required = false) String timeZone
+                               @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
         reading.setTimestamp(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS));
 
-        ZoneId zoneId = timeZone != null ? ZoneId.of(timeZone) : ZoneId.of("UTC");
-
-        return service.create(reading, zoneId);
+        return service.create(reading, authHeader);
     }
 }

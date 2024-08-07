@@ -11,10 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.ZoneId;
 import java.util.List;
 
 @RestController
@@ -28,7 +28,7 @@ public class TeamController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", defaultValue = "5") Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
         page--;
 
@@ -36,9 +36,7 @@ public class TeamController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "createdAt"));
 
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        PagedModel<EntityModel<TeamVO>> teams = teamService.findAll(pageable, zoneId);
+        PagedModel<EntityModel<TeamVO>> teams = teamService.findAll(pageable, authHeader);
 
         return ResponseEntity.ok(teams);
     }
@@ -46,11 +44,9 @@ public class TeamController {
     @GetMapping(value = "/findId/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<TeamVO> findById(
             @PathVariable Long id,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        TeamVO team = teamService.findById(id, zoneId);
+        TeamVO team = teamService.findById(id, authHeader);
 
         return ResponseEntity.ok(team);
     }
@@ -58,11 +54,9 @@ public class TeamController {
     @GetMapping(value = "/findHandle/{handle}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<TeamVO> findByHandle(
             @PathVariable String handle,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        TeamVO team = teamService.findByHandle(handle, zoneId);
+        TeamVO team = teamService.findByHandle(handle, authHeader);
 
         return ResponseEntity.ok(team);
     }
@@ -70,11 +64,9 @@ public class TeamController {
     @GetMapping(value = "/search/{handle}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<List<TeamVO>> searchTeamsByHandle(
             @PathVariable String handle,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        List<TeamVO> teams = teamService.findByHandleContaining(handle, zoneId);
+        List<TeamVO> teams = teamService.findByHandleContaining(handle, authHeader);
 
         return ResponseEntity.ok(teams);
     }
@@ -85,11 +77,9 @@ public class TeamController {
     )
     public TeamVO create(
             @RequestBody TeamVO teamVO,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        return teamService.create(teamVO, zoneId);
+        return teamService.create(teamVO, authHeader);
     }
 
     @PutMapping(
@@ -100,11 +90,9 @@ public class TeamController {
     public TeamVO update(
             @PathVariable Long teamId,
             @RequestBody TeamVO teamVO,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC",required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        return teamService.update(teamId, teamVO, zoneId);
+        return teamService.update(teamId, teamVO, authHeader);
     }
 
     @DeleteMapping(value = "/{teamId}")
@@ -122,13 +110,11 @@ public class TeamController {
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
             @RequestBody TeamMember teamMember,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
-        ZoneId zoneId = ZoneId.of(timeZone);
-
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
-        TeamVO team = teamService.addMember(teamMemberId, teamMember.getRole(), zoneId);
+        TeamVO team = teamService.addMember(teamMemberId, teamMember.getRole(), authHeader);
 
         return ResponseEntity.ok(team);
     }
@@ -142,13 +128,11 @@ public class TeamController {
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
             @RequestBody TeamMember teamMember,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ){
-        ZoneId zoneId = ZoneId.of(timeZone);
-
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
-        TeamVO team = teamService.updateMemberRole(teamMemberId, teamMember.getRole(), zoneId);
+        TeamVO team = teamService.updateMemberRole(teamMemberId, teamMember.getRole(), authHeader);
 
         return ResponseEntity.ok(team);
     }
@@ -171,11 +155,9 @@ public class TeamController {
     )
     public ResponseEntity<List<TeamVO>> findTeamsByUserId(
             @PathVariable Long userId,
-            @RequestHeader(value = "Time-Zone", defaultValue = "UTC", required = false) String timeZone
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
     ) {
-        ZoneId zoneId = ZoneId.of(timeZone);
-
-        List<TeamVO> teamVOs = teamService.findTeamsByUserId(userId, zoneId);
+        List<TeamVO> teamVOs = teamService.findTeamsByUserId(userId, authHeader);
 
         return ResponseEntity.ok(teamVOs);
     }

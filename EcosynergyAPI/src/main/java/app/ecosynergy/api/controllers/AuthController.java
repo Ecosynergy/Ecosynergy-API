@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private final AuthServices service;
+
     @Autowired
-    private AuthServices service;
+    public AuthController(AuthServices service) {
+        this.service = service;
+    }
 
     @Operation(summary = "Sign in", description = "Authenticate a user and return a token", tags = {"Authentication Endpoint"})
     @PostMapping(value = "/signin",

@@ -1,6 +1,7 @@
 package app.ecosynergy.api.security.jwt;
 
 import app.ecosynergy.api.exceptions.InvalidJwtAuthenticationException;
+import app.ecosynergy.api.security.SecurityProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -15,21 +16,35 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class JwtTokenFilter extends GenericFilterBean {
 
     @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
 
-    public JwtTokenFilter(JwtTokenProvider tokenProvider) {
+    private final List<String> publicEndpoints;
+
+    @Autowired
+    public JwtTokenFilter(JwtTokenProvider tokenProvider, SecurityProperties securityProperties) {
+        this.publicEndpoints = securityProperties.getPublicEndpoints();
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = tokenProvider.resolveToken((HttpServletRequest) request);
+        String path = ((HttpServletRequest) request).getRequestURI();
+
+        boolean isPublicEndpoint = publicEndpoints.stream().anyMatch(path::startsWith);
+
+        if(isPublicEndpoint) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         try {
+            String token = tokenProvider.resolveToken((HttpServletRequest) request);
+
             if (token != null && tokenProvider.validateToken(token)) {
                 Authentication auth = tokenProvider.getAuthentication(token);
                 if (auth != null) {
@@ -42,7 +57,7 @@ public class JwtTokenFilter extends GenericFilterBean {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             String timestamp = OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            response.getWriter().write("{\"timestamp\": \"" + timestamp + "\", \"message\": \"" + ex.getMessage() + "\", \"path\": \"" + ((HttpServletRequest) request).getRequestURI() + "\"}");
+            response.getWriter().write("{\"timestamp\": \"" + timestamp + "\", \"message\": \"" + ex.getMessage() + "\", \"path\": \"" + path + "\"}");
             return;
         }
 
