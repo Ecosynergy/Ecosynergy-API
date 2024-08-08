@@ -3,7 +3,6 @@ package app.ecosynergy.api.services;
 import app.ecosynergy.api.controllers.TeamController;
 import app.ecosynergy.api.data.vo.v1.MemberRoleVO;
 import app.ecosynergy.api.data.vo.v1.TeamVO;
-import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
@@ -38,9 +37,6 @@ public class TeamService {
     private UserRepository userRepository;
 
     @Autowired
-    private UserServices userServices;
-
-    @Autowired
     private TeamMemberRepository teamMemberRepository;
 
     @Autowired
@@ -48,15 +44,13 @@ public class TeamService {
 
     private static final Logger logger = Logger.getLogger(TeamService.class.getName());
 
-    public PagedModel<EntityModel<TeamVO>> findAll(Pageable pageable, String authHeader) {
+    public PagedModel<EntityModel<TeamVO>> findAll(Pageable pageable) {
         Page<Team> teams = teamRepository.findAllWithMembers(pageable);
-
-        UserVO userVO = userServices.findByAccessToken(authHeader);
         
         Page<TeamVO> teamVOs = teams.map(team -> {
             TeamVO teamVO = convertToVO(team);
-            teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-            teamVO.setUpdatedAt(teamVO.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+            teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(teamVO.getTimeZone()));
+            teamVO.setUpdatedAt(teamVO.getUpdatedAt().withZoneSameInstant(teamVO.getTimeZone()));
             return teamVO;
         });
 
@@ -64,32 +58,29 @@ public class TeamService {
                 .findAll(
                         pageable.getPageNumber(),
                         pageable.getPageSize(),
-                        pageable.getSort().toString(),
-                        userVO.getTimeZone().toString()
+                        pageable.getSort().toString()
                 ))
                 .withSelfRel();
 
         return assembler.toModel(teamVOs, link);
     }
 
-    public TeamVO findById(Long id, String authHeader) {
+    public TeamVO findById(Long id) {
         if(id == null) throw new RequiredObjectIsNullException();
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(id);
 
         if(teamOpt.isEmpty()) throw new ResourceNotFoundException("Team not found with the given ID: " + id);
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
         Team team = teamOpt.get();
 
-        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(team.getTimeZone()));
+        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(team.getTimeZone()));
 
         return convertToVO(team);
     }
 
-    public TeamVO findByHandle(String teamHandle, String authHeader) {
+    public TeamVO findByHandle(String teamHandle) {
         if(teamHandle == null) throw new RequiredObjectIsNullException();
         teamHandle = teamHandle.toLowerCase(Locale.ROOT);
 
@@ -97,34 +88,30 @@ public class TeamService {
 
         if(teamOpt.isEmpty()) throw new ResourceNotFoundException("Team not found with the given Handle: " + teamHandle);
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
         Team team = teamOpt.get();
 
-        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(team.getTimeZone()));
+        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(team.getTimeZone()));
 
         return convertToVO(team);
     }
 
-    public List<TeamVO> findByHandleContaining(String teamHandle, String authHeader) {
+    public List<TeamVO> findByHandleContaining(String teamHandle) {
         if(teamHandle == null) throw new RequiredObjectIsNullException();
 
         List<Team> teams = teamRepository.findByHandleContaining(teamHandle.toLowerCase(Locale.ROOT));
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
         return teams.stream().map(team -> {
             TeamVO teamVO = convertToVO(team);
-            teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-            teamVO.setUpdatedAt(teamVO.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+            teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(teamVO.getTimeZone()));
+            teamVO.setUpdatedAt(teamVO.getUpdatedAt().withZoneSameInstant(teamVO.getTimeZone()));
 
             return teamVO;
         }).toList();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeamVO create(TeamVO team, String authHeader) {
+    public TeamVO create(TeamVO team) {
         if(team == null) throw new RequiredObjectIsNullException();
 
         team.setHandle(team.getHandle().toLowerCase(Locale.ROOT));
@@ -148,11 +135,9 @@ public class TeamService {
             return teamMember;
         }).collect(Collectors.toSet());
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
         teamEntity.setTeamMembers(teamMembers);
-        teamEntity.setCreatedAt(teamEntity.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-        teamEntity.setUpdatedAt(teamEntity.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+        teamEntity.setCreatedAt(teamEntity.getCreatedAt().withZoneSameInstant(teamEntity.getTimeZone()));
+        teamEntity.setUpdatedAt(teamEntity.getUpdatedAt().withZoneSameInstant(teamEntity.getTimeZone()));
 
         teamRepository.save(teamEntity);
 
@@ -160,7 +145,7 @@ public class TeamService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeamVO update(Long teamId, TeamVO updatedTeamVO, String authHeader) {
+    public TeamVO update(Long teamId, TeamVO updatedTeamVO) {
         if(teamId == null || updatedTeamVO == null) throw new RequiredObjectIsNullException();
 
         updatedTeamVO.setHandle(updatedTeamVO.getHandle().toLowerCase(Locale.ROOT));
@@ -173,10 +158,8 @@ public class TeamService {
 
         Team updatedTeam = teamRepository.save(existingTeam);
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
-        updatedTeam.setCreatedAt(updatedTeam.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-        updatedTeam.setUpdatedAt(updatedTeam.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+        updatedTeam.setCreatedAt(updatedTeam.getCreatedAt().withZoneSameInstant(updatedTeam.getTimeZone()));
+        updatedTeam.setUpdatedAt(updatedTeam.getUpdatedAt().withZoneSameInstant(updatedTeam.getTimeZone()));
 
         return convertToVO(updatedTeam);
     }
@@ -189,7 +172,7 @@ public class TeamService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeamVO addMember(TeamMemberId teamMemberId, Role role, String authHeader) {
+    public TeamVO addMember(TeamMemberId teamMemberId, Role role) {
         if(teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || role == null) throw new RequiredObjectIsNullException();
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
@@ -219,16 +202,14 @@ public class TeamService {
         team.getTeamMembers().add(teamMember);
         teamRepository.save(team);
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
-        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(team.getTimeZone()));
+        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(team.getTimeZone()));
 
         return convertToVO(team);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeamVO updateMemberRole(TeamMemberId teamMemberId, Role newRole, String authHeader) {
+    public TeamVO updateMemberRole(TeamMemberId teamMemberId, Role newRole) {
         if (teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || newRole == null) throw new RequiredObjectIsNullException();
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
@@ -251,10 +232,8 @@ public class TeamService {
 
         teamMember.setRole(newRole);
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
-        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+        team.setCreatedAt(team.getCreatedAt().withZoneSameInstant(team.getTimeZone()));
+        team.setUpdatedAt(team.getUpdatedAt().withZoneSameInstant(team.getTimeZone()));
 
         teamRepository.save(team);
 
@@ -279,7 +258,7 @@ public class TeamService {
 
 
     @Transactional(readOnly = true)
-    public List<TeamVO> findTeamsByUserId(Long userId, String authHeader) {
+    public List<TeamVO> findTeamsByUserId(Long userId) {
         if(userId == null) throw new RequiredObjectIsNullException();
 
         if(!userRepository.existsById(userId)) throw new ResourceNotFoundException("User not found with the given ID: " + userId);
@@ -288,11 +267,9 @@ public class TeamService {
 
         List<TeamVO> teamVOs = teams.stream().map(this::convertToVO).toList();
 
-        UserVO userVO = userServices.findByAccessToken(authHeader);
-
         teamVOs = teamVOs.stream().peek(teamVO -> {
-            teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(userVO.getTimeZone()));
-            teamVO.setUpdatedAt(teamVO.getUpdatedAt().withZoneSameInstant(userVO.getTimeZone()));
+            teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(teamVO.getTimeZone()));
+            teamVO.setUpdatedAt(teamVO.getUpdatedAt().withZoneSameInstant(teamVO.getTimeZone()));
         }).toList();
 
         return teamVOs;
@@ -304,6 +281,7 @@ public class TeamService {
         teamVO.setHandle(team.getHandle());
         teamVO.setName(team.getName());
         teamVO.setDescription(team.getDescription());
+        teamVO.setTimeZone(team.getTimeZone());
         teamVO.setCreatedAt(team.getCreatedAt());
         teamVO.setUpdatedAt(team.getUpdatedAt());
 
@@ -316,7 +294,7 @@ public class TeamService {
 
         teamVO.setMembers(memberRoleVOs);
 
-        teamVO.add(linkTo(methodOn(TeamController.class).findById(teamVO.getKey(), teamVO.getCreatedAt().getZone().toString())).withSelfRel());
+        teamVO.add(linkTo(methodOn(TeamController.class).findById(teamVO.getKey())).withSelfRel());
 
         return teamVO;
     }

@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +29,9 @@ public class FireReadingController {
     @GetMapping(value= "/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public FireReadingVO findById (@PathVariable("id") Long id,
-                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+    public FireReadingVO findById (@PathVariable("id") Long id
     ){
-        return service.findById(id, authHeader);
+        return service.findById(id);
     }
 
     @Operation(summary = "Get all fire readings", description = "Retrieve a list of all fire readings")
@@ -41,8 +39,7 @@ public class FireReadingController {
     public ResponseEntity<PagedModel<EntityModel<FireReadingVO>>> findAll (
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestParam(value = "direction", defaultValue = "asc") String direction
     ){
         page--;
 
@@ -52,7 +49,7 @@ public class FireReadingController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
-        return ResponseEntity.ok(service.findAll(pageable, authHeader));
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @Operation(summary = "Get fire readings by team handle", description = "Retrieve a list of fire readings by team handle")
@@ -64,8 +61,7 @@ public class FireReadingController {
             @PathVariable("teamHandle") String teamHandle,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestParam(value = "direction", defaultValue = "asc") String direction
     ){
         page--;
 
@@ -75,18 +71,17 @@ public class FireReadingController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "timestamp"));
 
-        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable, authHeader));
+        return ResponseEntity.ok(service.findByTeamHandle(teamHandle, pageable));
     }
 
     @Operation(summary = "Create a new fire reading", description = "Create a new fire reading with the current data")
     @PostMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public FireReadingVO create (@RequestBody FireReadingVO reading,
-                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+    public FireReadingVO create (@RequestBody FireReadingVO reading
     ){
         reading.setTimestamp(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS));
 
-        return service.create(reading, authHeader);
+        return service.create(reading);
     }
 }

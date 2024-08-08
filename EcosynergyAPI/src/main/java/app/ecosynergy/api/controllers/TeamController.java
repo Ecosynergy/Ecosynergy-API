@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +26,7 @@ public class TeamController {
     public ResponseEntity<PagedModel<EntityModel<TeamVO>>> findAll(
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", defaultValue = "5") Integer limit,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestParam(value = "direction", defaultValue = "asc") String direction
     ) {
         page--;
 
@@ -36,37 +34,34 @@ public class TeamController {
 
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "createdAt"));
 
-        PagedModel<EntityModel<TeamVO>> teams = teamService.findAll(pageable, authHeader);
+        PagedModel<EntityModel<TeamVO>> teams = teamService.findAll(pageable);
 
         return ResponseEntity.ok(teams);
     }
 
     @GetMapping(value = "/findId/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<TeamVO> findById(
-            @PathVariable Long id,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @PathVariable Long id
     ) {
-        TeamVO team = teamService.findById(id, authHeader);
+        TeamVO team = teamService.findById(id);
 
         return ResponseEntity.ok(team);
     }
 
     @GetMapping(value = "/findHandle/{handle}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<TeamVO> findByHandle(
-            @PathVariable String handle,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @PathVariable String handle
     ) {
-        TeamVO team = teamService.findByHandle(handle, authHeader);
+        TeamVO team = teamService.findByHandle(handle);
 
         return ResponseEntity.ok(team);
     }
 
     @GetMapping(value = "/search/{handle}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<List<TeamVO>> searchTeamsByHandle(
-            @PathVariable String handle,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @PathVariable String handle
     ) {
-        List<TeamVO> teams = teamService.findByHandleContaining(handle, authHeader);
+        List<TeamVO> teams = teamService.findByHandleContaining(handle);
 
         return ResponseEntity.ok(teams);
     }
@@ -76,10 +71,9 @@ public class TeamController {
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public TeamVO create(
-            @RequestBody TeamVO teamVO,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestBody TeamVO teamVO
     ) {
-        return teamService.create(teamVO, authHeader);
+        return teamService.create(teamVO);
     }
 
     @PutMapping(
@@ -89,10 +83,9 @@ public class TeamController {
     )
     public TeamVO update(
             @PathVariable Long teamId,
-            @RequestBody TeamVO teamVO,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestBody TeamVO teamVO
     ) {
-        return teamService.update(teamId, teamVO, authHeader);
+        return teamService.update(teamId, teamVO);
     }
 
     @DeleteMapping(value = "/{teamId}")
@@ -109,12 +102,11 @@ public class TeamController {
     public ResponseEntity<TeamVO> addMember(
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
-            @RequestBody TeamMember teamMember,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestBody TeamMember teamMember
     ){
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
-        TeamVO team = teamService.addMember(teamMemberId, teamMember.getRole(), authHeader);
+        TeamVO team = teamService.addMember(teamMemberId, teamMember.getRole());
 
         return ResponseEntity.ok(team);
     }
@@ -127,12 +119,11 @@ public class TeamController {
     public ResponseEntity<TeamVO> updateMemberRole(
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
-            @RequestBody TeamMember teamMember,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @RequestBody TeamMember teamMember
     ){
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
-        TeamVO team = teamService.updateMemberRole(teamMemberId, teamMember.getRole(), authHeader);
+        TeamVO team = teamService.updateMemberRole(teamMemberId, teamMember.getRole());
 
         return ResponseEntity.ok(team);
     }
@@ -154,10 +145,9 @@ public class TeamController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public ResponseEntity<List<TeamVO>> findTeamsByUserId(
-            @PathVariable Long userId,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader
+            @PathVariable Long userId
     ) {
-        List<TeamVO> teamVOs = teamService.findTeamsByUserId(userId, authHeader);
+        List<TeamVO> teamVOs = teamService.findTeamsByUserId(userId);
 
         return ResponseEntity.ok(teamVOs);
     }

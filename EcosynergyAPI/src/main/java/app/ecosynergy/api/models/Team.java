@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -27,6 +28,9 @@ public class Team implements Serializable {
 
     @Column
     private String description;
+
+    @Column(name = "time_zone")
+    private ZoneId timeZone;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt = ZonedDateTime.now();
@@ -93,6 +97,14 @@ public class Team implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ZoneId getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(ZoneId timeZone) {
+        this.timeZone = timeZone;
     }
 
     public ZonedDateTime getCreatedAt() {

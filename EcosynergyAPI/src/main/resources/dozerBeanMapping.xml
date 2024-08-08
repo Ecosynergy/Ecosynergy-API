@@ -14,8 +14,8 @@
     </configuration>
 
     <mapping>
-        <class-a>app.ecosynergy.api.models.User</class-a>
-        <class-b>app.ecosynergy.api.data.vo.v1.UserVO</class-b>
+        <class-a>app.ecosynergy.api.models.Team</class-a>
+        <class-b>app.ecosynergy.api.data.vo.v1.TeamVO</class-b>
         <field custom-converter="app.ecosynergy.api.converter.ZoneIdConverter">
             <a>timeZone</a>
             <b>timeZone</b>

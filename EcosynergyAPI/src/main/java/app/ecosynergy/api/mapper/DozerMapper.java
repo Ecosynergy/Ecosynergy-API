@@ -19,7 +19,7 @@ public class DozerMapper {
         try {
             return mapper.map(origin, destination);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao mapear objeto", e);
+            throw new RuntimeException("Object Mapping Error: ", e);
         }
     }
 

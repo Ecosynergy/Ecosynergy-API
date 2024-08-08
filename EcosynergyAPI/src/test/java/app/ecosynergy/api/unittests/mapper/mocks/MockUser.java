@@ -3,7 +3,6 @@ package app.ecosynergy.api.unittests.mapper.mocks;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.models.User;
 
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class MockUser {
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
         entity.setNationality("Brazilian" + number);
-        entity.setTimeZone(ZoneId.of("America/Sao_Paulo"));
         entity.setEnabled(true);
         entity.setAccountNonExpired(true);
         entity.setAccountNonLocked(true);
@@ -43,7 +41,6 @@ public class MockUser {
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
         entity.setNationality("Brazilian" + number);
-        entity.setTimeZone(ZoneId.of("America/Sao_Paulo"));
         entity.setEnabled(true);
         entity.setAccountNonExpired(true);
         entity.setAccountNonLocked(true);

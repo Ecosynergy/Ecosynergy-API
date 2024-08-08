@@ -7,6 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -26,6 +27,8 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
     private String name;
 
     private String description;
+
+    private ZoneId timeZone;
 
     private ZonedDateTime createdAt;
 
@@ -63,6 +66,14 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ZoneId getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(ZoneId timeZone) {
+        this.timeZone = timeZone;
     }
 
     public ZonedDateTime getCreatedAt() {

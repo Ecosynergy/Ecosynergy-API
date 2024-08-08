@@ -168,7 +168,6 @@ public class UserServices implements UserDetailsService {
         entity.setEmail(user.getEmail() != null ? user.getEmail() : entity.getEmail());
         entity.setGender(user.getGender() != null ? user.getGender() : entity.getGender());
         entity.setNationality(user.getNationality() != null ? user.getNationality() : entity.getNationality());
-        entity.setTimeZone(user.getTimeZone() != null ? user.getTimeZone() : entity.getTimeZone());
 
         logger.info("Updating user!");
 

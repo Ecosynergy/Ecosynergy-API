@@ -1,1 +1,0 @@
-ALTER TABLE users ADD COLUMN time_zone VARCHAR(255) NOT NULL AFTER nationality;

@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.ZoneId;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +48,6 @@ class UserServicesTest {
         assertNotNull(result.getPassword());
         assertNotNull(result.getGender());
         assertNotNull(result.getNationality());
-        assertNotNull(result.getTimeZone());
         assertNotNull(result.getLinks());
 
         assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
@@ -59,7 +57,6 @@ class UserServicesTest {
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
-        assertEquals(ZoneId.of("America/Sao_Paulo"), result.getTimeZone());
 
         assertTrue(result.getEnabled());
         assertTrue(result.getAccountNonExpired());
@@ -82,7 +79,6 @@ class UserServicesTest {
         assertNotNull(result.getPassword());
         assertNotNull(result.getGender());
         assertNotNull(result.getNationality());
-        assertNotNull(result.getTimeZone());
         assertNotNull(result.getLinks());
 
         assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
@@ -92,7 +88,6 @@ class UserServicesTest {
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
-        assertEquals(ZoneId.of("America/Sao_Paulo"), result.getTimeZone());
 
         assertTrue(result.getEnabled());
         assertTrue(result.getAccountNonExpired());
@@ -118,7 +113,6 @@ class UserServicesTest {
         assertNotNull(result.getPassword());
         assertNotNull(result.getGender());
         assertNotNull(result.getNationality());
-        assertNotNull(result.getTimeZone());
         assertNotNull(result.getLinks());
 
         assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
@@ -128,7 +122,6 @@ class UserServicesTest {
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
-        assertEquals(ZoneId.of("America/Sao_Paulo"), result.getTimeZone());
 
         assertTrue(result.getEnabled());
         assertTrue(result.getAccountNonExpired());
@@ -165,7 +158,6 @@ class UserServicesTest {
         assertNotNull(result.getPassword());
         assertNotNull(result.getGender());
         assertNotNull(result.getNationality());
-        assertNotNull(result.getTimeZone());
         assertNotNull(result.getLinks());
 
         assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
@@ -175,7 +167,6 @@ class UserServicesTest {
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
-        assertEquals(ZoneId.of("America/Sao_Paulo"), result.getTimeZone());
 
         assertTrue(result.getEnabled());
         assertTrue(result.getAccountNonExpired());

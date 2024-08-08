@@ -95,7 +95,6 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(user.getEmail());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
-        assertNotNull(user.getTimeZone());
         assertTrue(user.getEnabled());
         assertTrue(user.getAccountNonExpired());
         assertTrue(user.getAccountNonLocked());
@@ -159,7 +158,6 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(user.getEmail());
         assertNotNull(user.getGender());
         assertNotNull(user.getNationality());
-        assertNotNull(user.getTimeZone());
         assertTrue(user.getEnabled());
         assertTrue(user.getAccountNonExpired());
         assertTrue(user.getAccountNonLocked());
@@ -225,7 +223,6 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
             assertNotNull(u.getEmail());
             assertNotNull(u.getGender());
             assertNotNull(u.getNationality());
-            assertNotNull(u.getTimeZone());
             assertTrue(u.getEnabled());
             assertTrue(u.getAccountNonExpired());
             assertTrue(u.getAccountNonLocked());

@@ -7,7 +7,6 @@ import app.ecosynergy.api.unittests.mapper.mocks.MockUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.ZoneId;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +32,6 @@ public class DozerConverterTest {
         assertNotNull(vo.getPassword());
         assertNotNull(vo.getGender());
         assertNotNull(vo.getNationality());
-        assertNotNull(vo.getTimeZone());
 
         assertEquals("user0", vo.getUserName());
         assertEquals("User0", vo.getFullName());
@@ -41,7 +39,6 @@ public class DozerConverterTest {
         assertEquals("Password0", vo.getPassword());
         assertEquals("Male", vo.getGender());
         assertEquals("Brazilian0", vo.getNationality());
-        assertEquals(ZoneId.of("America/Sao_Paulo"), vo.getTimeZone());
 
         assertTrue(vo.getEnabled());
         assertTrue(vo.getAccountNonExpired());
@@ -64,14 +61,12 @@ public class DozerConverterTest {
             assertNotNull(vo.getPassword());
             assertNotNull(vo.getGender());
             assertNotNull(vo.getNationality());
-            assertNotNull(vo.getTimeZone());
 
             assertEquals("User" + vo.getKey(), vo.getFullName());
             assertEquals("Email" + vo.getKey(), vo.getEmail());
             assertEquals("Password" + vo.getKey(), vo.getPassword());
             assertEquals(vo.getKey() % 2 == 0 ? "Male" : "Female", vo.getGender());
             assertEquals("Brazilian" + vo.getKey(), vo.getNationality());
-            assertEquals(ZoneId.of("America/Sao_Paulo"), vo.getTimeZone());
 
             assertTrue(vo.getEnabled());
             assertTrue(vo.getAccountNonExpired());
@@ -92,7 +87,6 @@ public class DozerConverterTest {
         assertNotNull(entity.getPassword());
         assertNotNull(entity.getGender());
         assertNotNull(entity.getNationality());
-        assertNotNull(entity.getTimeZone());
 
         assertEquals("user0", entity.getUserName());
         assertEquals("User0", entity.getFullName());
@@ -100,7 +94,6 @@ public class DozerConverterTest {
         assertEquals("Password0", entity.getPassword());
         assertEquals("Male", entity.getGender());
         assertEquals("Brazilian0", entity.getNationality());
-        assertEquals(ZoneId.of("America/Sao_Paulo"), entity.getTimeZone());
 
         assertTrue(entity.getEnabled());
         assertTrue(entity.getAccountNonExpired());
@@ -123,14 +116,12 @@ public class DozerConverterTest {
             assertNotNull(entity.getPassword());
             assertNotNull(entity.getGender());
             assertNotNull(entity.getNationality());
-            assertNotNull(entity.getTimeZone());
 
             assertEquals("User" + entity.getId(), entity.getFullName());
             assertEquals("Email" + entity.getId(), entity.getEmail());
             assertEquals("Password" + entity.getId(), entity.getPassword());
             assertEquals(entity.getId() % 2 == 0 ? "Male" : "Female", entity.getGender());
             assertEquals("Brazilian" + entity.getId(), entity.getNationality());
-            assertEquals(ZoneId.of("America/Sao_Paulo"), entity.getTimeZone());
 
             assertTrue(entity.getEnabled());
             assertTrue(entity.getAccountNonExpired());

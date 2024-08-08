@@ -8,9 +8,7 @@ import app.ecosynergy.api.models.MQ7Reading;
 import app.ecosynergy.api.repositories.MQ7ReadingRepository;
 import app.ecosynergy.api.services.MQ7ReadingServices;
 import app.ecosynergy.api.services.TeamService;
-import app.ecosynergy.api.services.UserServices;
 import app.ecosynergy.api.unittests.mapper.mocks.MockMQ7Reading;
-import app.ecosynergy.api.unittests.mapper.mocks.MockUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class MQ7ReadingServicesTest {
     MockMQ7Reading input;
 
-    MockUser userInput;
-
     @InjectMocks
     private MQ7ReadingServices service;
 
@@ -35,15 +31,11 @@ class MQ7ReadingServicesTest {
     private TeamService teamService;
 
     @Mock
-    private UserServices userServices;
-
-    @Mock
     private MQ7ReadingRepository repository;
     
     @BeforeEach
     void setupMocks() {
         input = new MockMQ7Reading();
-        userInput = new MockUser();
         MockitoAnnotations.openMocks(this);
     }
 
@@ -51,10 +43,10 @@ class MQ7ReadingServicesTest {
     void findById() {
         MQ7Reading reading = input.mockEntity(1);
 
-        when(userServices.findByAccessToken(any(String.class))).thenReturn(userInput.mockUserVO());
+        when(teamService.findByHandle(any(String.class))).thenReturn(DozerMapper.parseObject(reading.getTeam(), TeamVO.class));
         when(repository.findByIdWithTeam(reading.getId())).thenReturn(Optional.of(reading));
 
-        MQ7ReadingVO result = service.findById(reading.getId(), "");
+        MQ7ReadingVO result = service.findById(reading.getId());
         assertEquals("links: [</api/mq7Reading/v1/1>;rel=\"self\"]", result.toString());
         assertEquals(1L, result.getKey());
         assertNotNull(result.getTeamHandle());
@@ -70,11 +62,10 @@ class MQ7ReadingServicesTest {
         MQ7ReadingVO vo = input.mockVO(1);
         vo.setKey(1L);
 
-        when(userServices.findByAccessToken(any(String.class))).thenReturn(userInput.mockUserVO());
-        when(teamService.findByHandle(any(String.class), any(String.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
+        when(teamService.findByHandle(any(String.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
         when(repository.save(any(MQ7Reading.class))).thenReturn(entity);
 
-        var result = service.create(vo, "");
+        var result = service.create(vo);
 
         assertNotNull(result);
         assertNotNull(result.getKey());
@@ -88,7 +79,7 @@ class MQ7ReadingServicesTest {
 
     @Test
     void createWithNullMQ7Reading() {
-        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> service.create(null, ""));
+        Exception exception = assertThrows(RequiredObjectIsNullException.class, () -> service.create(null));
 
         String expectedMessage = "It is not allowed to persist a null object!";
         String actualMessage = exception.getMessage();

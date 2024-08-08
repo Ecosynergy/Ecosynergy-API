@@ -4,6 +4,7 @@ import app.ecosynergy.api.data.vo.v1.FireReadingVO;
 import app.ecosynergy.api.models.FireReading;
 import app.ecosynergy.api.models.Team;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class MockFireReading {
     public FireReading mockEntity(Integer number){
         Team team = new Team();
         team.setHandle("ecosynergyofc");
+        team.setTimeZone(ZoneId.of("UTC"));
 
         FireReading entity = new FireReading();
         entity.setId(number.longValue());

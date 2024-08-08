@@ -1,0 +1,1 @@
+UPDATE teams SET time_zone='America/Sao_Paulo' where handle='ecosynergyofc';

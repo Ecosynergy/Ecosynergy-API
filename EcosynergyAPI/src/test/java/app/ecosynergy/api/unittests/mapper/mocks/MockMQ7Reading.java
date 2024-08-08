@@ -4,6 +4,7 @@ import app.ecosynergy.api.data.vo.v1.MQ7ReadingVO;
 import app.ecosynergy.api.models.MQ7Reading;
 import app.ecosynergy.api.models.Team;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class MockMQ7Reading {
     public MQ7Reading mockEntity(Integer number){
         Team team = new Team();
         team.setHandle("ecosynergyofc");
+        team.setTimeZone(ZoneId.of("UTC"));
 
         MQ7Reading entity = new MQ7Reading();
         entity.setId(number.longValue());

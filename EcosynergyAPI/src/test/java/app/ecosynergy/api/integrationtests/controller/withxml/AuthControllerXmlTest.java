@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
-import java.time.ZoneId;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -79,7 +78,6 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(vo.getEmail());
         assertNotNull(vo.getGender());
         assertNotNull(vo.getNationality());
-        assertNotNull(vo.getTimeZone());
         assertTrue(vo.getEnabled());
         assertTrue(vo.getAccountNonExpired());
         assertTrue(vo.getAccountNonLocked());
@@ -136,6 +134,5 @@ public class AuthControllerXmlTest extends AbstractIntegrationTest {
         user.setPassword("admin123");
         user.setGender("Male");
         user.setNationality("Brazilian");
-        user.setTimeZone(ZoneId.of("UTC"));
     }
 }
