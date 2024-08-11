@@ -10,6 +10,10 @@
                 <class-a>java.time.ZoneId</class-a>
                 <class-b>java.lang.String</class-b>
             </converter>
+            <converter type="app.ecosynergy.api.converter.SectorConverter">
+                <class-a>app.ecosynergy.api.models.Sector</class-a>
+                <class-b>java.lang.String</class-b>
+            </converter>
         </custom-converters>
     </configuration>
 
@@ -19,6 +23,15 @@
         <field custom-converter="app.ecosynergy.api.converter.ZoneIdConverter">
             <a>timeZone</a>
             <b>timeZone</b>
+        </field>
+    </mapping>
+
+    <mapping>
+        <class-a>app.ecosynergy.api.models.Activity</class-a>
+        <class-b>app.ecosynergy.api.data.vo.v1.ActivityVO</class-b>
+        <field custom-converter="app.ecosynergy.api.converter.SectorConverter">
+            <a>sector</a>
+            <b>sector</b>
         </field>
     </mapping>
 </mappings>
