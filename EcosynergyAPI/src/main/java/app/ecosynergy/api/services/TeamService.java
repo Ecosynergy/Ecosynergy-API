@@ -38,6 +38,9 @@ public class TeamService {
     private UserRepository userRepository;
 
     @Autowired
+    private ActivityServices activityServices;
+
+    @Autowired
     private TeamMemberRepository teamMemberRepository;
 
     @Autowired
@@ -120,16 +123,25 @@ public class TeamService {
         boolean isHandlerExists = teamRepository.findByHandleWithMembers(team.getHandle()).isPresent();
         if(isHandlerExists) throw new ResourceAlreadyExistsException("A team with the given handle already exists: " + team.getHandle());
 
-        Team teamEntity = teamRepository.save(DozerMapper.parseObject(team, Team.class));
+        Team teamEntity = new Team();
+        teamEntity.setName(team.getName());
+        teamEntity.setHandle(team.getHandle());
+        teamEntity.setDescription(team.getDescription());
+
+        ActivityVO activityVO = activityServices.findById(team.getActivity().getKey());
+        teamEntity.setActivity(DozerMapper.parseObject(activityVO, Activity.class));
+        teamEntity.setTimeZone(team.getTimeZone());
+
+        Team finalTeamEntity = teamRepository.save(teamEntity);
 
         Set<TeamMember> teamMembers = team.getMembers().stream().map(memberRoleVO -> {
             User user = userRepository.findById(memberRoleVO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + memberRoleVO.getId()));
 
-            TeamMemberId teamMemberId = new TeamMemberId(teamEntity.getId(), user.getId());
+            TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), user.getId());
             TeamMember teamMember = new TeamMember();
             teamMember.setId(teamMemberId);
-            teamMember.setTeam(teamEntity);
+            teamMember.setTeam(finalTeamEntity);
             teamMember.setUser(user);
             teamMember.setRole(Role.valueOf(memberRoleVO.getRole().toUpperCase()));
 
@@ -146,16 +158,21 @@ public class TeamService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public TeamVO update(Long teamId, TeamVO updatedTeamVO) {
-        if(teamId == null || updatedTeamVO == null) throw new RequiredObjectIsNullException();
+    public TeamVO update(Long teamId, TeamVO teamVO) {
+        if(teamId == null || teamVO == null) throw new RequiredObjectIsNullException();
 
-        updatedTeamVO.setHandle(updatedTeamVO.getHandle().toLowerCase(Locale.ROOT));
+        teamVO.setHandle(teamVO.getHandle().toLowerCase(Locale.ROOT));
 
         Team existingTeam = teamRepository.findByIdWithMembers(teamId).orElseThrow(() -> new ResourceNotFoundException("Team not found with ID: " + teamId));
 
-        existingTeam.setHandle(updatedTeamVO.getHandle() != null ? updatedTeamVO.getHandle() : existingTeam.getHandle());
-        existingTeam.setName(updatedTeamVO.getName() != null ? updatedTeamVO.getName() : existingTeam.getName());
-        existingTeam.setDescription(updatedTeamVO.getDescription() != null ? updatedTeamVO.getDescription() : existingTeam.getDescription());
+        existingTeam.setHandle(teamVO.getHandle() != null ? teamVO.getHandle() : existingTeam.getHandle());
+        existingTeam.setName(teamVO.getName() != null ? teamVO.getName() : existingTeam.getName());
+        existingTeam.setDescription(teamVO.getDescription() != null ? teamVO.getDescription() : existingTeam.getDescription());
+        existingTeam.setTimeZone(teamVO.getTimeZone() != null ? teamVO.getTimeZone() : existingTeam.getTimeZone());
+
+        ActivityVO activity = activityServices.findById(teamVO.getActivity().getKey());
+
+        existingTeam.setActivity(DozerMapper.parseObject(activity, Activity.class));
 
         Team updatedTeam = teamRepository.save(existingTeam);
 
