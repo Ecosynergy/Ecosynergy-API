@@ -1,6 +1,7 @@
 package app.ecosynergy.api.services;
 
 import app.ecosynergy.api.controllers.TeamController;
+import app.ecosynergy.api.data.vo.v1.ActivityVO;
 import app.ecosynergy.api.data.vo.v1.MemberRoleVO;
 import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
@@ -281,6 +282,7 @@ public class TeamService {
         teamVO.setHandle(team.getHandle());
         teamVO.setName(team.getName());
         teamVO.setDescription(team.getDescription());
+        teamVO.setActivity(DozerMapper.parseObject(team.getActivity(), ActivityVO.class));
         teamVO.setTimeZone(team.getTimeZone());
         teamVO.setCreatedAt(team.getCreatedAt());
         teamVO.setUpdatedAt(team.getUpdatedAt());

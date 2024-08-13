@@ -28,6 +28,8 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
 
     private String description;
 
+    private ActivityVO activity;
+
     private ZoneId timeZone;
 
     private ZonedDateTime createdAt;
@@ -68,6 +70,14 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
         this.description = description;
     }
 
+    public ActivityVO getActivity() {
+        return activity;
+    }
+
+    public void setActivity(ActivityVO activity) {
+        this.activity = activity;
+    }
+
     public ZoneId getTimeZone() {
         return timeZone;
     }
@@ -106,11 +116,11 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         TeamVO teamVO = (TeamVO) o;
-        return Objects.equals(getKey(), teamVO.getKey()) && Objects.equals(getHandle(), teamVO.getHandle()) && Objects.equals(getName(), teamVO.getName()) && Objects.equals(getDescription(), teamVO.getDescription()) && Objects.equals(getCreatedAt(), teamVO.getCreatedAt()) && Objects.equals(getUpdatedAt(), teamVO.getUpdatedAt()) && Objects.equals(getMembers(), teamVO.getMembers());
+        return Objects.equals(key, teamVO.key) && Objects.equals(handle, teamVO.handle) && Objects.equals(name, teamVO.name) && Objects.equals(description, teamVO.description) && Objects.equals(activity, teamVO.activity) && Objects.equals(timeZone, teamVO.timeZone) && Objects.equals(createdAt, teamVO.createdAt) && Objects.equals(updatedAt, teamVO.updatedAt) && Objects.equals(members, teamVO.members);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getKey(), getHandle(), getName(), getDescription(), getCreatedAt(), getUpdatedAt(), getMembers());
+        return Objects.hash(super.hashCode(), key, handle, name, description, activity, timeZone, createdAt, updatedAt, members);
     }
 }

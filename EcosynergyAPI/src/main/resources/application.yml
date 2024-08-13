@@ -12,16 +12,16 @@ security:
 spring:
   application:
     name: EcosynergyAPI
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://ecosynergy-database.cz2qyuyusvdl.us-east-1.rds.amazonaws.com/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: admin
-    password: GabrielBen123#
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://127.0.0.1:3306/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
-#    username: root
-#    password: 220624And
+#    url: jdbc:mysql://ecosynergy-database.cz2qyuyusvdl.us-east-1.rds.amazonaws.com/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
+#    username: admin
+#    password: GabrielBen123#
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: master
   jpa:
     open-in-view: false
     hibernate:

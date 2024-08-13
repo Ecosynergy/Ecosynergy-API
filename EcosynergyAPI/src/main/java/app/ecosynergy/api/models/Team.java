@@ -29,6 +29,13 @@ public class Team implements Serializable {
     @Column
     private String description;
 
+    @Transient
+    private Sector sector;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "activity_id")
+    private Activity activity;
+
     @Column(name = "time_zone")
     private ZoneId timeZone;
 
@@ -99,6 +106,22 @@ public class Team implements Serializable {
         this.description = description;
     }
 
+    public Sector getSector() {
+        return activity != null ? activity.getSector() : null;
+    }
+
+    public void setSector(Sector sector) {
+        this.sector = sector;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+
     public ZoneId getTimeZone() {
         return timeZone;
     }
@@ -136,11 +159,11 @@ public class Team implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return Objects.equals(getId(), team.getId()) && Objects.equals(getHandle(), team.getHandle()) && Objects.equals(getName(), team.getName()) && Objects.equals(getDescription(), team.getDescription()) && Objects.equals(getCreatedAt(), team.getCreatedAt()) && Objects.equals(getUpdatedAt(), team.getUpdatedAt()) && Objects.equals(getTeamMembers(), team.getTeamMembers());
+        return Objects.equals(id, team.id) && Objects.equals(handle, team.handle) && Objects.equals(name, team.name) && Objects.equals(description, team.description) && Objects.equals(sector, team.sector) && Objects.equals(activity, team.activity) && Objects.equals(timeZone, team.timeZone) && Objects.equals(createdAt, team.createdAt) && Objects.equals(updatedAt, team.updatedAt) && Objects.equals(teamMembers, team.teamMembers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getHandle() , getName(), getDescription(), getCreatedAt(), getUpdatedAt(), getTeamMembers());
+        return Objects.hash(id, handle, name, description, sector, activity, timeZone, createdAt, updatedAt, teamMembers);
     }
 }
