@@ -1,16 +1,16 @@
-CREATE TABLE Sectors (
+CREATE TABLE sectors (
     id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
-INSERT INTO Sectors (name) VALUES ('Textile');
-INSERT INTO Sectors (name) VALUES ('Automotive');
-INSERT INTO Sectors (name) VALUES ('Petrochemical');
-INSERT INTO Sectors (name) VALUES ('Pharmaceutical');
-INSERT INTO Sectors (name) VALUES ('Food');
-INSERT INTO Sectors (name) VALUES ('Basic');
-INSERT INTO Sectors (name) VALUES ('Steel');
-INSERT INTO Sectors (name) VALUES ('Metallurgical');
-INSERT INTO Sectors (name) VALUES ('Agricultural');
-INSERT INTO Sectors (name) VALUES ('Naval');
-INSERT INTO Sectors (name) VALUES ('Electroelectronic');
+INSERT INTO sectors (name) VALUES ('Textile');
+INSERT INTO sectors (name) VALUES ('Automotive');
+INSERT INTO sectors (name) VALUES ('Petrochemical');
+INSERT INTO sectors (name) VALUES ('Pharmaceutical');
+INSERT INTO sectors (name) VALUES ('Food');
+INSERT INTO sectors (name) VALUES ('Basic');
+INSERT INTO sectors (name) VALUES ('Steel');
+INSERT INTO sectors (name) VALUES ('Metallurgical');
+INSERT INTO sectors (name) VALUES ('Agricultural');
+INSERT INTO sectors (name) VALUES ('Naval');
+INSERT INTO sectors (name) VALUES ('Electroelectronic');
