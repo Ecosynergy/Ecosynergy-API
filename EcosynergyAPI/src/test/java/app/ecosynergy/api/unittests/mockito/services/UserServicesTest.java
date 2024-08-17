@@ -50,7 +50,7 @@ class UserServicesTest {
         assertNotNull(result.getNationality());
         assertNotNull(result.getLinks());
 
-        assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
+        assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User1", result.getFullName());
         assertEquals("Email1", result.getEmail());
@@ -81,7 +81,7 @@ class UserServicesTest {
         assertNotNull(result.getNationality());
         assertNotNull(result.getLinks());
 
-        assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
+        assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User1", result.getFullName());
         assertEquals("Email1", result.getEmail());
@@ -115,7 +115,7 @@ class UserServicesTest {
         assertNotNull(result.getNationality());
         assertNotNull(result.getLinks());
 
-        assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
+        assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User1", result.getFullName());
         assertEquals("Email1", result.getEmail());
@@ -160,7 +160,7 @@ class UserServicesTest {
         assertNotNull(result.getNationality());
         assertNotNull(result.getLinks());
 
-        assertTrue(result.toString().contains("links: [</api/user/v1/findId/1>;rel=\"self\"]"));
+        assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User1", result.getFullName());
         assertEquals("Email1", result.getEmail());
