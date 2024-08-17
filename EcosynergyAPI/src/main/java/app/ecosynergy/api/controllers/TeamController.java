@@ -39,7 +39,7 @@ public class TeamController {
         return ResponseEntity.ok(teams);
     }
 
-    @GetMapping(value = "/findId/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
+    @GetMapping(value = "/id/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<TeamVO> findById(
             @PathVariable Long id
     ) {
@@ -48,7 +48,7 @@ public class TeamController {
         return ResponseEntity.ok(team);
     }
 
-    @GetMapping(value = "/findHandle/{handle}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
+    @GetMapping(value = "/handle/{handle}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
     public ResponseEntity<TeamVO> findByHandle(
             @PathVariable String handle
     ) {

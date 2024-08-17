@@ -188,7 +188,7 @@ public class UserServices implements UserDetailsService {
         repository.delete(entity);
     }
 
-    public UserVO recoverPassword(UserVO user){
+    public UserVO resetPassword(UserVO user){
         if(user.getUserName() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
 
         logger.info("Recovering password");

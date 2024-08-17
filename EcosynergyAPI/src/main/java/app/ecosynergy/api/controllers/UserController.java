@@ -24,7 +24,7 @@ public class UserController {
     UserServices services;
 
     @Operation(summary = "Find user by ID", description = "Retrieve a user by ID")
-    @GetMapping(value = "/findId/{id}",
+    @GetMapping(value = "/id/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public UserVO findById(@PathVariable("id") Long id){
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @Operation(summary = "Find user by Email", description = "Retrieve a user by Email")
-    @GetMapping(value = "/findEmail/{email}",
+    @GetMapping(value = "/email/{email}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public UserVO findByEmail(@PathVariable("email") String email) {
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @Operation(summary = "Find user by Username", description = "Retrieve a user by Username")
-    @GetMapping(value = "/findUsername/{username}",
+    @GetMapping(value = "/username/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public UserVO findByUsername(@PathVariable("username") String username){
@@ -88,12 +88,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Recovery Password", description = "Recovery a user password")
-    @PostMapping(value = "/recoverPassword",
+    @Operation(summary = "Reset Password", description = "Reset a user password")
+    @PostMapping(value = "/resetPassword",
                 produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
                 consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO recoverPassword(@RequestBody UserVO user){
-        return services.recoverPassword(user);
+    public UserVO resetPassword(@RequestBody UserVO user){
+        return services.resetPassword(user);
     }
 }
