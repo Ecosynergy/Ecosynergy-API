@@ -276,9 +276,9 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
 
         assertNotNull(content);
 
-        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/findId/1</href></links>"));
-        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/findId/3</href></links>"));
-        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/findId/4</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/id/1</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/id/3</href></links>"));
+        assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1/id/4</href></links>"));
         assertTrue(content.contains("<links><rel>self</rel><href>http://localhost:8888/api/user/v1?page=0&amp;limit=10&amp;direction=fullName%3A%20ASC</href></links>"));
         assertTrue(content.contains("<page><size>10</size><totalElements>" + countUsers + "</totalElements><totalPages>1</totalPages><number>0</number></page>"));
     }

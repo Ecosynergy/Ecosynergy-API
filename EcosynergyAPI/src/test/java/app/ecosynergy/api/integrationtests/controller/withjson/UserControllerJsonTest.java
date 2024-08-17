@@ -267,7 +267,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
 
         assertNotNull(content);
 
-        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1/findId/2\"}}}"));
+        assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1/id/2\"}}}"));
         assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/user/v1?page=0&limit=10&direction=fullName%3A%20ASC\"}}"));
         assertTrue(content.contains("\"page\":{\"size\":10,\"totalElements\":" + countUsers + ",\"totalPages\":1,\"number\":0}}"));
     }
