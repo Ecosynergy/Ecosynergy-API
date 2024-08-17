@@ -3,6 +3,7 @@ package app.ecosynergy.api.services;
 import app.ecosynergy.api.data.vo.v1.ActivityVO;
 import app.ecosynergy.api.data.vo.v1.SectorVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
+import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.Sector;
@@ -33,7 +34,7 @@ public class SectorServices {
     public SectorVO findById(Long id) {
         if(id == null) throw new RequiredObjectIsNullException();
 
-        Sector sector = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        Sector sector = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sector not found with given ID: " + id));
 
         return DozerMapper.parseObject(sector, SectorVO.class);
     }
@@ -41,7 +42,7 @@ public class SectorServices {
     public SectorVO findByName(String name) {
         if(name.isBlank()) throw new RequiredObjectIsNullException();
 
-        Sector sector = repository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(""));
+        Sector sector = repository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Sector not found with given name: " + name));
 
         return DozerMapper.parseObject(sector, SectorVO.class);
     }
@@ -57,6 +58,10 @@ public class SectorServices {
     public SectorVO create(SectorVO sectorVO) {
         if(sectorVO == null) throw new RequiredObjectIsNullException();
 
+        boolean isSectorAlreadyExists = repository.findByName(sectorVO.getName()).isPresent();
+
+        if(isSectorAlreadyExists) throw new ResourceAlreadyExistsException("Activity with name: '" + sectorVO.getName() + "' already exists");
+
         Sector sector = repository.save(DozerMapper.parseObject(sectorVO, Sector.class));
 
         return DozerMapper.parseObject(sector, SectorVO.class);
@@ -65,7 +70,7 @@ public class SectorServices {
     public SectorVO update(Long id, SectorVO sectorVO) {
         if(id == null || sectorVO.getName() == null) throw new RequiredObjectIsNullException();
 
-        Sector sector = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        Sector sector = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Sector not found with given ID: " + id));
 
         sector.setName(sectorVO.getName());
 

@@ -3,6 +3,7 @@ package app.ecosynergy.api.services;
 import app.ecosynergy.api.data.vo.v1.ActivityVO;
 import app.ecosynergy.api.data.vo.v1.SectorVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
+import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.Activity;
@@ -31,7 +32,7 @@ public class ActivityServices {
     public ActivityVO findById(Long id) {
         if(id == null) throw new RequiredObjectIsNullException();
 
-        Activity activity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        Activity activity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Activity not found with given ID: " + id));
 
         return DozerMapper.parseObject(activity, ActivityVO.class);
     }
@@ -39,7 +40,7 @@ public class ActivityServices {
     public ActivityVO findByName(String name) {
         if(name == null) throw new RequiredObjectIsNullException();
 
-        Activity activity = repository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(""));
+        Activity activity = repository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Activity not found with given name: " + name));
 
         return DozerMapper.parseObject(activity, ActivityVO.class);
     }
@@ -63,6 +64,10 @@ public class ActivityServices {
     public ActivityVO create(ActivityVO activityVO) {
         if(activityVO == null) throw new RequiredObjectIsNullException();
 
+        boolean isActivityAlreadyExists = repository.findByName(activityVO.getName()).isPresent();
+
+        if(isActivityAlreadyExists) throw new ResourceAlreadyExistsException("Activity with name: '" + activityVO.getName() + "' already exists");
+
         Activity activity = convertToEntity(activityVO);
 
         activity = repository.save(activity);
@@ -73,7 +78,7 @@ public class ActivityServices {
     public ActivityVO update(Long id, ActivityVO activityVO) {
         if(id == null || activityVO == null) throw new RequiredObjectIsNullException();
 
-        Activity entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(""));
+        Activity entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Activity not found with given ID: " + id));
         entity.setName(activityVO.getName() != null ? activityVO.getName() : entity.getName());
 
         if(activityVO.getSector() != null) {

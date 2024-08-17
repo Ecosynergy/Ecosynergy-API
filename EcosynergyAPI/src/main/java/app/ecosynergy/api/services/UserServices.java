@@ -80,7 +80,7 @@ public class UserServices implements UserDetailsService {
         logger.info("Finding User by Id!");
 
         User entity = repository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with given ID: " + id));
 
         UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(id)).withSelfRel());
