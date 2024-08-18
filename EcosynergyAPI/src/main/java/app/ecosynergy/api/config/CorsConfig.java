@@ -18,6 +18,7 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:80");
         config.addAllowedOrigin("https://ecosynergybr.com");
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://ecosynergybr.com.s3-website-us-east-1.amazonaws.com");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
