@@ -1,4 +1,4 @@
-name: Backup to Google Drive
+name: Upload to Google Drive
 
 on:
   push:
@@ -6,25 +6,29 @@ on:
       - main
 
 jobs:
-  backup:
+  upload:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.12.6'
+          python-version: '3.x'
 
       - name: Install dependencies
         run: |
-          pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+          python -m pip install --upgrade pip
+          pip install --upgrade google-api-python-client google-auth google-auth-oauthlib google-auth-httplib2
 
-      - name: Run script to upload to Google Drive
-        run: python upload_to_drive.py
+      - name: Zip repository files
+        run: zip -r arquivo.zip .
+
+      - name: Upload to Google Drive
         env:
+          REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: python upload_to_drive.py
