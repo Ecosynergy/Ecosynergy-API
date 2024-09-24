@@ -32,4 +32,4 @@ if __name__ == "__main__":
     if os.path.exists(file_path):
         upload_to_drive(file_path)
     else:
-        print(f'Arquivo {file_path} não encontrado.')
+        print(f'Arquivo {file_path} não encontrado!')
