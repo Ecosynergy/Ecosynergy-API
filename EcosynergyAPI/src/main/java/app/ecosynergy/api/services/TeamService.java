@@ -127,6 +127,7 @@ public class TeamService {
         teamEntity.setName(team.getName());
         teamEntity.setHandle(team.getHandle());
         teamEntity.setDescription(team.getDescription());
+        teamEntity.setGoal(team.getGoal());
 
         ActivityVO activityVO = activityService.findById(team.getActivity().getKey());
         teamEntity.setActivity(DozerMapper.parseObject(activityVO, Activity.class));
@@ -168,11 +169,12 @@ public class TeamService {
         existingTeam.setHandle(teamVO.getHandle() != null ? teamVO.getHandle() : existingTeam.getHandle());
         existingTeam.setName(teamVO.getName() != null ? teamVO.getName() : existingTeam.getName());
         existingTeam.setDescription(teamVO.getDescription() != null ? teamVO.getDescription() : existingTeam.getDescription());
+        existingTeam.setGoal(teamVO.getGoal() != null ? teamVO.getGoal() : existingTeam.getGoal());
         existingTeam.setTimeZone(teamVO.getTimeZone() != null ? teamVO.getTimeZone() : existingTeam.getTimeZone());
 
         ActivityVO activity = activityService.findById(teamVO.getActivity().getKey());
 
-        existingTeam.setActivity(DozerMapper.parseObject(activity, Activity.class));
+        existingTeam.setActivity(activity != null ? DozerMapper.parseObject(activity, Activity.class) : existingTeam.getActivity());
 
         Team updatedTeam = teamRepository.save(existingTeam);
 
@@ -300,6 +302,7 @@ public class TeamService {
         teamVO.setName(team.getName());
         teamVO.setDescription(team.getDescription());
         teamVO.setActivity(DozerMapper.parseObject(team.getActivity(), ActivityVO.class));
+        teamVO.setGoal(team.getGoal());
         teamVO.setTimeZone(team.getTimeZone());
         teamVO.setCreatedAt(team.getCreatedAt());
         teamVO.setUpdatedAt(team.getUpdatedAt());

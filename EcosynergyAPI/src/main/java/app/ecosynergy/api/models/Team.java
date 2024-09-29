@@ -36,6 +36,9 @@ public class Team implements Serializable {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
+    @Column
+    private Double goal;
+
     @Column(name = "time_zone")
     private ZoneId timeZone;
 
@@ -122,6 +125,14 @@ public class Team implements Serializable {
         this.activity = activity;
     }
 
+    public Double getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Double goal) {
+        this.goal = goal;
+    }
+
     public ZoneId getTimeZone() {
         return timeZone;
     }
@@ -159,11 +170,11 @@ public class Team implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return Objects.equals(id, team.id) && Objects.equals(handle, team.handle) && Objects.equals(name, team.name) && Objects.equals(description, team.description) && Objects.equals(sector, team.sector) && Objects.equals(activity, team.activity) && Objects.equals(timeZone, team.timeZone) && Objects.equals(createdAt, team.createdAt) && Objects.equals(updatedAt, team.updatedAt) && Objects.equals(teamMembers, team.teamMembers);
+        return Objects.equals(id, team.id) && Objects.equals(handle, team.handle) && Objects.equals(name, team.name) && Objects.equals(description, team.description) && Objects.equals(sector, team.sector) && Objects.equals(activity, team.activity) && Objects.equals(goal, team.goal) && Objects.equals(timeZone, team.timeZone) && Objects.equals(createdAt, team.createdAt) && Objects.equals(updatedAt, team.updatedAt) && Objects.equals(teamMembers, team.teamMembers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, handle, name, description, sector, activity, timeZone, createdAt, updatedAt, teamMembers);
+        return Objects.hash(id, handle, name, description, sector, activity, goal, timeZone, createdAt, updatedAt, teamMembers);
     }
 }

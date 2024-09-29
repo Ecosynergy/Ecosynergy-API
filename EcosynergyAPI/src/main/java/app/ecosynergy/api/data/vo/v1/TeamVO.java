@@ -30,6 +30,8 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
 
     private ActivityVO activity;
 
+    private Double goal;
+
     private ZoneId timeZone;
 
     private ZonedDateTime createdAt;
@@ -76,6 +78,14 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
 
     public void setActivity(ActivityVO activity) {
         this.activity = activity;
+    }
+
+    public Double getGoal() {
+        return goal;
+    }
+
+    public void setGoal(Double goal) {
+        this.goal = goal;
     }
 
     public ZoneId getTimeZone() {

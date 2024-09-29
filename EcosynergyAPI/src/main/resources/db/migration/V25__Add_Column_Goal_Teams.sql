@@ -1,0 +1,1 @@
+ALTER TABLE teams ADD COLUMN goal DECIMAL(10, 2) AFTER activity_id;
