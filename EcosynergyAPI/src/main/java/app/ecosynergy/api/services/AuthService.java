@@ -29,13 +29,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class AuthServices {
+public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRepository repository;
 
     @Autowired
-    public AuthServices(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository) {
+    public AuthService(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.repository = repository;

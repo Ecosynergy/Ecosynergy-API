@@ -4,7 +4,7 @@ import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
-import app.ecosynergy.api.services.UserServices;
+import app.ecosynergy.api.services.UserService;
 import app.ecosynergy.api.unittests.mapper.mocks.MockUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class UserServicesTest {
+class UserServiceTest {
     MockUser input;
 
     @InjectMocks
-    private UserServices service;
+    private UserService service;
 
     @Mock
     UserRepository repository;

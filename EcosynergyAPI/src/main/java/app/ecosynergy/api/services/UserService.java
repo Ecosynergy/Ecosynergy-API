@@ -36,15 +36,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class UserServices implements UserDetailsService {
+public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PagedResourcesAssembler<UserVO> assembler;
 
-    private static final Logger logger = Logger.getLogger(UserServices.class.getName());
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     @Autowired
-    public UserServices(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, PagedResourcesAssembler<UserVO> assembler) {
+    public UserService(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, PagedResourcesAssembler<UserVO> assembler) {
         this.repository = repository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.assembler = assembler;

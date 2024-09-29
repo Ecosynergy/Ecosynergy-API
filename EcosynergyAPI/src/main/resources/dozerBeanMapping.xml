@@ -34,4 +34,22 @@
             <b>sector</b>
         </field>
     </mapping>
+
+    <mapping>
+        <class-a>app.ecosynergy.api.models.Invite</class-a>
+        <class-b>app.ecosynergy.api.data.vo.v1.InviteVO</class-b>
+        <field>
+            <a>sender.id</a>
+            <b>senderId</b>
+        </field>
+        <field>
+            <a>recipient.id</a>
+            <b>recipientId</b>
+        </field>
+        <field>
+            <a>team.id</a>
+            <b>teamId</b>
+        </field>
+    </mapping>
+
 </mappings>

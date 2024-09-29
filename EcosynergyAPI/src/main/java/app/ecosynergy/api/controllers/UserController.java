@@ -1,7 +1,7 @@
 package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.UserVO;
-import app.ecosynergy.api.services.UserServices;
+import app.ecosynergy.api.services.UserService;
 import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/user/v1")
 public class UserController {
     @Autowired
-    UserServices services;
+    UserService services;
 
     @Operation(summary = "Find user by ID", description = "Retrieve a user by ID")
     @GetMapping(value = "/id/{id}",

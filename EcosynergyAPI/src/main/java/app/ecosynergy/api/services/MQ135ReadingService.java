@@ -1,14 +1,14 @@
 package app.ecosynergy.api.services;
 
-import app.ecosynergy.api.controllers.FireReadingController;
-import app.ecosynergy.api.data.vo.v1.FireReadingVO;
+import app.ecosynergy.api.controllers.MQ135ReadingController;
+import app.ecosynergy.api.data.vo.v1.MQ135ReadingVO;
 import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
-import app.ecosynergy.api.models.FireReading;
+import app.ecosynergy.api.models.MQ135Reading;
 import app.ecosynergy.api.models.Team;
-import app.ecosynergy.api.repositories.FireReadingRepository;
+import app.ecosynergy.api.repositories.MQ135ReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,67 +22,67 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
-public class FireReadingServices {
+public class MQ135ReadingService {
     @Autowired
-    private FireReadingRepository repository;
+    private MQ135ReadingRepository repository;
 
     @Autowired
     private TeamService teamService;
 
     @Autowired
-    private PagedResourcesAssembler<FireReadingVO> assembler;
+    private PagedResourcesAssembler<MQ135ReadingVO> assembler;
 
-    public FireReadingVO findById(Long id){
+    public MQ135ReadingVO findById(Long id){
         if(id == null) throw new RequiredObjectIsNullException();
 
-        FireReading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException("Fire Reading not found with given ID: " + id));
+        MQ135Reading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
         TeamVO teamVO = teamService.findByHandle(reading.getTeam().getHandle());
 
-        FireReadingVO vo = DozerMapper.parseObject(reading, FireReadingVO.class);
+        MQ135ReadingVO vo = DozerMapper.parseObject(reading, MQ135ReadingVO.class);
         vo.setTeamHandle(reading.getTeam().getHandle());
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(teamVO.getTimeZone()));
-        vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
         return vo;
     }
 
-    public PagedModel<EntityModel<FireReadingVO>> findAll(Pageable pageable){
-        Page<FireReading> readingsPage = repository.findAllWithTeam(pageable);
+    public PagedModel<EntityModel<MQ135ReadingVO>> findAll(Pageable pageable){
+        Page<MQ135Reading> readingsPage = repository.findAll(pageable);
 
-        Page<FireReadingVO> voPage = readingsPage.map(r -> {
+        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
             TeamVO teamVO = teamService.findByHandle(r.getTeam().getHandle());
-            FireReadingVO vo = DozerMapper.parseObject(r, FireReadingVO.class);
+
+            MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
             vo.setTeamHandle(r.getTeam().getHandle());
             vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(teamVO.getTimeZone()));
             return vo;
         });
-
         voPage.map(vo -> {
             try{
-                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
             } catch (Exception e){
                 throw new RuntimeException(e);
             }
         });
 
-        Link link = linkTo(methodOn(FireReadingController.class)
+        Link link = linkTo(methodOn(MQ135ReadingController.class)
                 .findAll(
-                        pageable.getPageNumber(),
-                        pageable.getPageSize(),
-                        pageable.getSort().toString()
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    pageable.getSort().toString()
                 ))
                 .withSelfRel();
 
         return assembler.toModel(voPage, link);
     }
 
-    public PagedModel<EntityModel<FireReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable){
-        Page<FireReading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
+    public PagedModel<EntityModel<MQ135ReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable){
+        Page<MQ135Reading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
 
         TeamVO teamVO = teamService.findByHandle(teamHandle);
 
-        Page<FireReadingVO> voPage = readingsPage.map(r -> {
-            FireReadingVO vo = DozerMapper.parseObject(r, FireReadingVO.class);
+        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
+            MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
             vo.setTeamHandle(r.getTeam().getHandle());
             vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(teamVO.getTimeZone()));
             return vo;
@@ -90,13 +90,13 @@ public class FireReadingServices {
 
         voPage.map(vo -> {
             try{
-                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
             } catch (Exception e){
                 throw new RuntimeException(e);
             }
         });
 
-        Link link = linkTo(methodOn(FireReadingController.class)
+        Link link = linkTo(methodOn(MQ135ReadingController.class)
                 .findAll(
                         pageable.getPageNumber(),
                         pageable.getPageSize(),
@@ -107,7 +107,7 @@ public class FireReadingServices {
         return assembler.toModel(voPage, link);
     }
 
-    public FireReadingVO create(FireReadingVO reading){
+    public MQ135ReadingVO create(MQ135ReadingVO reading){
         if(reading == null) throw new RequiredObjectIsNullException();
 
         Team team = DozerMapper.parseObject(
@@ -115,14 +115,14 @@ public class FireReadingServices {
                 Team.class
         );
 
-        FireReading readingEntity = DozerMapper.parseObject(reading, FireReading.class);
+        MQ135Reading readingEntity = DozerMapper.parseObject(reading, MQ135Reading.class);
         readingEntity.setTeam(team);
         readingEntity = repository.save(readingEntity);
 
-        FireReadingVO vo = DozerMapper.parseObject(readingEntity, FireReadingVO.class);
+        MQ135ReadingVO vo = DozerMapper.parseObject(readingEntity, MQ135ReadingVO.class);
         vo.setTeamHandle(readingEntity.getTeam().getHandle());
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(team.getTimeZone()));
-        vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
+        vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
     }

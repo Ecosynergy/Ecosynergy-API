@@ -38,7 +38,7 @@ public class TeamService {
     private UserRepository userRepository;
 
     @Autowired
-    private ActivityServices activityServices;
+    private ActivityService activityService;
 
     @Autowired
     private TeamMemberRepository teamMemberRepository;
@@ -128,7 +128,7 @@ public class TeamService {
         teamEntity.setHandle(team.getHandle());
         teamEntity.setDescription(team.getDescription());
 
-        ActivityVO activityVO = activityServices.findById(team.getActivity().getKey());
+        ActivityVO activityVO = activityService.findById(team.getActivity().getKey());
         teamEntity.setActivity(DozerMapper.parseObject(activityVO, Activity.class));
         teamEntity.setTimeZone(team.getTimeZone());
 
@@ -170,7 +170,7 @@ public class TeamService {
         existingTeam.setDescription(teamVO.getDescription() != null ? teamVO.getDescription() : existingTeam.getDescription());
         existingTeam.setTimeZone(teamVO.getTimeZone() != null ? teamVO.getTimeZone() : existingTeam.getTimeZone());
 
-        ActivityVO activity = activityServices.findById(teamVO.getActivity().getKey());
+        ActivityVO activity = activityService.findById(teamVO.getActivity().getKey());
 
         existingTeam.setActivity(DozerMapper.parseObject(activity, Activity.class));
 

@@ -1,7 +1,7 @@
 package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.ActivityVO;
-import app.ecosynergy.api.services.ActivityServices;
+import app.ecosynergy.api.services.ActivityService;
 import app.ecosynergy.api.util.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/api/activity/v1")
 public class ActivityController {
     @Autowired
-    private ActivityServices services;
+    private ActivityService services;
 
     @GetMapping(value = "/id/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}

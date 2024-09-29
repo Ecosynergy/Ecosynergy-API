@@ -96,4 +96,30 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InviteAlreadyRespondedException.class)
+    public final ResponseEntity<ExceptionResponse> handleInviteAlreadyRespondedException(
+            InviteAlreadyRespondedException ex, WebRequest request
+    ) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public final ResponseEntity<ExceptionResponse> handleUnauthorizedException(
+            UnauthorizedException ex, WebRequest request
+    ) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+    }
 }

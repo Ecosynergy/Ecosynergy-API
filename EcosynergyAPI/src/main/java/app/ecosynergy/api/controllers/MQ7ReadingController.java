@@ -1,7 +1,7 @@
 package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.MQ7ReadingVO;
-import app.ecosynergy.api.services.MQ7ReadingServices;
+import app.ecosynergy.api.services.MQ7ReadingService;
 import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit;
 @RequestMapping("/api/mq7Reading/v1")
 public class MQ7ReadingController {
     @Autowired
-    MQ7ReadingServices service;
+    MQ7ReadingService service;
 
     @Operation(summary = "Find MQ7 reading by ID", description = "Retrieve an MQ7 sensor reading by ID")
     @GetMapping(value = "/{id}",

@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SectorServices {
-    private final ActivityServices activityServices;
+public class SectorService {
+    private final ActivityService activityService;
     private final SectorRepository repository;
 
     @Autowired
-    public SectorServices(ActivityServices activityServices, SectorRepository repository) {
-        this.activityServices = activityServices;
+    public SectorService(ActivityService activityService, SectorRepository repository) {
+        this.activityService = activityService;
         this.repository = repository;
     }
 
@@ -50,7 +50,7 @@ public class SectorServices {
     public SectorVO findByActivity(Long activityId) {
         if(activityId == null) throw new RequiredObjectIsNullException();
 
-        ActivityVO activityVO = activityServices.findById(activityId);
+        ActivityVO activityVO = activityService.findById(activityId);
 
         return findByName(activityVO.getSector());
     }

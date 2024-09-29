@@ -2,7 +2,7 @@ package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.SectorVO;
 import app.ecosynergy.api.data.vo.v1.views.Views;
-import app.ecosynergy.api.services.SectorServices;
+import app.ecosynergy.api.services.SectorService;
 import app.ecosynergy.api.util.MediaType;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/sector/v1")
 public class SectorController {
     @Autowired
-    SectorServices services;
+    SectorService services;
 
     @GetMapping(
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}

@@ -1,7 +1,7 @@
 package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.FireReadingVO;
-import app.ecosynergy.api.services.FireReadingServices;
+import app.ecosynergy.api.services.FireReadingService;
 import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit;
 @RequestMapping("/api/fireReading/v1")
 public class FireReadingController {
     @Autowired
-    FireReadingServices service;
+    FireReadingService service;
 
     @Operation(summary = "Find fire reading by ID", description = "Retrieve a fire reading by ID")
     @GetMapping(value= "/{id}",

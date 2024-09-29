@@ -17,17 +17,17 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
-public class ActivityServices {
+public class ActivityService {
     private final ActivityRepository repository;
-    private final SectorServices sectorServices;
+    private final SectorService sectorService;
 
     @Autowired
-    public ActivityServices(ActivityRepository repository, @Lazy SectorServices sectorServices) {
+    public ActivityService(ActivityRepository repository, @Lazy SectorService sectorService) {
         this.repository = repository;
-        this.sectorServices = sectorServices;
+        this.sectorService = sectorService;
     }
 
-    private static final Logger logger = Logger.getLogger(ActivityServices.class.getName());
+    private static final Logger logger = Logger.getLogger(ActivityService.class.getName());
 
     public ActivityVO findById(Long id) {
         if(id == null) throw new RequiredObjectIsNullException();
@@ -48,7 +48,7 @@ public class ActivityServices {
     public List<ActivityVO> findBySectorId(Long sectorId) {
         if(sectorId == null) throw new RequiredObjectIsNullException();
 
-        SectorVO sectorVO = sectorServices.findById(sectorId);
+        SectorVO sectorVO = sectorService.findById(sectorId);
 
         List<Activity> activities = repository.findActivitiesBySectorId(sectorVO.getKey());
 
@@ -82,7 +82,7 @@ public class ActivityServices {
         entity.setName(activityVO.getName() != null ? activityVO.getName() : entity.getName());
 
         if(activityVO.getSector() != null) {
-            entity.setSector(DozerMapper.parseObject(sectorServices.findByName(activityVO.getSector()), Sector.class));
+            entity.setSector(DozerMapper.parseObject(sectorService.findByName(activityVO.getSector()), Sector.class));
         }
 
         Activity updatedActivity = repository.save(entity);
@@ -103,7 +103,7 @@ public class ActivityServices {
         entity.setId(activityVO.getKey());
         entity.setName(activityVO.getName());
 
-        SectorVO sectorVO = sectorServices.findByName(activityVO.getSector());
+        SectorVO sectorVO = sectorService.findByName(activityVO.getSector());
 
         entity.setSector(DozerMapper.parseObject(sectorVO, Sector.class));
 

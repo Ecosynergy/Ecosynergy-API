@@ -2,7 +2,7 @@ package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
-import app.ecosynergy.api.services.AuthServices;
+import app.ecosynergy.api.services.AuthService;
 import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private final AuthServices service;
+    private final AuthService service;
 
     @Autowired
-    public AuthController(AuthServices service) {
+    public AuthController(AuthService service) {
         this.service = service;
     }
 
