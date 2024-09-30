@@ -4,11 +4,14 @@ import app.ecosynergy.api.controllers.UserController;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
 import app.ecosynergy.api.data.vo.v1.security.TokenVO;
+import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
+import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
+import app.ecosynergy.api.util.ConfirmationCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +36,14 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserRepository repository;
+    private final EmailService emailService;
 
     @Autowired
-    public AuthService(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository) {
+    public AuthService(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, EmailService emailService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.repository = repository;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<?> signIn(AccountCredentialsVO data){
@@ -118,6 +123,33 @@ public class AuthService {
         }
 
         return ResponseEntity.ok(tokenResponse);
+    }
+
+    public String sendConfirmationCode(String email) {
+        if(email == null) throw new RequiredObjectIsNullException();
+
+        boolean isExistsEmail = repository.existsByEmail(email);
+
+        if(!isExistsEmail) throw new ResourceNotFoundException("Email Not Found");
+
+        String confirmationCode = ConfirmationCodeGenerator.generateCode();
+
+        emailService.sendConfirmationEmail(email, confirmationCode);
+
+        return confirmationCode;
+    }
+
+    public UserVO forgotPassword(UserVO user){
+        if(user.getUserName() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
+
+        User entity = repository.findByUsername(user.getUserName());
+
+        entity.setPassword(passwordEncode(user.getPassword()));
+
+        UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
+        vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
+
+        return vo;
     }
 
     private String passwordEncode(String password){

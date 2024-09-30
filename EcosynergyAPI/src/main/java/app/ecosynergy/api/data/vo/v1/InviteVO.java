@@ -2,13 +2,14 @@ package app.ecosynergy.api.data.vo.v1;
 
 import app.ecosynergy.api.models.InviteStatus;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @JsonPropertyOrder("id")
-public class InviteVO implements Serializable {
+public class InviteVO extends RepresentationModel<InviteVO> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 

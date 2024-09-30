@@ -1,5 +1,6 @@
 package app.ecosynergy.api.services;
 
+import app.ecosynergy.api.controllers.InviteController;
 import app.ecosynergy.api.data.vo.v1.InviteVO;
 import app.ecosynergy.api.exceptions.*;
 import app.ecosynergy.api.mapper.DozerMapper;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class InviteService {
@@ -42,6 +47,9 @@ public class InviteService {
     private TeamService teamService;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private PagedResourcesAssembler<InviteVO> assembler;
 
     private static final Logger logger = Logger.getLogger(InviteService.class.getName());
@@ -51,19 +59,37 @@ public class InviteService {
         Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "createdAt"));
 
         Page<Invite> invitePage = inviteRepository.findAll(pageable);
+        Page<InviteVO> voPage = invitePage.map(i -> DozerMapper.parseObject(i, InviteVO.class));
 
-        List<InviteVO> inviteVOs = invitePage.stream()
-                .map(invite -> DozerMapper.parseObject(invite, InviteVO.class))
-                .toList();
+        voPage.map(inviteVO -> {
+            Team team = teamRepository.findById(inviteVO.getTeamId()).orElseThrow();
 
-        return assembler.toModel(invitePage.map(invite -> EntityModel.of(DozerMapper.parseObject(invite, InviteVO.class)).getContent()));
+            inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(team.getTimeZone()));
+            inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(team.getTimeZone()));
+
+            inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+            return inviteVO;
+        });
+
+        Link link = linkTo(methodOn(InviteController.class)
+                .findAll(pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort().toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
     }
 
     public InviteVO findById(Long id) {
         Invite invite = inviteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Invite not found for this id: " + id));
 
-        return DozerMapper.parseObject(invite, InviteVO.class);
+        InviteVO inviteVO = DozerMapper.parseObject(invite, InviteVO.class);
+        inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+        return inviteVO;
     }
 
     @Transactional
@@ -100,7 +126,13 @@ public class InviteService {
 
         Invite savedInvite = inviteRepository.save(invite);
 
-        return DozerMapper.parseObject(savedInvite, InviteVO.class);
+        emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), sender.get().getFullName());
+
+        InviteVO savedInviteVO = DozerMapper.parseObject(savedInvite, InviteVO.class);
+        inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        savedInviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+        return savedInviteVO;
     }
 
     @Transactional
@@ -122,7 +154,14 @@ public class InviteService {
         teamService.addMember(teamMemberId, Role.COMMON_USER);
 
         Invite updatedInvite = inviteRepository.save(invite);
-        return DozerMapper.parseObject(updatedInvite, InviteVO.class);
+
+        emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+
+        InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
+        inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+        return inviteVO;
     }
 
     @Transactional
@@ -136,27 +175,59 @@ public class InviteService {
 
         invite.setStatus(InviteStatus.DECLINED);
         Invite updatedInvite = inviteRepository.save(invite);
-        return DozerMapper.parseObject(updatedInvite, InviteVO.class);
+
+        emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+
+        InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
+        inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+        inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+
+        return inviteVO;
     }
 
     public List<InviteVO> findPendingInvitesByRecipient(Long recipientId) {
         return inviteRepository.findByRecipientIdAndStatus(recipientId, InviteStatus.PENDING)
                 .stream()
-                .map(invite -> DozerMapper.parseObject(invite, InviteVO.class))
+                .map(invite -> {
+                    InviteVO inviteVO = DozerMapper.parseObject(invite, InviteVO.class);
+
+                    inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+                    inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+
+                    inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+                    return inviteVO;
+                })
                 .collect(Collectors.toList());
     }
 
     public List<InviteVO> findInvitesBySender(Long senderId) {
         return inviteRepository.findBySenderId(senderId)
                 .stream()
-                .map(invite -> DozerMapper.parseObject(invite, InviteVO.class))
+                .map(invite -> {
+                    InviteVO inviteVO = DozerMapper.parseObject(invite, InviteVO.class);
+
+                    inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+                    inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+
+                    inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+                    return inviteVO;
+                })
                 .collect(Collectors.toList());
     }
 
     public List<InviteVO> findInvitesByRecipient(Long recipientId) {
         return inviteRepository.findByRecipientId(recipientId)
                 .stream()
-                .map(invite -> DozerMapper.parseObject(invite, InviteVO.class))
+                .map(invite -> {
+                    InviteVO inviteVO = DozerMapper.parseObject(invite, InviteVO.class);
+
+                    inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+                    inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+
+                    inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+                    return inviteVO;
+                })
                 .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,8 @@ package app.ecosynergy.api.controllers;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
 import app.ecosynergy.api.services.AuthService;
+import app.ecosynergy.api.services.EmailService;
+import app.ecosynergy.api.util.ConfirmationCodeGenerator;
 import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,10 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService service;
+    private final EmailService emailService;
 
     @Autowired
-    public AuthController(AuthService service) {
+    public AuthController(AuthService service, EmailService emailService) {
         this.service = service;
+        this.emailService = emailService;
     }
 
     @Operation(summary = "Sign in", description = "Authenticate a user and return a token", tags = {"Authentication Endpoint"})
@@ -68,6 +72,29 @@ public class AuthController {
         } else {
             return token;
         }
+    }
+
+    @PostMapping(value = "/signup/send-confirmation-code")
+    public ResponseEntity<String> sendConfirmationCode(@RequestParam String email) {
+        String confirmationCode = ConfirmationCodeGenerator.generateCode();
+
+        emailService.sendConfirmationEmail(email, confirmationCode);
+
+        return ResponseEntity.ok(confirmationCode);
+    }
+
+    @PostMapping(value = "/forgot-password/send-confirmation-code")
+    public ResponseEntity<String> sendConfirmationCodeForgotPassword(@RequestParam String email) {
+        String confirmationCode = service.sendConfirmationCode(email);
+
+        return ResponseEntity.ok(confirmationCode);
+    }
+
+    @PostMapping(value = "forgot-password")
+    public ResponseEntity<UserVO> forgotPassword(@RequestBody UserVO user) {
+        UserVO userVO = service.forgotPassword(user);
+
+        return ResponseEntity.ok(userVO);
     }
 
     private static boolean checkIfParamsIsNotNull(AccountCredentialsVO data) {
