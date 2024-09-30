@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,8 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     private String gender;
 
     private String nationality;
+
+    private ZonedDateTime createdAt;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonExpired;

@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +42,9 @@ public class User implements UserDetails, Serializable {
 
     @Column
     private String nationality;
+
+    @Column(name = "created_at", nullable = false)
+    private ZonedDateTime createdAt = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
 
     @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
@@ -158,6 +163,14 @@ public class User implements UserDetails, Serializable {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(ZonedDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Boolean getAccountNonExpired() {
