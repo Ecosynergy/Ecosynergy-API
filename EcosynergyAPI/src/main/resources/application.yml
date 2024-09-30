@@ -21,23 +21,27 @@ spring:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://127.0.0.1:3306/ecosynergy?useLegacyDatetimeCode=false&serverTimezone=UTC
 #    username: root
-#    password: master
+#    password: 220624And
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: none
     show_sql: false
-#  mail:
-#    host: smtppro.zoho.com
-#    port: 587
-#    username: suporte@ecosynergybr.com
-#    password: GabrielBen321#
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
+  mail:
+    host: smtp.zoho.com
+    port: 587
+    username: noreply@ecosynergybr.com
+    password: GabrielBen123#
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 springdoc:
   paths-to-match:
     - /auth/**
