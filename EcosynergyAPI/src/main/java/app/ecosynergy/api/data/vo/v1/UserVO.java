@@ -163,6 +163,14 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         this.nationality = nationality;
     }
 
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(ZonedDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Boolean getAccountNonExpired() {
         return accountNonExpired;
     }
