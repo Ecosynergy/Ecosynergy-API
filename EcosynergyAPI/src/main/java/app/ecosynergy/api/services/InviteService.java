@@ -94,14 +94,14 @@ public class InviteService {
 
     @Transactional
     public InviteVO createInvite(InviteVO inviteVO) {
-        if(inviteVO.getSenderId() == null || inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null) throw new RequiredObjectIsNullException("Invalid User ou Team");
+        if(inviteVO.getSenderId() == null || inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null) throw new RequiredObjectIsNullException("Invalid User or Team");
 
         Optional<User> sender = userRepository.findById(inviteVO.getSenderId());
         Optional<User> recipient = userRepository.findById(inviteVO.getRecipientId());
         Optional<Team> team = teamRepository.findById(inviteVO.getTeamId());
 
         if (sender.isEmpty() || recipient.isEmpty() || team.isEmpty()) {
-            throw new ResourceNotFoundException("Invalid User ou Team");
+            throw new ResourceNotFoundException("Invalid User or Team");
         }
 
         boolean isAdmin = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), sender.get().getId(), Role.ADMINISTRATOR);
