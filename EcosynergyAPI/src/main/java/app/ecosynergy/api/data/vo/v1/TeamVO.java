@@ -7,6 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -30,7 +31,13 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
 
     private ActivityVO activity;
 
-    private Double goal;
+    private BigDecimal dailyGoal;
+
+    private BigDecimal weeklyGoal;
+
+    private BigDecimal monthlyGoal;
+
+    private BigDecimal annualGoal;
 
     private ZoneId timeZone;
 
@@ -80,12 +87,36 @@ public class TeamVO extends RepresentationModel<TeamVO> implements Serializable 
         this.activity = activity;
     }
 
-    public Double getGoal() {
-        return goal;
+    public BigDecimal getDailyGoal() {
+        return dailyGoal;
     }
 
-    public void setGoal(Double goal) {
-        this.goal = goal;
+    public void setDailyGoal(BigDecimal dailyGoal) {
+        this.dailyGoal = dailyGoal;
+    }
+
+    public BigDecimal getWeeklyGoal() {
+        return weeklyGoal;
+    }
+
+    public void setWeeklyGoal(BigDecimal weeklyGoal) {
+        this.weeklyGoal = weeklyGoal;
+    }
+
+    public BigDecimal getMonthlyGoal() {
+        return monthlyGoal;
+    }
+
+    public void setMonthlyGoal(BigDecimal monthlyGoal) {
+        this.monthlyGoal = monthlyGoal;
+    }
+
+    public BigDecimal getAnnualGoal() {
+        return annualGoal;
+    }
+
+    public void setAnnualGoal(BigDecimal annualGoal) {
+        this.annualGoal = annualGoal;
     }
 
     public ZoneId getTimeZone() {

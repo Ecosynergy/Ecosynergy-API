@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -36,8 +37,17 @@ public class Team implements Serializable {
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
-    @Column
-    private Double goal;
+    @Column(name = "daily_goal")
+    private BigDecimal dailyGoal;
+
+    @Column(name = "weekly_goal")
+    private BigDecimal weeklyGoal;
+
+    @Column(name = "monthly_goal")
+    private BigDecimal monthlyGoal;
+
+    @Column(name = "annual_goal")
+    private BigDecimal annualGoal;
 
     @Column(name = "time_zone")
     private ZoneId timeZone;
@@ -125,12 +135,36 @@ public class Team implements Serializable {
         this.activity = activity;
     }
 
-    public Double getGoal() {
-        return goal;
+    public BigDecimal getDailyGoal() {
+        return dailyGoal;
     }
 
-    public void setGoal(Double goal) {
-        this.goal = goal;
+    public void setDailyGoal(BigDecimal dailyGoal) {
+        this.dailyGoal = dailyGoal;
+    }
+
+    public BigDecimal getWeeklyGoal() {
+        return weeklyGoal;
+    }
+
+    public void setWeeklyGoal(BigDecimal weeklyGoal) {
+        this.weeklyGoal = weeklyGoal;
+    }
+
+    public BigDecimal getMonthlyGoal() {
+        return monthlyGoal;
+    }
+
+    public void setMonthlyGoal(BigDecimal monthlyGoal) {
+        this.monthlyGoal = monthlyGoal;
+    }
+
+    public BigDecimal getAnnualGoal() {
+        return annualGoal;
+    }
+
+    public void setAnnualGoal(BigDecimal annualGoal) {
+        this.annualGoal = annualGoal;
     }
 
     public ZoneId getTimeZone() {
@@ -170,11 +204,11 @@ public class Team implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return Objects.equals(id, team.id) && Objects.equals(handle, team.handle) && Objects.equals(name, team.name) && Objects.equals(description, team.description) && Objects.equals(sector, team.sector) && Objects.equals(activity, team.activity) && Objects.equals(goal, team.goal) && Objects.equals(timeZone, team.timeZone) && Objects.equals(createdAt, team.createdAt) && Objects.equals(updatedAt, team.updatedAt) && Objects.equals(teamMembers, team.teamMembers);
+        return Objects.equals(id, team.id) && Objects.equals(handle, team.handle) && Objects.equals(name, team.name) && Objects.equals(description, team.description) && Objects.equals(sector, team.sector) && Objects.equals(activity, team.activity) && Objects.equals(dailyGoal, team.dailyGoal) && Objects.equals(weeklyGoal, team.weeklyGoal) && Objects.equals(monthlyGoal, team.monthlyGoal) && Objects.equals(annualGoal, team.annualGoal) && Objects.equals(timeZone, team.timeZone) && Objects.equals(createdAt, team.createdAt) && Objects.equals(updatedAt, team.updatedAt) && Objects.equals(teamMembers, team.teamMembers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, handle, name, description, sector, activity, goal, timeZone, createdAt, updatedAt, teamMembers);
+        return Objects.hash(id, handle, name, description, sector, activity, dailyGoal, weeklyGoal, monthlyGoal, annualGoal, timeZone, createdAt, updatedAt, teamMembers);
     }
 }
