@@ -129,9 +129,9 @@ public class InviteService {
         emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), sender.get().getFullName());
 
         InviteVO savedInviteVO = DozerMapper.parseObject(savedInvite, InviteVO.class);
-        inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
-        inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
-        savedInviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+        savedInviteVO.setCreatedAt(savedInviteVO.getCreatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
+        savedInviteVO.setUpdatedAt(savedInviteVO.getUpdatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
+        savedInviteVO.add(linkTo(methodOn(InviteController.class).findById(savedInviteVO.getId())).withSelfRel());
         return savedInviteVO;
     }
 
