@@ -43,8 +43,8 @@ public class User implements UserDetails, Serializable {
     @Column
     private String nationality;
 
-    @Column(name = "created_at", nullable = false)
-    private ZonedDateTime createdAt = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private ZonedDateTime createdAt;
 
     @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
@@ -64,6 +64,11 @@ public class User implements UserDetails, Serializable {
             inverseJoinColumns = {@JoinColumn (name = "id_permission")}
     )
     private List<Permission> permissions;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
+    }
 
     public List<String> getRoles(){
         if (permissions == null) {

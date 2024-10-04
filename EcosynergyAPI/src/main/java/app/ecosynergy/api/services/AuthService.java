@@ -104,11 +104,15 @@ public class AuthService {
 
         if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with email '" + user.getEmail() + "' already exists");
 
-        User entity = repository.save(DozerMapper.parseObject(user, User.class));
+        User entity = DozerMapper.parseObject(user, User.class);
 
-        UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
+        User savedEntity = repository.save(entity);
 
+        UserVO vo = DozerMapper.parseObject(savedEntity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
+
+        emailService.sendWelcomeEmail(savedEntity.getEmail(), savedEntity.getFullName().split(" ")[0]);
+
         return vo;
     }
 

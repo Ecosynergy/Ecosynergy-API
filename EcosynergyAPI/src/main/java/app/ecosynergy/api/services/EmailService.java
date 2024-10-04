@@ -25,7 +25,29 @@ public class EmailService {
         String text = "Seu código de confirmação é: " + code + ".\nInsira este código para verificar seu email.";
         sendEmail(to, subject, text);
     }
-    
+
+    public void sendWelcomeEmail(String recipientEmail, String name) {
+        String subject = "Bem-vindo(a) à Ecosynergy!";
+
+        String body = String.format(
+                """
+                        Olá %s,
+
+                        Bem-vindo(a) à Ecosynergy! Estamos felizes em tê-lo(a) conosco.
+
+                        Aqui estão algumas coisas que você pode fazer na plataforma:
+                        1. Criar uma nova equipe e começar a gerenciar suas metas ambientais.
+                        2. Convidar outros usuários para sua equipe e colaborar na redução de emissões.
+                        3. Ou, aguardar um convite para participar de uma equipe já existente e contribuir com as metas dela.
+
+                        Desejamos muito sucesso na sua jornada rumo à sustentabilidade ambiental!
+
+                        Atenciosamente,
+                        Equipe Ecosynergy""",
+                name
+        );
+    }
+
     public void sendInviteEmail(String recipientEmail, String teamName, String inviterName) {
         String subject = "Você foi convidado para se juntar à equipe " + teamName + " - Ecosynergy";
         String text = "Olá,\n\n" + inviterName + " convidou você para se juntar à equipe " + teamName + " no sistema Ecosynergy."
