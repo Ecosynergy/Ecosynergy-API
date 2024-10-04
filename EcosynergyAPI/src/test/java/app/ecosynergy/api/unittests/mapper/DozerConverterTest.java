@@ -35,7 +35,7 @@ public class DozerConverterTest {
 
         assertEquals("user0", vo.getUserName());
         assertEquals("User0", vo.getFullName());
-        assertEquals("Email0", vo.getEmail());
+        assertEquals("email0", vo.getEmail());
         assertEquals("Password0", vo.getPassword());
         assertEquals("Male", vo.getGender());
         assertEquals("Brazilian0", vo.getNationality());
@@ -63,7 +63,7 @@ public class DozerConverterTest {
             assertNotNull(vo.getNationality());
 
             assertEquals("User" + vo.getKey(), vo.getFullName());
-            assertEquals("Email" + vo.getKey(), vo.getEmail());
+            assertEquals("email" + vo.getKey(), vo.getEmail());
             assertEquals("Password" + vo.getKey(), vo.getPassword());
             assertEquals(vo.getKey() % 2 == 0 ? "Male" : "Female", vo.getGender());
             assertEquals("Brazilian" + vo.getKey(), vo.getNationality());
@@ -90,7 +90,7 @@ public class DozerConverterTest {
 
         assertEquals("user0", entity.getUserName());
         assertEquals("User0", entity.getFullName());
-        assertEquals("Email0", entity.getEmail());
+        assertEquals("email0", entity.getEmail());
         assertEquals("Password0", entity.getPassword());
         assertEquals("Male", entity.getGender());
         assertEquals("Brazilian0", entity.getNationality());
@@ -118,7 +118,7 @@ public class DozerConverterTest {
             assertNotNull(entity.getNationality());
 
             assertEquals("User" + entity.getId(), entity.getFullName());
-            assertEquals("Email" + entity.getId(), entity.getEmail());
+            assertEquals("email" + entity.getId(), entity.getEmail());
             assertEquals("Password" + entity.getId(), entity.getPassword());
             assertEquals(entity.getId() % 2 == 0 ? "Male" : "Female", entity.getGender());
             assertEquals("Brazilian" + entity.getId(), entity.getNationality());
