@@ -165,7 +165,7 @@ public class UserService implements UserDetailsService {
 
         entity.setUserName(user.getUserName() != null ? user.getUserName().toLowerCase(Locale.ROOT) : entity.getUserName());
         entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
-        entity.setEmail(user.getEmail() != null ? user.getEmail() : entity.getEmail());
+        entity.setEmail(user.getEmail() != null ? user.getEmail().toLowerCase() : entity.getEmail());
         entity.setGender(user.getGender() != null ? user.getGender() : entity.getGender());
         entity.setNationality(user.getNationality() != null ? user.getNationality() : entity.getNationality());
 
