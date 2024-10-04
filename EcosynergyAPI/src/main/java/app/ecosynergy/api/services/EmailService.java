@@ -46,6 +46,8 @@ public class EmailService {
                         Equipe Ecosynergy""",
                 name
         );
+
+        sendEmail(recipientEmail, subject, body);
     }
 
     public void sendInviteEmail(String recipientEmail, String teamName, String inviterName) {
