@@ -59,7 +59,11 @@ public class SecurityConfig {
                                 .requestMatchers(
                                         "/auth/signin",
                                         "/auth/signup",
+                                        "/auth/signup/send-confirmation-code",
+                                        "/auth/forgot-password",
+                                        "/auth/forgot-password/send-confirmation-code",
                                         "/auth/refresh/**",
+                                        "/api/user/v1/exists/**",
                                         "/api-docs/**",
                                         "/swagger-ui.html**"
                                 ).permitAll()
@@ -67,7 +71,6 @@ public class SecurityConfig {
                                 .authenticated()
                                 .requestMatchers("/users")
                                 .denyAll()
-
                 )
                 .cors(cors -> {})
                 .build();

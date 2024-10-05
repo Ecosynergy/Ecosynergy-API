@@ -96,4 +96,10 @@ public class UserController {
     public UserVO resetPassword(@RequestBody UserVO user){
         return services.resetPassword(user);
     }
+
+    @Operation(summary = "Exists by Username", description = "Check if the username exists")
+    @GetMapping(value = "/exists/{username}")
+    public ResponseEntity<Boolean> existsByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(services.existsByUsername(username));
+    }
 }

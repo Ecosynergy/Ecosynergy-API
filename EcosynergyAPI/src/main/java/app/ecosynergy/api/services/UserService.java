@@ -203,6 +203,12 @@ public class UserService implements UserDetailsService {
         return vo;
     }
 
+    public boolean existsByUsername(String username) {
+        if(username == null) throw new RequiredObjectIsNullException();
+
+        return repository.existsByUserName(username);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("Finding one User by name " + username + "!");
