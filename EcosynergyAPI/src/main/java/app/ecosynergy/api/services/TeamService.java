@@ -116,16 +116,21 @@ public class TeamService {
 
     @Transactional(rollbackFor = Exception.class)
     public TeamVO create(TeamVO team) {
-        if(team == null) throw new RequiredObjectIsNullException();
+        if(
+                team == null ||
+                team.getName() == null ||
+                team.getHandle() == null ||
+                team.getDescription() == null ||
+                team.getActivity() == null
+        ) throw new RequiredObjectIsNullException();
 
-        team.setHandle(team.getHandle().toLowerCase(Locale.ROOT));
 
         boolean isHandlerExists = teamRepository.findByHandleWithMembers(team.getHandle()).isPresent();
         if(isHandlerExists) throw new ResourceAlreadyExistsException("A team with the given handle already exists: " + team.getHandle());
 
         Team teamEntity = new Team();
         teamEntity.setName(team.getName());
-        teamEntity.setHandle(team.getHandle());
+        teamEntity.setHandle(team.getHandle().toLowerCase());
         teamEntity.setDescription(team.getDescription());
         teamEntity.setDailyGoal(team.getDailyGoal());
         teamEntity.setWeeklyGoal(team.getWeeklyGoal());
@@ -165,11 +170,9 @@ public class TeamService {
     public TeamVO update(Long teamId, TeamVO teamVO) {
         if(teamId == null || teamVO == null) throw new RequiredObjectIsNullException();
 
-        teamVO.setHandle(teamVO.getHandle().toLowerCase(Locale.ROOT));
-
         Team existingTeam = teamRepository.findByIdWithMembers(teamId).orElseThrow(() -> new ResourceNotFoundException("Team not found with ID: " + teamId));
 
-        existingTeam.setHandle(teamVO.getHandle() != null ? teamVO.getHandle() : existingTeam.getHandle());
+        existingTeam.setHandle(teamVO.getHandle() != null ? teamVO.getHandle().toLowerCase() : existingTeam.getHandle());
         existingTeam.setName(teamVO.getName() != null ? teamVO.getName() : existingTeam.getName());
         existingTeam.setDescription(teamVO.getDescription() != null ? teamVO.getDescription() : existingTeam.getDescription());
         existingTeam.setDailyGoal(teamVO.getDailyGoal() != null ? teamVO.getDailyGoal() : existingTeam.getDailyGoal());
