@@ -181,9 +181,10 @@ public class TeamService {
         existingTeam.setAnnualGoal(teamVO.getAnnualGoal() != null ? teamVO.getAnnualGoal() : existingTeam.getAnnualGoal());
         existingTeam.setTimeZone(teamVO.getTimeZone() != null ? teamVO.getTimeZone() : existingTeam.getTimeZone());
 
-        ActivityVO activity = activityService.findById(teamVO.getActivity().getKey());
-
-        existingTeam.setActivity(activity != null ? DozerMapper.parseObject(activity, Activity.class) : existingTeam.getActivity());
+        if(teamVO.getActivity() != null) {
+            ActivityVO activity = activityService.findById(teamVO.getActivity().getKey());
+            existingTeam.setActivity(DozerMapper.parseObject(activity, Activity.class));
+        }
 
         Team updatedTeam = teamRepository.save(existingTeam);
 
