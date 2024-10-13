@@ -12,6 +12,7 @@ import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
 import app.ecosynergy.api.util.ConfirmationCodeGenerator;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +86,7 @@ public class AuthService {
         }
     }
 
-    public UserVO signUp(UserVO user){
+    public UserVO signUp(UserVO user) throws MessagingException {
         String currentPassword = user.getPassword();
 
         user.setUserName(user.getUserName().toLowerCase());
@@ -129,16 +130,16 @@ public class AuthService {
         return ResponseEntity.ok(tokenResponse);
     }
 
-    public String sendConfirmationCode(String email) {
+    public String sendConfirmationCode(String email) throws MessagingException {
         if(email == null) throw new RequiredObjectIsNullException();
 
-        boolean isExistsEmail = repository.existsByEmail(email);
+        User user = repository.findByEmail(email);
 
-        if(!isExistsEmail) throw new ResourceNotFoundException("Email Not Found");
+        if(user == null) throw new ResourceNotFoundException("Email Not Found");
 
         String confirmationCode = ConfirmationCodeGenerator.generateCode();
 
-        emailService.sendConfirmationEmail(email, confirmationCode);
+        emailService.sendConfirmationEmail(email, user.getFullName(), confirmationCode);
 
         return confirmationCode;
     }

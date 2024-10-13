@@ -8,6 +8,7 @@ import app.ecosynergy.api.util.ConfirmationCodeGenerator;
 import app.ecosynergy.api.util.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class AuthController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<?> signUp(@RequestBody UserVO data){
+    public ResponseEntity<?> signUp(@RequestBody UserVO data) throws MessagingException {
         if(checkIfParamsIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
@@ -75,16 +76,16 @@ public class AuthController {
     }
 
     @PostMapping(value = "/signup/send-confirmation-code")
-    public ResponseEntity<String> sendConfirmationCode(@RequestParam String email) {
+    public ResponseEntity<String> sendConfirmationCode(@RequestParam String email, @RequestParam String name) throws MessagingException {
         String confirmationCode = ConfirmationCodeGenerator.generateCode();
 
-        emailService.sendConfirmationEmail(email, confirmationCode);
+        emailService.sendConfirmationEmail(email, name, confirmationCode);
 
         return ResponseEntity.ok(confirmationCode);
     }
 
     @PostMapping(value = "/forgot-password/send-confirmation-code")
-    public ResponseEntity<String> sendConfirmationCodeForgotPassword(@RequestParam String email) {
+    public ResponseEntity<String> sendConfirmationCodeForgotPassword(@RequestParam String email) throws MessagingException {
         String confirmationCode = service.sendConfirmationCode(email);
 
         return ResponseEntity.ok(confirmationCode);

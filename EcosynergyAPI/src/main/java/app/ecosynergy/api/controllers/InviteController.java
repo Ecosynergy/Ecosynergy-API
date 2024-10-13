@@ -3,6 +3,7 @@ package app.ecosynergy.api.controllers;
 import app.ecosynergy.api.data.vo.v1.InviteVO;
 import app.ecosynergy.api.services.InviteService;
 import app.ecosynergy.api.util.MediaType;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
@@ -43,7 +44,7 @@ public class InviteController {
     )
     public ResponseEntity<InviteVO> create(
             @RequestBody InviteVO invite
-    ) {
+    ) throws MessagingException {
         InviteVO inviteVO = inviteService.createInvite(invite);
         return ResponseEntity.ok(inviteVO);
     }
@@ -52,7 +53,7 @@ public class InviteController {
             value = "/accept/{inviteId}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<InviteVO> acceptInvite(@PathVariable Long inviteId) {
+    public ResponseEntity<InviteVO> acceptInvite(@PathVariable Long inviteId) throws MessagingException {
         InviteVO inviteVO = inviteService.acceptInvite(inviteId);
         return ResponseEntity.ok(inviteVO);
     }
@@ -61,7 +62,7 @@ public class InviteController {
             value = "/decline/{inviteId}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<InviteVO> declineInvite(@PathVariable Long inviteId) {
+    public ResponseEntity<InviteVO> declineInvite(@PathVariable Long inviteId) throws MessagingException {
         InviteVO inviteVO = inviteService.declineInvite(inviteId);
         return ResponseEntity.ok(inviteVO);
     }

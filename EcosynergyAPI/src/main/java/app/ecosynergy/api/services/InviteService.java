@@ -9,6 +9,7 @@ import app.ecosynergy.api.repositories.InviteRepository;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
 import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.repositories.UserRepository;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -93,7 +94,7 @@ public class InviteService {
     }
 
     @Transactional
-    public InviteVO createInvite(InviteVO inviteVO) {
+    public InviteVO createInvite(InviteVO inviteVO) throws MessagingException {
         if(inviteVO.getSenderId() == null || inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null) throw new RequiredObjectIsNullException("Invalid User or Team");
 
         Optional<User> sender = userRepository.findById(inviteVO.getSenderId());
@@ -136,7 +137,7 @@ public class InviteService {
     }
 
     @Transactional
-    public InviteVO acceptInvite(Long inviteId) {
+    public InviteVO acceptInvite(Long inviteId) throws MessagingException {
         Invite invite = inviteRepository.findById(inviteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Invite Not Found"));
 
@@ -155,7 +156,7 @@ public class InviteService {
 
         Invite updatedInvite = inviteRepository.save(invite);
 
-        emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+        emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
@@ -165,7 +166,7 @@ public class InviteService {
     }
 
     @Transactional
-    public InviteVO declineInvite(Long inviteId) {
+    public InviteVO declineInvite(Long inviteId) throws MessagingException {
         Invite invite = inviteRepository.findById(inviteId)
                 .orElseThrow(() -> new IllegalArgumentException("Invite Not Found"));
 
@@ -176,7 +177,7 @@ public class InviteService {
         invite.setStatus(InviteStatus.DECLINED);
         Invite updatedInvite = inviteRepository.save(invite);
 
-        emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+        emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
