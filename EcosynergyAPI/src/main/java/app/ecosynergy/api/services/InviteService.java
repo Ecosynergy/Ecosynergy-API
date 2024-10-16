@@ -231,4 +231,19 @@ public class InviteService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public List<InviteVO> findByTeamId(Long teamId) {
+        return inviteRepository.findByTeamId(teamId)
+                .stream()
+                .map(invite -> {
+                    InviteVO inviteVO = DozerMapper.parseObject(invite, InviteVO.class);
+
+                    inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+                    inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
+
+                    inviteVO.add(linkTo(methodOn(InviteController.class).findById(inviteVO.getId())).withSelfRel());
+                    return inviteVO;
+                })
+                .collect(Collectors.toList());
+    }
 }

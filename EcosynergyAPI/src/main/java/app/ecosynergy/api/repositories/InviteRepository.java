@@ -12,6 +12,8 @@ public interface InviteRepository extends JpaRepository<Invite, Long> {
 
     List<Invite> findByRecipientId(Long recipientId);
 
+    List<Invite> findByTeamId(Long teamId);
+
     List<Invite> findByStatus(InviteStatus status);
 
     List<Invite> findByRecipientIdAndStatus(Long recipientId, InviteStatus status);

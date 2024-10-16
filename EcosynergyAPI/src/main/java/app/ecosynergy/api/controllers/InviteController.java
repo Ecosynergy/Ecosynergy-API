@@ -93,4 +93,14 @@ public class InviteController {
         List<InviteVO> invites = inviteService.findInvitesByRecipient(recipientId);
         return ResponseEntity.ok(invites);
     }
+
+    @GetMapping(
+            value = "/team/{teamId}",
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+    )
+    public ResponseEntity<List<InviteVO>> findInvitesByTeamId(@PathVariable Long teamId) {
+        List<InviteVO> invites = inviteService.findByTeamId(teamId);
+
+        return ResponseEntity.ok(invites);
+    }
 }
