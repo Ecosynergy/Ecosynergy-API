@@ -122,4 +122,19 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
         return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(SelfAdditionToTeamException.class)
+    public final ResponseEntity<ExceptionResponse> handleSelfAdditionToTeamException(
+            SelfAdditionToTeamException ex, WebRequest request
+    ) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
 }
