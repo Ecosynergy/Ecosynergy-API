@@ -148,21 +148,25 @@ public class TeamService {
 
         User currentUser = userService.getCurrentUser();
 
-        Set<TeamMember> teamMembers = team.getMembers().stream().map(memberRoleVO -> {
-            User user = userRepository.findById(memberRoleVO.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + memberRoleVO.getId()));
+        Set<TeamMember> teamMembers = new HashSet<>();
 
-            if(Objects.equals(user.getId(), currentUser.getId())) throw new SelfAdditionToTeamException();
+        if(!team.getMembers().isEmpty()) {
+            teamMembers = team.getMembers().stream().map(memberRoleVO -> {
+                User user = userRepository.findById(memberRoleVO.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + memberRoleVO.getId()));
 
-            TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), user.getId());
-            TeamMember teamMember = new TeamMember();
-            teamMember.setId(teamMemberId);
-            teamMember.setTeam(finalTeamEntity);
-            teamMember.setUser(user);
-            teamMember.setRole(Role.valueOf(memberRoleVO.getRole().toUpperCase()));
+                if (Objects.equals(user.getId(), currentUser.getId())) throw new SelfAdditionToTeamException();
 
-            return teamMember;
-        }).collect(Collectors.toSet());
+                TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), user.getId());
+                TeamMember teamMember = new TeamMember();
+                teamMember.setId(teamMemberId);
+                teamMember.setTeam(finalTeamEntity);
+                teamMember.setUser(user);
+                teamMember.setRole(Role.valueOf(memberRoleVO.getRole().toUpperCase()));
+
+                return teamMember;
+            }).collect(Collectors.toSet());
+        }
 
         TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), currentUser.getId());
         TeamMember teamMember = new TeamMember();
