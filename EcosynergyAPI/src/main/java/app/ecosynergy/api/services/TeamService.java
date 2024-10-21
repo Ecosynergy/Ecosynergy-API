@@ -7,11 +7,14 @@ import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
+import app.ecosynergy.api.exceptions.SelfAdditionToTeamException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.*;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
 import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.repositories.UserRepository;
+import app.ecosynergy.api.security.jwt.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +34,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class TeamService {
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private HttpServletRequest request;
+
     @Autowired
     private TeamRepository teamRepository;
 
@@ -142,9 +152,13 @@ public class TeamService {
 
         Team finalTeamEntity = teamRepository.save(teamEntity);
 
+        User currentUser = getCurrentUser();
+
         Set<TeamMember> teamMembers = team.getMembers().stream().map(memberRoleVO -> {
             User user = userRepository.findById(memberRoleVO.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + memberRoleVO.getId()));
+
+            if(Objects.equals(user.getId(), currentUser.getId())) throw new SelfAdditionToTeamException();
 
             TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), user.getId());
             TeamMember teamMember = new TeamMember();
@@ -155,6 +169,15 @@ public class TeamService {
 
             return teamMember;
         }).collect(Collectors.toSet());
+
+        TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), currentUser.getId());
+        TeamMember teamMember = new TeamMember();
+        teamMember.setId(teamMemberId);
+        teamMember.setTeam(finalTeamEntity);
+        teamMember.setUser(currentUser);
+        teamMember.setRole(Role.FOUNDER);
+
+        teamMembers.add(teamMember);
 
         teamEntity.setTeamMembers(teamMembers);
         teamEntity.setCreatedAt(teamEntity.getCreatedAt().withZoneSameInstant(teamEntity.getTimeZone()));
@@ -281,10 +304,12 @@ public class TeamService {
 
         teamMemberRepository.delete(teamMember);
 
-        teamRepository.save(team);
+        if(team.getTeamMembers().isEmpty()) {
+            teamRepository.deleteById(teamMemberId.getTeamId());
+        } else {
+            teamRepository.save(team);
+        }
     }
-
-
 
     @Transactional(readOnly = true)
     public List<TeamVO> findTeamsByUserId(Long userId) {
@@ -331,5 +356,13 @@ public class TeamService {
         teamVO.add(linkTo(methodOn(TeamController.class).findById(teamVO.getKey())).withSelfRel());
 
         return teamVO;
+    }
+
+    private User getCurrentUser() {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        String username = jwtTokenProvider.decodedToken(accessToken).getSubject();
+
+        return userRepository.findByUsername(username);
     }
 }

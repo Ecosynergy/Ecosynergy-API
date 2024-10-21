@@ -17,4 +17,7 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, TeamMemb
     boolean existsByTeamIdAndUserId(Long teamId, Long userId);
 
     boolean existsByTeamIdAndUserIdAndRole(Long teamId, Long userId, Role role);
+
+    @Query("SELECT tm.team FROM TeamMember tm WHERE tm.team.id = :teamId")
+    List<TeamMember> findByTeamId(Long teamId);
 }
