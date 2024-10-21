@@ -7,7 +7,6 @@ import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
-import app.ecosynergy.api.exceptions.SelfAdditionToTeamException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.*;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -149,24 +147,6 @@ public class TeamService {
         User currentUser = userService.getCurrentUser();
 
         Set<TeamMember> teamMembers = new HashSet<>();
-
-        if(!team.getMembers().isEmpty()) {
-            teamMembers = team.getMembers().stream().map(memberRoleVO -> {
-                User user = userRepository.findById(memberRoleVO.getId())
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + memberRoleVO.getId()));
-
-                if (Objects.equals(user.getId(), currentUser.getId())) throw new SelfAdditionToTeamException();
-
-                TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), user.getId());
-                TeamMember teamMember = new TeamMember();
-                teamMember.setId(teamMemberId);
-                teamMember.setTeam(finalTeamEntity);
-                teamMember.setUser(user);
-                teamMember.setRole(Role.valueOf(memberRoleVO.getRole().toUpperCase()));
-
-                return teamMember;
-            }).collect(Collectors.toSet());
-        }
 
         TeamMemberId teamMemberId = new TeamMemberId(finalTeamEntity.getId(), currentUser.getId());
         TeamMember teamMember = new TeamMember();

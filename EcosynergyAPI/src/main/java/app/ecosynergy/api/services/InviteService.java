@@ -106,7 +106,8 @@ public class InviteService {
         }
 
         boolean isAdmin = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), sender.get().getId(), Role.ADMINISTRATOR);
-        if(!isAdmin) throw new UnauthorizedException("User is not an ADMINISTRATOR of the team");
+        boolean isFounder = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), sender.get().getId(), Role.FOUNDER);
+        if(!isAdmin && !isFounder) throw new UnauthorizedException("User is not an ADMINISTRATOR of the team");
 
         boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.get().getId(), recipient.get().getId());
         if(isMember) throw new ResourceAlreadyExistsException("Recipient is already a member of the team");
