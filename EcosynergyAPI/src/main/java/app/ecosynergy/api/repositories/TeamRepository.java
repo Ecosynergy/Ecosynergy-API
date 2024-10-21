@@ -23,6 +23,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     @Query("SELECT t FROM Team t JOIN FETCH t.teamMembers tm JOIN FETCH tm.user WHERE t.handle = :handle")
     Optional<Team> findByHandleWithMembers(@Param("handle") String handle);
 
+    Optional<Team> findByHandle(String handle);
+
     @Query("SELECT t FROM Team t JOIN FETCH t.teamMembers tm JOIN FETCH tm.user WHERE t.handle LIKE %:handle%")
     List<Team> findByHandleContaining(@Param("handle") String handle);
 }

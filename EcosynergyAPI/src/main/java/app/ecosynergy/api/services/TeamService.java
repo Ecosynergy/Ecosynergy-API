@@ -124,8 +124,7 @@ public class TeamService {
                 team.getActivity() == null
         ) throw new RequiredObjectIsNullException();
 
-
-        boolean isHandlerExists = teamRepository.findByHandleWithMembers(team.getHandle()).isPresent();
+        boolean isHandlerExists = teamRepository.findByHandle(team.getHandle()).isPresent();
         if(isHandlerExists) throw new ResourceAlreadyExistsException("A team with the given handle already exists: " + team.getHandle());
 
         Team teamEntity = new Team();
