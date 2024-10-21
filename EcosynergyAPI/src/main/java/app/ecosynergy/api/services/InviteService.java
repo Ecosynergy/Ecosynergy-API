@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -39,6 +40,9 @@ public class InviteService {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private TeamMemberRepository teamMemberRepository;
 
     @Autowired
@@ -53,7 +57,13 @@ public class InviteService {
     @Autowired
     private PagedResourcesAssembler<InviteVO> assembler;
 
+    private User currentUser;
+
     private static final Logger logger = Logger.getLogger(InviteService.class.getName());
+
+    private User getCurrentUser() {
+        return userService.getCurrentUser();
+    }
 
     public PagedModel<EntityModel<InviteVO>> findAllPaged(int page, int limit, String direction) {
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -95,25 +105,26 @@ public class InviteService {
 
     @Transactional
     public InviteVO createInvite(InviteVO inviteVO) throws MessagingException {
-        if(inviteVO.getSenderId() == null || inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null) throw new RequiredObjectIsNullException("Invalid User or Team");
+        if(inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null) throw new RequiredObjectIsNullException("Invalid User or Team");
 
-        Optional<User> sender = userRepository.findById(inviteVO.getSenderId());
+        currentUser = getCurrentUser();
+
         Optional<User> recipient = userRepository.findById(inviteVO.getRecipientId());
         Optional<Team> team = teamRepository.findById(inviteVO.getTeamId());
 
-        if (sender.isEmpty() || recipient.isEmpty() || team.isEmpty()) {
+        if (recipient.isEmpty() || team.isEmpty()) {
             throw new ResourceNotFoundException("Invalid User or Team");
         }
 
-        boolean isAdmin = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), sender.get().getId(), Role.ADMINISTRATOR);
-        boolean isFounder = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), sender.get().getId(), Role.FOUNDER);
+        boolean isAdmin = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), currentUser.getId(), Role.ADMINISTRATOR);
+        boolean isFounder = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), currentUser.getId(), Role.FOUNDER);
         if(!isAdmin && !isFounder) throw new UnauthorizedException("User is not an ADMINISTRATOR of the team");
 
         boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.get().getId(), recipient.get().getId());
         if(isMember) throw new ResourceAlreadyExistsException("Recipient is already a member of the team");
 
         boolean inviteExists = inviteRepository.existsBySenderIdAndRecipientIdAndTeamIdAndStatus(
-                sender.get().getId(),
+                currentUser.getId(),
                 recipient.get().getId(),
                 team.get().getId(),
                 InviteStatus.PENDING
@@ -121,14 +132,14 @@ public class InviteService {
         if(inviteExists) throw new ResourceAlreadyExistsException("An invite with the same sender, recipient, and team already exists");
 
         Invite invite = new Invite();
-        invite.setSender(sender.get());
+        invite.setSender(currentUser);
         invite.setRecipient(recipient.get());
         invite.setTeam(team.get());
         invite.setStatus(InviteStatus.PENDING);
 
         Invite savedInvite = inviteRepository.save(invite);
 
-        emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), sender.get().getFullName());
+        emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), currentUser.getFullName());
 
         InviteVO savedInviteVO = DozerMapper.parseObject(savedInvite, InviteVO.class);
         savedInviteVO.setCreatedAt(savedInviteVO.getCreatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
@@ -145,6 +156,10 @@ public class InviteService {
         if (invite.getStatus() != InviteStatus.PENDING) {
             throw new InviteAlreadyRespondedException("Invite has already been responded to");
         }
+
+        currentUser = getCurrentUser();
+
+        if(!Objects.equals(invite.getRecipient().getId(), currentUser.getId())) throw new UnauthorizedActionException("You are not authorized to accept this invite");
 
         invite.setStatus(InviteStatus.ACCEPTED);
 
@@ -174,6 +189,10 @@ public class InviteService {
         if (invite.getStatus() != InviteStatus.PENDING) {
             throw new InviteAlreadyRespondedException("Invite has already been responded to");
         }
+
+        currentUser = getCurrentUser();
+
+        if(!Objects.equals(invite.getRecipient().getId(), currentUser.getId())) throw new UnauthorizedActionException("You are not authorized to decline this invite");
 
         invite.setStatus(InviteStatus.DECLINED);
         Invite updatedInvite = inviteRepository.save(invite);
