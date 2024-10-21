@@ -10,6 +10,7 @@ import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -39,14 +40,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserService implements UserDetailsService {
     private final UserRepository repository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final HttpServletRequest request;
     private final PagedResourcesAssembler<UserVO> assembler;
 
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     @Autowired
-    public UserService(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, PagedResourcesAssembler<UserVO> assembler) {
+    public UserService(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, HttpServletRequest request, PagedResourcesAssembler<UserVO> assembler) {
         this.repository = repository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.request = request;
         this.assembler = assembler;
     }
 
@@ -114,20 +117,20 @@ public class UserService implements UserDetailsService {
         return vo;
     }
 
-    public UserVO findByAccessToken(String accessToken) {
-        String token = jwtTokenProvider.resolveToken(accessToken);
+    public User getCurrentUser() {
+        String token = jwtTokenProvider.resolveToken(request);
 
         DecodedJWT decodedJWT = jwtTokenProvider.decodedToken(token);
 
-        return findByUsername(decodedJWT.getSubject());
+        return repository.findByUsername(decodedJWT.getSubject());
     }
 
-    public List<UserVO> findByUsernameContaining(String username) {
-        if(username == null) throw new RequiredObjectIsNullException();
+    public List<UserVO> findByIdentifierContaining(String identifier) {
+        if(identifier == null) throw new RequiredObjectIsNullException();
 
-        logger.info("Searching Users by Username!");
+        logger.info("Searching Users by Identifier (username or email)!");
 
-        List<User> entities = repository.findByUsernameContaining(username);
+        List<User> entities = repository.findByIdentifierContaining(identifier);
 
         return entities.stream().map(entity -> {
             UserVO userVO = DozerMapper.parseObject(entity, UserVO.class);

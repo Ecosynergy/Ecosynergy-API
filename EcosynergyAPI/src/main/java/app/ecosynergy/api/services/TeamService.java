@@ -13,8 +13,6 @@ import app.ecosynergy.api.models.*;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
 import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.repositories.UserRepository;
-import app.ecosynergy.api.security.jwt.JwtTokenProvider;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,18 +32,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class TeamService {
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private HttpServletRequest request;
-
     @Autowired
     private TeamRepository teamRepository;
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ActivityService activityService;
@@ -152,7 +146,7 @@ public class TeamService {
 
         Team finalTeamEntity = teamRepository.save(teamEntity);
 
-        User currentUser = getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
         Set<TeamMember> teamMembers = team.getMembers().stream().map(memberRoleVO -> {
             User user = userRepository.findById(memberRoleVO.getId())
@@ -356,13 +350,5 @@ public class TeamService {
         teamVO.add(linkTo(methodOn(TeamController.class).findById(teamVO.getKey())).withSelfRel());
 
         return teamVO;
-    }
-
-    private User getCurrentUser() {
-        String accessToken = jwtTokenProvider.resolveToken(request);
-
-        String username = jwtTokenProvider.decodedToken(accessToken).getSubject();
-
-        return userRepository.findByUsername(username);
     }
 }

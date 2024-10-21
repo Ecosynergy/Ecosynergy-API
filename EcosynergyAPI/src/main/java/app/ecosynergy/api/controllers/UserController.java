@@ -47,12 +47,12 @@ public class UserController {
         return services.findByUsername(username);
     }
 
-    @Operation(summary = "Search Users by Username", description = "Retrieve users by Username")
-    @GetMapping(value = "/search/{username}",
+    @Operation(summary = "Search Users by Identifier", description = "Retrieve users by Identifier")
+    @GetMapping(value = "/search/{identifier}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public List<UserVO> searchUserByUsername(@PathVariable("username") String username){
-        return services.findByUsernameContaining(username);
+    public List<UserVO> searchUserByUsername(@PathVariable("identifier") String identifier){
+        return services.findByIdentifierContaining(identifier);
     }
 
     @Operation(summary = "Get all users", description = "Retrieve a list of all users")
