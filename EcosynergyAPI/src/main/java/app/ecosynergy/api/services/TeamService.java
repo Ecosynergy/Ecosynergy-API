@@ -7,6 +7,7 @@ import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
+import app.ecosynergy.api.exceptions.UnauthorizedActionException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.*;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
@@ -205,6 +206,8 @@ public class TeamService {
     public TeamVO addMember(TeamMemberId teamMemberId, Role role) {
         if(teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || role == null) throw new RequiredObjectIsNullException();
 
+        if(role.equals(Role.FOUNDER)) throw new UnauthorizedActionException("It is not allowed to add a user with the role of FOUNDER to a team");
+
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
         Optional<User> userOpt = userRepository.findById(teamMemberId.getUserId());
 
@@ -242,6 +245,8 @@ public class TeamService {
     public TeamVO updateMemberRole(TeamMemberId teamMemberId, Role newRole) {
         if (teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || newRole == null) throw new RequiredObjectIsNullException();
 
+        if(newRole.equals(Role.FOUNDER)) throw new UnauthorizedActionException("It is not allowed to change the role to FOUNDER");
+
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
         Optional<User> userOpt = userRepository.findById(teamMemberId.getUserId());
 
@@ -259,6 +264,8 @@ public class TeamService {
                 .filter(tm -> tm.getUser().equals(user))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("User is not a member of this team"));
+
+        if(teamMember.getRole().equals(Role.FOUNDER)) throw new UnauthorizedActionException("It is not permitted to change the role of a founder");
 
         teamMember.setRole(newRole);
 
