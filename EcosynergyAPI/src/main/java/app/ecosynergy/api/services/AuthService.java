@@ -4,6 +4,7 @@ import app.ecosynergy.api.controllers.UserController;
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.data.vo.v1.security.AccountCredentialsVO;
 import app.ecosynergy.api.data.vo.v1.security.TokenVO;
+import app.ecosynergy.api.exceptions.InvalidUserDataException;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
@@ -89,6 +90,7 @@ public class AuthService {
     public UserVO signUp(UserVO user) throws MessagingException {
         String currentPassword = user.getPassword();
 
+        if(containsSpecialCharacters(user.getFullName())) throw new InvalidUserDataException("Full name contains special characters or digits.");
         user.setUserName(user.getUserName().toLowerCase());
         user.setEmail(user.getEmail().toLowerCase());
         user.setPassword(passwordEncode(currentPassword));
@@ -155,6 +157,10 @@ public class AuthService {
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
+    }
+
+    private boolean containsSpecialCharacters(String fullName) {
+        return fullName != null && !fullName.matches("[a-zA-Z\\s]+");
     }
 
     private String passwordEncode(String password){

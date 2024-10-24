@@ -43,6 +43,9 @@ public class User implements UserDetails, Serializable {
     @Column
     private String nationality;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserToken> tokens = new ArrayList<>();
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
 
@@ -168,6 +171,14 @@ public class User implements UserDetails, Serializable {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public List<UserToken> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<UserToken> tokens) {
+        this.tokens = tokens;
     }
 
     public ZonedDateTime getCreatedAt() {
