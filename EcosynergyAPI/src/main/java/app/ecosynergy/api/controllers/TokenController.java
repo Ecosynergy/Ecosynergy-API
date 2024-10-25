@@ -1,19 +1,17 @@
 package app.ecosynergy.api.controllers;
 
-import app.ecosynergy.api.services.TokenService;
 import app.ecosynergy.api.models.UserToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-
+import app.ecosynergy.api.services.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/token/v1")
@@ -31,11 +29,9 @@ public class TokenController {
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
     public ResponseEntity<String> saveToken(
-            @Parameter(description = "ID of the user", required = true) @RequestParam Long userId,
             @Parameter(description = "FCM token", required = true) @RequestParam String fcmToken,
-            @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType,
-            @Parameter(description = "Expiration date of the token", required = true) @RequestParam ZonedDateTime expiresAt) {
-        tokenService.saveOrUpdateToken(userId, fcmToken, deviceType, expiresAt);
+            @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
+        tokenService.saveOrUpdateToken(fcmToken, deviceType);
         return ResponseEntity.ok("FCM token saved successfully.");
     }
 
@@ -47,9 +43,8 @@ public class TokenController {
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
     public ResponseEntity<String> removeToken(
-            @Parameter(description = "ID of the user", required = true) @RequestParam Long userId,
             @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        tokenService.removeToken(userId, deviceType);
+        tokenService.removeToken(deviceType);
         return ResponseEntity.ok("FCM token removed successfully.");
     }
 
@@ -59,8 +54,8 @@ public class TokenController {
             @ApiResponse(responseCode = "200", description = "All FCM tokens removed successfully."),
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
-    public ResponseEntity<String> removeAllTokens(@Parameter(description = "ID of the user", required = true) @RequestParam Long userId) {
-        tokenService.removeAllTokens(userId);
+    public ResponseEntity<String> removeAllTokens() {
+        tokenService.removeAllTokens();
         return ResponseEntity.ok("All FCM tokens removed successfully.");
     }
 
@@ -71,9 +66,8 @@ public class TokenController {
             @ApiResponse(responseCode = "404", description = "Token not found.")
     })
     public ResponseEntity<List<String>> getUserTokens(
-            @Parameter(description = "ID of the user", required = true) @RequestParam Long userId,
             @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        List<String> tokens = tokenService.getUserToken(userId, deviceType);
+        List<String> tokens = tokenService.getUserToken(deviceType);
         return ResponseEntity.ok(tokens);
     }
 
@@ -83,8 +77,8 @@ public class TokenController {
             @ApiResponse(responseCode = "200", description = "Tokens found."),
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
-    public ResponseEntity<List<UserToken>> getAllUserTokens(@Parameter(description = "ID of the user", required = true) @RequestParam Long userId) {
-        List<UserToken> tokens = tokenService.getAllUserTokens(userId);
+    public ResponseEntity<List<UserToken>> getAllUserTokens() {
+        List<UserToken> tokens = tokenService.getAllUserTokens();
         return ResponseEntity.ok(tokens);
     }
 }

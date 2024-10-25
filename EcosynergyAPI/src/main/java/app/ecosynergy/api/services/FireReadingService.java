@@ -9,6 +9,7 @@ import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.FireReading;
 import app.ecosynergy.api.models.Team;
 import app.ecosynergy.api.repositories.FireReadingRepository;
+import app.ecosynergy.api.services.notification.FireSensorNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,9 @@ public class FireReadingService {
 
     @Autowired
     private TeamService teamService;
+
+    @Autowired
+    private FireSensorNotificationService fireSensorNotificationService;
 
     @Autowired
     private PagedResourcesAssembler<FireReadingVO> assembler;
@@ -124,6 +128,7 @@ public class FireReadingService {
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(team.getTimeZone()));
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
 
+        if(vo.getFire()) fireSensorNotificationService.sendFireDetectedNotification(team.getTeamMembers(), team.getName());
         return vo;
     }
 

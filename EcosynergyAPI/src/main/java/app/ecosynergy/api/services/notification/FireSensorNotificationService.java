@@ -1,9 +1,10 @@
 package app.ecosynergy.api.services.notification;
 
+import app.ecosynergy.api.models.TeamMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class FireSensorNotificationService {
@@ -11,12 +12,12 @@ public class FireSensorNotificationService {
     @Autowired
     private NotificationService notificationService;
 
-    public void sendFireDetectedNotification(List<String> userTokens, String location) {
+    public void sendFireDetectedNotification(Set<TeamMember> teamMembers, String teamName) {
         String title = "Fire Detected!";
-        String body = "A fire has been detected at " + location + ". Please take immediate action!";
+        String body = "A fire has been detected by the team " + teamName + ". Please take immediate action!";
 
-        for (String userToken : userTokens) {
-            notificationService.sendNotificationToUser(userToken, title, body);
+        for (TeamMember teamMember : teamMembers) {
+            teamMember.getUser().getTokens().forEach(userToken -> notificationService.sendNotificationToUser(userToken.getToken(), title, body));
         }
     }
 }

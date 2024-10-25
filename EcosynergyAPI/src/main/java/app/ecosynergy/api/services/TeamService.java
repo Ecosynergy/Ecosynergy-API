@@ -13,6 +13,7 @@ import app.ecosynergy.api.models.*;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
 import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.repositories.UserRepository;
+import app.ecosynergy.api.services.notification.TeamNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,9 @@ public class TeamService {
 
     @Autowired
     private TeamMemberRepository teamMemberRepository;
+
+    @Autowired
+    private TeamNotificationService teamNotificationService;
 
     @Autowired
     private PagedResourcesAssembler<TeamVO> assembler;
@@ -260,6 +264,12 @@ public class TeamService {
         Team team = teamOpt.get();
         User user = userOpt.get();
 
+        User currentUser = userService.getCurrentUser();
+
+        boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.getId(), currentUser.getId());
+
+        if(!isMember) throw new UnauthorizedActionException("You don't belong on the team");
+
         TeamMember teamMember = team.getTeamMembers().stream()
                 .filter(tm -> tm.getUser().equals(user))
                 .findFirst()
@@ -274,6 +284,8 @@ public class TeamService {
 
         teamRepository.save(team);
 
+        teamNotificationService.sendMemberPromotedNotification(user.getTokens(), currentUser.getUserName(), team.getName(), newRole.toString());
+
         return convertToVO(team);
     }
 
@@ -285,6 +297,11 @@ public class TeamService {
         TeamMember teamMember = teamMemberRepository.findById(teamMemberId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team Member not found with the given IDs: teamId=" + teamMemberId.getTeamId() + ", userId=" + teamMemberId.getUserId()));
 
+        User currentUser = userService.getCurrentUser();
+
+        boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.getId(), currentUser.getId());
+        if(!isMember) throw new UnauthorizedActionException("You don't belong on the team");
+
         team.getTeamMembers().remove(teamMember);
 
         teamMemberRepository.delete(teamMember);
@@ -294,6 +311,8 @@ public class TeamService {
         } else {
             teamRepository.save(team);
         }
+
+        teamNotificationService.sendMemberRemovedNotification(teamMember.getUser().getTokens(), currentUser.getUserName(), teamMember.getTeam().getName());
     }
 
     @Transactional(readOnly = true)

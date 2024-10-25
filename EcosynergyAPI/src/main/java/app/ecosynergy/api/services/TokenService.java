@@ -7,7 +7,6 @@ import app.ecosynergy.api.repositories.UserTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -17,27 +16,25 @@ public class TokenService {
     private UserRepository userRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private UserTokenRepository userTokenRepository;
 
-    public void saveOrUpdateToken(Long userId, String fcmToken, String deviceType, ZonedDateTime expiresAt) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void saveOrUpdateToken(String fcmToken, String deviceType) {
+        User user = userService.getCurrentUser();
 
-        UserToken existingToken = userTokenRepository.findByUserId(userId)
-                .stream()
+        UserToken existingToken = user.getTokens().stream()
                 .filter(token -> token.getDeviceType().equals(deviceType))
                 .findFirst()
                 .orElse(null);
 
         if (existingToken != null) {
             existingToken.setToken(fcmToken);
-            existingToken.setExpiresAt(expiresAt);
-            userTokenRepository.save(existingToken);
         } else {
             UserToken newToken = new UserToken();
             newToken.setToken(fcmToken);
             newToken.setDeviceType(deviceType);
-            newToken.setExpiresAt(expiresAt);
             newToken.setUser(user);
             user.getTokens().add(newToken);
         }
@@ -45,9 +42,8 @@ public class TokenService {
         userRepository.save(user);
     }
 
-    public void removeToken(Long userId, String deviceType) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void removeToken(String deviceType) {
+        User user = userService.getCurrentUser();
 
         List<UserToken> tokens = user.getTokens();
         tokens.removeIf(token -> token.getDeviceType().equals(deviceType));
@@ -55,23 +51,22 @@ public class TokenService {
         userRepository.save(user);
     }
 
-    public void removeAllTokens(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void removeAllTokens() {
+        User user = userService.getCurrentUser();
 
         user.getTokens().clear();
         userRepository.save(user);
     }
 
-    public List<String> getUserToken(Long userId, String deviceType) {
-        return userTokenRepository.findByUserId(userId)
+    public List<String> getUserToken(String deviceType) {
+        return userTokenRepository.findByUserId(userService.getCurrentUser().getId())
                 .stream()
                 .filter(token -> token.getDeviceType().equals(deviceType))
                 .map(UserToken::getToken)
                 .toList();
     }
 
-    public List<UserToken> getAllUserTokens(Long userId) {
-        return userTokenRepository.findByUserId(userId);
+    public List<UserToken> getAllUserTokens() {
+        return userTokenRepository.findByUserId(userService.getCurrentUser().getId());
     }
 }

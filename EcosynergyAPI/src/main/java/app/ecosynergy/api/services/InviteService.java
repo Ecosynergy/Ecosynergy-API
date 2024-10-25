@@ -9,6 +9,7 @@ import app.ecosynergy.api.repositories.InviteRepository;
 import app.ecosynergy.api.repositories.TeamMemberRepository;
 import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.repositories.UserRepository;
+import app.ecosynergy.api.services.notification.InvitationNotificationService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,6 +54,9 @@ public class InviteService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private InvitationNotificationService invitationNotificationService;
 
     @Autowired
     private PagedResourcesAssembler<InviteVO> assembler;
@@ -141,10 +145,13 @@ public class InviteService {
 
         emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), currentUser.getFullName());
 
+        invitationNotificationService.sendInviteNotification(savedInvite.getRecipient().getTokens(), savedInvite.getSender().getUserName(), savedInvite.getTeam().getName());
+
         InviteVO savedInviteVO = DozerMapper.parseObject(savedInvite, InviteVO.class);
         savedInviteVO.setCreatedAt(savedInviteVO.getCreatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
         savedInviteVO.setUpdatedAt(savedInviteVO.getUpdatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
         savedInviteVO.add(linkTo(methodOn(InviteController.class).findById(savedInviteVO.getId())).withSelfRel());
+
         return savedInviteVO;
     }
 
@@ -174,6 +181,8 @@ public class InviteService {
 
         emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
+        invitationNotificationService.sendInviteAcceptedNotification(updatedInvite.getSender().getTokens(), updatedInvite.getRecipient().getUserName(), updatedInvite.getTeam().getName());
+
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
         inviteVO.setUpdatedAt(inviteVO.getUpdatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
@@ -198,6 +207,8 @@ public class InviteService {
         Invite updatedInvite = inviteRepository.save(invite);
 
         emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+
+        invitationNotificationService.sendInviteDeclinedNotification(updatedInvite.getSender().getTokens(), updatedInvite.getRecipient().getUserName(), updatedInvite.getTeam().getName());
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));

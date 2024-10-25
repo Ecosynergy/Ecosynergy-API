@@ -1,6 +1,7 @@
 package app.ecosynergy.api.models;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
@@ -20,9 +21,6 @@ public class UserToken implements Serializable {
 
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
-
-    @Column(name = "expires_at")
-    private ZonedDateTime expiresAt;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -67,14 +65,6 @@ public class UserToken implements Serializable {
 
     public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public ZonedDateTime getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(ZonedDateTime expiresAt) {
-        this.expiresAt = expiresAt;
     }
 
     public Boolean getActive() {
