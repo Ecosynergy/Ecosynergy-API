@@ -192,15 +192,16 @@ public class UserService implements UserDetailsService {
     }
 
     public UserVO resetPassword(UserVO user){
-        if(user.getUserName() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
+        if(user.getPassword() == null) throw new RequiredObjectIsNullException();
 
         logger.info("Recovering password");
 
-        User entity = repository.findByUsername(user.getUserName());
+        User entity = getCurrentUser();
 
         entity.setPassword(passwordEncode(user.getPassword()));
 
         UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
+
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
