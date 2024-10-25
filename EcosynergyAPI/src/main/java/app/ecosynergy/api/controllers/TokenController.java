@@ -70,11 +70,11 @@ public class TokenController {
             @ApiResponse(responseCode = "200", description = "Token found."),
             @ApiResponse(responseCode = "404", description = "Token not found.")
     })
-    public ResponseEntity<String> getUserToken(
+    public ResponseEntity<List<String>> getUserTokens(
             @Parameter(description = "ID of the user", required = true) @RequestParam Long userId,
             @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        String token = tokenService.getUserToken(userId, deviceType);
-        return ResponseEntity.ok(token != null ? token : "Token not found.");
+        List<String> tokens = tokenService.getUserToken(userId, deviceType);
+        return ResponseEntity.ok(tokens);
     }
 
     @GetMapping("/all")

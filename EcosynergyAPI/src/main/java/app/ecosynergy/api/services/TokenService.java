@@ -32,6 +32,7 @@ public class TokenService {
         if (existingToken != null) {
             existingToken.setToken(fcmToken);
             existingToken.setExpiresAt(expiresAt);
+            userTokenRepository.save(existingToken);
         } else {
             UserToken newToken = new UserToken();
             newToken.setToken(fcmToken);
@@ -62,13 +63,12 @@ public class TokenService {
         userRepository.save(user);
     }
 
-    public String getUserToken(Long userId, String deviceType) {
+    public List<String> getUserToken(Long userId, String deviceType) {
         return userTokenRepository.findByUserId(userId)
                 .stream()
                 .filter(token -> token.getDeviceType().equals(deviceType))
                 .map(UserToken::getToken)
-                .findFirst()
-                .orElse(null);
+                .toList();
     }
 
     public List<UserToken> getAllUserTokens(Long userId) {

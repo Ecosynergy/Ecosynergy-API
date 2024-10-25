@@ -43,7 +43,7 @@ public class User implements UserDetails, Serializable {
     @Column
     private String nationality;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserToken> tokens = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
