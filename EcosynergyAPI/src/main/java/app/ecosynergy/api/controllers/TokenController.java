@@ -1,6 +1,6 @@
 package app.ecosynergy.api.controllers;
 
-import app.ecosynergy.api.models.UserToken;
+import app.ecosynergy.api.data.vo.v1.UserTokenVO;
 import app.ecosynergy.api.services.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,9 +65,9 @@ public class TokenController {
             @ApiResponse(responseCode = "200", description = "Token found."),
             @ApiResponse(responseCode = "404", description = "Token not found.")
     })
-    public ResponseEntity<List<String>> getUserTokens(
+    public ResponseEntity<List<UserTokenVO>> getUserTokens(
             @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        List<String> tokens = tokenService.getUserToken(deviceType);
+        List<UserTokenVO> tokens = tokenService.getUserToken(deviceType);
         return ResponseEntity.ok(tokens);
     }
 
@@ -77,8 +77,8 @@ public class TokenController {
             @ApiResponse(responseCode = "200", description = "Tokens found."),
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
-    public ResponseEntity<List<UserToken>> getAllUserTokens() {
-        List<UserToken> tokens = tokenService.getAllUserTokens();
+    public ResponseEntity<List<UserTokenVO>> getAllUserTokens() {
+        List<UserTokenVO> tokens = tokenService.getAllUserTokens();
         return ResponseEntity.ok(tokens);
     }
 }

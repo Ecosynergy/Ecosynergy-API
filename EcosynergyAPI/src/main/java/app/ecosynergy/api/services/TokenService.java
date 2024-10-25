@@ -1,5 +1,7 @@
 package app.ecosynergy.api.services;
 
+import app.ecosynergy.api.data.vo.v1.UserTokenVO;
+import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.models.UserToken;
 import app.ecosynergy.api.repositories.UserRepository;
@@ -58,15 +60,18 @@ public class TokenService {
         userRepository.save(user);
     }
 
-    public List<String> getUserToken(String deviceType) {
-        return userTokenRepository.findByUserId(userService.getCurrentUser().getId())
+    public List<UserTokenVO> getUserToken(String deviceType) {
+        List<UserToken> userTokens = userTokenRepository.findByUserId(userService.getCurrentUser().getId())
                 .stream()
                 .filter(token -> token.getDeviceType().equals(deviceType))
-                .map(UserToken::getToken)
                 .toList();
+
+        return DozerMapper.parseListObjects(userTokens, UserTokenVO.class);
     }
 
-    public List<UserToken> getAllUserTokens() {
-        return userTokenRepository.findByUserId(userService.getCurrentUser().getId());
+    public List<UserTokenVO> getAllUserTokens() {
+        List<UserToken> userTokens = userTokenRepository.findByUserId(userService.getCurrentUser().getId());
+
+        return DozerMapper.parseListObjects(userTokens, UserTokenVO.class);
     }
 }
