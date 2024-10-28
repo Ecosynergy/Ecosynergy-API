@@ -147,9 +147,9 @@ public class AuthService {
     }
 
     public UserVO forgotPassword(UserVO user){
-        if(user.getUserName() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
+        if(user.getEmail() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
 
-        User entity = repository.findByUsername(user.getUserName());
+        User entity = repository.findByEmail(user.getEmail());
 
         entity.setPassword(passwordEncode(user.getPassword()));
 
