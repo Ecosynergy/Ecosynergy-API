@@ -27,10 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -163,16 +160,16 @@ public class UserService implements UserDetailsService {
     public UserVO update(Long id, UserVO user){
         if(user == null) throw new RequiredObjectIsNullException();
 
+        User entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
+
         boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
 
-        if(isAlreadyExists) throw new ResourceAlreadyExistsException("The username: '" + user.getUserName() + "' is already in use");
+        if(isAlreadyExists && !Objects.equals(entity.getUserName(), user.getUserName())) throw new ResourceAlreadyExistsException("The username: '" + user.getUserName() + "' is already in use");
 
         isAlreadyExists = repository.existsByEmail(user.getEmail());
 
-        if(isAlreadyExists) throw new ResourceAlreadyExistsException("The email: '" + user.getEmail() + "' is already in use");
-
-        User entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
+        if(isAlreadyExists && !Objects.equals(entity.getEmail(), user.getEmail())) throw new ResourceAlreadyExistsException("The email: '" + user.getEmail() + "' is already in use");
 
         entity.setUserName(user.getUserName() != null ? user.getUserName().toLowerCase(Locale.ROOT) : entity.getUserName());
         entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
