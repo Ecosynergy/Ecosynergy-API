@@ -163,6 +163,14 @@ public class UserService implements UserDetailsService {
     public UserVO update(Long id, UserVO user){
         if(user == null) throw new RequiredObjectIsNullException();
 
+        boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
+
+        if(isAlreadyExists) throw new ResourceAlreadyExistsException("The username: '" + user.getUserName() + "' is already in use");
+
+        isAlreadyExists = repository.existsByEmail(user.getEmail());
+
+        if(isAlreadyExists) throw new ResourceAlreadyExistsException("The email: '" + user.getEmail() + "' is already in use");
+
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
 
