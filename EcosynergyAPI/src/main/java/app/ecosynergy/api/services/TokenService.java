@@ -1,6 +1,8 @@
 package app.ecosynergy.api.services;
 
 import app.ecosynergy.api.data.vo.v1.UserTokenVO;
+import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
+import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.models.UserToken;
@@ -73,5 +75,11 @@ public class TokenService {
         List<UserToken> userTokens = userTokenRepository.findByUserId(userService.getCurrentUser().getId());
 
         return DozerMapper.parseListObjects(userTokens, UserTokenVO.class);
+    }
+
+    public UserToken findByToken(String token) {
+        if(token == null) throw new RequiredObjectIsNullException();
+
+        return userTokenRepository.findByToken(token).orElseThrow(() -> new ResourceNotFoundException("FCM Token not found"));
     }
 }
