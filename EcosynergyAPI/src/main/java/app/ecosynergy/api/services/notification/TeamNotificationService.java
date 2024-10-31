@@ -18,8 +18,8 @@ public class TeamNotificationService {
     private NotificationService notificationService;
 
     public void sendMemberAddedNotification(List<UserToken> newMemberTokens, Team team) {
-        String title = "Welcome to the team!";
-        String body = "You have been added to the team " + team.getName() + ". We're excited to have you with us!";
+        String title = "Bem-vindo à equipe!";
+        String body = "Você entrou na equipe " + team.getName() + ". Estamos animados por tê-lo conosco!";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
@@ -32,8 +32,8 @@ public class TeamNotificationService {
     }
 
     public void sendMemberRemovedNotification(List<UserToken> removedMemberTokens, String removerName, Team team) {
-        String title = "You were removed from the team";
-        String body = removerName + " removed you from the team " + team.getName() + ".";
+        String title = "Você foi removido da equipe";
+        String body = removerName + " te removeu da equipe " + team.getName() + ".";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
@@ -45,8 +45,8 @@ public class TeamNotificationService {
     }
 
     public void sendMemberPromotedNotification(List<UserToken> promotedMemberTokens, String promoterName, Team team, String newRole) {
-        String title = "You were promoted!";
-        String body = promoterName + " promoted you to the role of " + (Objects.equals(newRole, COMMON_USER.name()) ? "COMMON USER" : ADMINISTRATOR.name()) + " in the team " + team.getName() + ".";
+        String title = "Você foi promovido!";
+        String body = promoterName + " te promoveu para o cargo de " + (Objects.equals(newRole, COMMON_USER.name()) ? "USUÁRIO COMUM" : ADMINISTRATOR.name()) + " na equipe " + team.getName() + ".";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
@@ -59,8 +59,8 @@ public class TeamNotificationService {
     }
 
     public void sendGoalAchievedNotification(Set<TeamMember> members, Team team, String goalType) {
-        String title = "Goal Achieved!";
-        String body = "The team " + team.getName() + " has achieved the " + goalType + " goal!";
+        String title = "Meta Atingida!";
+        String body = "A equipe " + team.getName() + " atingiu a meta " + goalType + "!";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);

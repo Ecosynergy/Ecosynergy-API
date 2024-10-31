@@ -45,6 +45,7 @@ public class TestController {
         Map<String, String> params = new HashMap<>();
         params.put("title", "Recado do Andinho");
         params.put("body", "Pega a visão");
+        params.put("type", "test");
         params.put("vision", "get the vision");
 
         for (UserToken userToken : user.getTokens()) {

@@ -16,8 +16,8 @@ public class InvitationNotificationService {
     private NotificationService notificationService;
 
     public void sendInviteNotification(List<UserToken> recipientTokens, Invite invite) {
-        String title = "New team invitation!";
-        String body = invite.getSender().getUserName() + " invited you to join the team " + invite.getTeam().getName() + " .";
+        String title = "Novo Convite para a Equipe!";
+        String body = invite.getSender().getUserName() + " te convidou para se juntar à equipe " + invite.getTeam().getName() + ".";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
@@ -27,12 +27,11 @@ public class InvitationNotificationService {
         for (UserToken recipientToken : recipientTokens) {
             notificationService.sendNotificationToUser(recipientToken.getToken(), params);
         }
-
     }
 
     public void sendInviteAcceptedNotification(List<UserToken> senderTokens, Invite invite) {
-        String title = "Invitation Accepted";
-        String body = invite.getRecipient().getUserName() + " accepted your invitation to join the team " + invite.getTeam().getName() + " !";
+        String title = "Convite Aceito";
+        String body = invite.getRecipient().getUserName() + " aceitou seu convite para se juntar à equipe " + invite.getTeam().getName() + "!";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
@@ -45,8 +44,8 @@ public class InvitationNotificationService {
     }
 
     public void sendInviteDeclinedNotification(List<UserToken> senderTokens, Invite invite) {
-        String title = "Invitation Declined";
-        String body = invite.getRecipient().getUserName() + " declined your invitation to join the team " + invite.getTeam().getName() + " .";
+        String title = "Convite Recusado";
+        String body = invite.getRecipient().getUserName() + " recusou seu convite para se juntar à equipe " + invite.getTeam().getName() + ".";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);

@@ -16,8 +16,8 @@ public class FireSensorNotificationService {
     private NotificationService notificationService;
 
     public void sendFireDetectedNotification(Set<TeamMember> teamMembers, Team team) {
-        String title = "Fire Detected!";
-        String body = "A fire has been detected by the team " + team.getName() + ". Please take immediate action!";
+        String title = "Fogo Detectado!";
+        String body = "Fogo foi detectado pela equipe " + team.getName() + ". Por favor, tome medidas imediatamente!";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
