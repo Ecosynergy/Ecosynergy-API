@@ -30,7 +30,7 @@ public class MQ7ReadingController {
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ7ReadingVO findById(@PathVariable("id") Long id
-    ){
+    ) {
         return service.findById(id);
     }
 
@@ -40,10 +40,10 @@ public class MQ7ReadingController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-    ){
+    ) {
         page--;
 
-        if(limit == null)  limit = (int) service.countAllReadings();
+        if (limit == null) limit = (int) service.countAllReadings();
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
@@ -57,15 +57,15 @@ public class MQ7ReadingController {
             value = "/team/{teamHandle}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<PagedModel<EntityModel<MQ7ReadingVO>>> findByTeamHandle (
+    public ResponseEntity<PagedModel<EntityModel<MQ7ReadingVO>>> findByTeamHandle(
             @PathVariable("teamHandle") String teamHandle,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-    ){
+    ) {
         page--;
 
-        if(limit == null) limit = (int) service.countAllReadings();
+        if (limit == null) limit = (int) service.countAllReadings();
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
@@ -79,7 +79,7 @@ public class MQ7ReadingController {
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public MQ7ReadingVO create(@RequestBody MQ7ReadingVO reading
-    ){
+    ) {
         reading.setTimestamp(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS));
 
         return service.create(reading);

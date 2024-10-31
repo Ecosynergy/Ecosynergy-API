@@ -2,7 +2,6 @@ package app.ecosynergy.api.security.jwt;
 
 import app.ecosynergy.api.data.vo.v1.security.TokenVO;
 import app.ecosynergy.api.exceptions.InvalidJwtAuthenticationException;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -10,10 +9,8 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,26 +26,24 @@ import java.util.List;
 
 @Service
 public class JwtTokenProvider {
-    @Value("${security.jwt.token.secret-key:default}")
-    private String secretKey = "secret";
-
-    @Value("${security.jwt.token.expire-length:default}")
-    private long validityInMilliseconds = 3600000; // 1h
-
     private final UserDetailsService userDetailsService;
     Algorithm algorithm = null;
+    @Value("${security.jwt.token.secret-key:default}")
+    private String secretKey = "secret";
+    @Value("${security.jwt.token.expire-length:default}")
+    private long validityInMilliseconds = 3600000; // 1h
 
     public JwtTokenProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
     @PostConstruct
-    protected void init(){
+    protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         algorithm = Algorithm.HMAC256(secretKey.getBytes());
     }
 
-    public TokenVO createAccessToken(String username, List<String> roles){
+    public TokenVO createAccessToken(String username, List<String> roles) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -58,8 +53,8 @@ public class JwtTokenProvider {
         return new TokenVO(username, true, now, validity, accessToken, refreshToken);
     }
 
-    public TokenVO refreshToken(String refreshToken){
-        if(refreshToken.contains("Bearer ")) {
+    public TokenVO refreshToken(String refreshToken) {
+        if (refreshToken.contains("Bearer ")) {
             refreshToken = refreshToken.substring("Bearer ".length());
         }
         DecodedJWT decodedJWT = decodedToken(refreshToken);
@@ -96,7 +91,7 @@ public class JwtTokenProvider {
                 .strip();
     }
 
-    public Authentication getAuthentication(String token){
+    public Authentication getAuthentication(String token) {
         try {
             DecodedJWT decodedJWT = decodedToken(token);
             UserDetails userDetails = this.userDetailsService
@@ -122,18 +117,18 @@ public class JwtTokenProvider {
 
     }
 
-    public String resolveToken(HttpServletRequest request){
+    public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring("Bearer ".length());
         }
 
         return null;
     }
 
-    public String resolveToken(String bearerToken){
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")){
+    public String resolveToken(String bearerToken) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring("Bearer ".length());
         }
 
@@ -141,7 +136,7 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        try{
+        try {
             DecodedJWT decodedJWT = decodedToken(token);
             return !decodedJWT.getExpiresAt().before(new Date());
         } catch (TokenExpiredException e) {

@@ -27,18 +27,32 @@ public class AuthController {
         this.emailService = emailService;
     }
 
+    private static boolean checkIfParamsIsNotNull(AccountCredentialsVO data) {
+        return data == null || data.getIdentifier() == null || data.getIdentifier().isBlank() ||
+                data.getPassword() == null || data.getPassword().isBlank();
+    }
+
+    private static boolean checkIfParamsIsNotNull(String username, String refreshToken) {
+        return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
+    }
+
+    private static boolean checkIfParamsIsNotNull(UserVO data) {
+        return data.getUserName() == null || data.getUserName().isBlank() ||
+                data.getPassword() == null || data.getPassword().isBlank();
+    }
+
     @Operation(summary = "Sign in", description = "Authenticate a user and return a token", tags = {"Authentication Endpoint"})
     @PostMapping(value = "/signin",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<?> signIn(@RequestBody AccountCredentialsVO data){
-        if(checkIfParamsIsNotNull(data))
+    public ResponseEntity<?> signIn(@RequestBody AccountCredentialsVO data) {
+        if (checkIfParamsIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
         var token = service.signIn(data);
 
-        if(token == null)
+        if (token == null)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid client request");
         else
             return token;
@@ -50,7 +64,7 @@ public class AuthController {
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
     public ResponseEntity<?> signUp(@RequestBody UserVO data) throws MessagingException {
-        if(checkIfParamsIsNotNull(data))
+        if (checkIfParamsIsNotNull(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
         UserVO userVO = service.signUp(data);
@@ -62,13 +76,13 @@ public class AuthController {
     @PutMapping(value = "/refresh/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<?> refreshToken(@PathVariable("username") String username, @RequestHeader("Authorization") String refreshToken){
-        if(checkIfParamsIsNotNull(username, refreshToken))
+    public ResponseEntity<?> refreshToken(@PathVariable("username") String username, @RequestHeader("Authorization") String refreshToken) {
+        if (checkIfParamsIsNotNull(username, refreshToken))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request");
 
         var token = service.refreshToken(username, refreshToken);
 
-        if(token == null){
+        if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid client request");
         } else {
             return token;
@@ -96,19 +110,5 @@ public class AuthController {
         UserVO userVO = service.forgotPassword(user);
 
         return ResponseEntity.ok(userVO);
-    }
-
-    private static boolean checkIfParamsIsNotNull(AccountCredentialsVO data) {
-        return data == null || data.getIdentifier() == null || data.getIdentifier().isBlank() ||
-                data.getPassword() == null || data.getPassword().isBlank();
-    }
-
-    private static boolean checkIfParamsIsNotNull(String username, String refreshToken) {
-        return refreshToken == null || refreshToken.isBlank() || username == null || username.isBlank();
-    }
-
-    private static boolean checkIfParamsIsNotNull(UserVO data) {
-        return data.getUserName() == null || data.getUserName().isBlank() ||
-                data.getPassword() == null || data.getPassword().isBlank();
     }
 }

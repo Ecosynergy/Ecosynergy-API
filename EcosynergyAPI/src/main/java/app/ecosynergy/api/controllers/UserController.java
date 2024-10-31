@@ -27,7 +27,7 @@ public class UserController {
     @GetMapping(value = "/id/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO findById(@PathVariable("id") Long id){
+    public UserVO findById(@PathVariable("id") Long id) {
         return services.findById(id);
     }
 
@@ -43,7 +43,7 @@ public class UserController {
     @GetMapping(value = "/username/{username}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO findByUsername(@PathVariable("username") String username){
+    public UserVO findByUsername(@PathVariable("username") String username) {
         return services.findByUsername(username);
     }
 
@@ -51,7 +51,7 @@ public class UserController {
     @GetMapping(value = "/search/{identifier}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public List<UserVO> searchUserByUsername(@PathVariable("identifier") String identifier){
+    public List<UserVO> searchUserByUsername(@PathVariable("identifier") String identifier) {
         return services.findByIdentifierContaining(identifier);
     }
 
@@ -61,7 +61,7 @@ public class UserController {
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", defaultValue = "20") Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-    ){
+    ) {
         page--;
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -75,7 +75,7 @@ public class UserController {
     @PutMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO update(@PathVariable Long id, @RequestBody UserVO user){
+    public UserVO update(@PathVariable Long id, @RequestBody UserVO user) {
         return services.update(id, user);
     }
 
@@ -83,17 +83,17 @@ public class UserController {
     @DeleteMapping(value = "/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<?> delete(@PathVariable("id") Long id){
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         services.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Reset Password", description = "Reset a user password")
     @PostMapping(value = "/resetPassword",
-                produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
-                consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
+            produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
+            consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public UserVO resetPassword(@RequestBody UserVO user){
+    public UserVO resetPassword(@RequestBody UserVO user) {
         return services.resetPassword(user);
     }
 

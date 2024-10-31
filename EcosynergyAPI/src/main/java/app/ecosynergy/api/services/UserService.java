@@ -35,12 +35,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class UserService implements UserDetailsService {
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserRepository repository;
     private final JwtTokenProvider jwtTokenProvider;
     private final HttpServletRequest request;
     private final PagedResourcesAssembler<UserVO> assembler;
-
-    private static final Logger logger = Logger.getLogger(UserService.class.getName());
 
     @Autowired
     public UserService(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, HttpServletRequest request, PagedResourcesAssembler<UserVO> assembler) {
@@ -50,16 +49,16 @@ public class UserService implements UserDetailsService {
         this.assembler = assembler;
     }
 
-    public PagedModel<EntityModel<UserVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<UserVO>> findAll(Pageable pageable) {
         logger.info("Finding all Users!");
 
         Page<User> userPage = repository.findAll(pageable);
         Page<UserVO> voPage = userPage.map(u -> DozerMapper.parseObject(u, UserVO.class));
 
         voPage.map(user -> {
-            try{
+            try {
                 return user.add(linkTo(methodOn(UserController.class).findById(user.getKey())).withSelfRel());
-            } catch(Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
@@ -74,8 +73,8 @@ public class UserService implements UserDetailsService {
         return assembler.toModel(voPage, link);
     }
 
-    public UserVO findById(Long id){
-        if(id == null) throw new RequiredObjectIsNullException();
+    public UserVO findById(Long id) {
+        if (id == null) throw new RequiredObjectIsNullException();
 
         logger.info("Finding User by Id!");
 
@@ -88,13 +87,13 @@ public class UserService implements UserDetailsService {
     }
 
     public UserVO findByEmail(String email) {
-        if(email == null) throw new RequiredObjectIsNullException();
+        if (email == null) throw new RequiredObjectIsNullException();
 
         logger.info("Finding User by Email!");
 
         User entity = repository.findByEmail(email);
 
-        if(entity == null) throw new ResourceNotFoundException("User not found with given E-mail: " + email);
+        if (entity == null) throw new ResourceNotFoundException("User not found with given E-mail: " + email);
 
         UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
@@ -102,8 +101,8 @@ public class UserService implements UserDetailsService {
         return vo;
     }
 
-    public UserVO findByUsername(String username){
-        if(username == null) throw new RequiredObjectIsNullException();
+    public UserVO findByUsername(String username) {
+        if (username == null) throw new RequiredObjectIsNullException();
 
         logger.info("Finding User by Username!");
 
@@ -123,7 +122,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserVO> findByIdentifierContaining(String identifier) {
-        if(identifier == null) throw new RequiredObjectIsNullException();
+        if (identifier == null) throw new RequiredObjectIsNullException();
 
         logger.info("Searching Users by Identifier (username or email)!");
 
@@ -136,16 +135,18 @@ public class UserService implements UserDetailsService {
         }).toList();
     }
 
-    public UserVO create(UserVO user){
-        if(user == null) throw new RequiredObjectIsNullException();
+    public UserVO create(UserVO user) {
+        if (user == null) throw new RequiredObjectIsNullException();
 
         boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
 
-        if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with username '" + user.getUserName() + "' already exists");
+        if (isAlreadyExists)
+            throw new ResourceAlreadyExistsException("User with username '" + user.getUserName() + "' already exists");
 
         isAlreadyExists = repository.existsByEmail(user.getEmail());
 
-        if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with email '" + user.getEmail() + "' already exists");
+        if (isAlreadyExists)
+            throw new ResourceAlreadyExistsException("User with email '" + user.getEmail() + "' already exists");
 
         User entity = DozerMapper.parseObject(user, User.class);
 
@@ -157,19 +158,21 @@ public class UserService implements UserDetailsService {
         return vo;
     }
 
-    public UserVO update(Long id, UserVO user){
-        if(user == null) throw new RequiredObjectIsNullException();
+    public UserVO update(Long id, UserVO user) {
+        if (user == null) throw new RequiredObjectIsNullException();
 
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
 
         boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
 
-        if(isAlreadyExists && !Objects.equals(entity.getUserName(), user.getUserName())) throw new ResourceAlreadyExistsException("The username: '" + user.getUserName() + "' is already in use");
+        if (isAlreadyExists && !Objects.equals(entity.getUserName(), user.getUserName()))
+            throw new ResourceAlreadyExistsException("The username: '" + user.getUserName() + "' is already in use");
 
         isAlreadyExists = repository.existsByEmail(user.getEmail());
 
-        if(isAlreadyExists && !Objects.equals(entity.getEmail(), user.getEmail())) throw new ResourceAlreadyExistsException("The email: '" + user.getEmail() + "' is already in use");
+        if (isAlreadyExists && !Objects.equals(entity.getEmail(), user.getEmail()))
+            throw new ResourceAlreadyExistsException("The email: '" + user.getEmail() + "' is already in use");
 
         entity.setUserName(user.getUserName() != null ? user.getUserName().toLowerCase(Locale.ROOT) : entity.getUserName());
         entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
@@ -185,8 +188,8 @@ public class UserService implements UserDetailsService {
         return vo;
     }
 
-    public void delete(Long id){
-        if(id == null) throw new RequiredObjectIsNullException();
+    public void delete(Long id) {
+        if (id == null) throw new RequiredObjectIsNullException();
 
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(""));
@@ -196,8 +199,8 @@ public class UserService implements UserDetailsService {
         repository.delete(entity);
     }
 
-    public UserVO resetPassword(UserVO user){
-        if(user.getPassword() == null) throw new RequiredObjectIsNullException();
+    public UserVO resetPassword(UserVO user) {
+        if (user.getPassword() == null) throw new RequiredObjectIsNullException();
 
         logger.info("Recovering password");
 
@@ -213,7 +216,7 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean existsByUsername(String username) {
-        if(username == null) throw new RequiredObjectIsNullException();
+        if (username == null) throw new RequiredObjectIsNullException();
 
         return repository.existsByUserName(username);
     }
@@ -224,14 +227,14 @@ public class UserService implements UserDetailsService {
 
         var user = repository.findByUsername(username);
 
-        if(user != null){
+        if (user != null) {
             return user;
         } else {
             throw new UsernameNotFoundException("Username " + username + " not found!");
         }
     }
 
-    private String passwordEncode(String password){
+    private String passwordEncode(String password) {
         Map<String, PasswordEncoder> encoders = new HashMap<>();
 
         Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder(

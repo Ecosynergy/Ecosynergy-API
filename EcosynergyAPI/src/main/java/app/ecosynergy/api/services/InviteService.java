@@ -34,36 +34,26 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class InviteService {
+    private static final Logger logger = Logger.getLogger(InviteService.class.getName());
     @Autowired
     private InviteRepository inviteRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private TeamMemberRepository teamMemberRepository;
-
     @Autowired
     private TeamRepository teamRepository;
-
     @Autowired
     private TeamService teamService;
-
     @Autowired
     private EmailService emailService;
-
     @Autowired
     private InvitationNotificationService invitationNotificationService;
-
     @Autowired
     private PagedResourcesAssembler<InviteVO> assembler;
-
     private User currentUser;
-
-    private static final Logger logger = Logger.getLogger(InviteService.class.getName());
 
     private User getCurrentUser() {
         return userService.getCurrentUser();
@@ -109,7 +99,8 @@ public class InviteService {
 
     @Transactional
     public InviteVO createInvite(InviteVO inviteVO) throws MessagingException {
-        if(inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null) throw new RequiredObjectIsNullException("Invalid User or Team");
+        if (inviteVO.getRecipientId() == null || inviteVO.getTeamId() == null)
+            throw new RequiredObjectIsNullException("Invalid User or Team");
 
         currentUser = getCurrentUser();
 
@@ -122,10 +113,10 @@ public class InviteService {
 
         boolean isAdmin = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), currentUser.getId(), Role.ADMINISTRATOR);
         boolean isFounder = teamMemberRepository.existsByTeamIdAndUserIdAndRole(team.get().getId(), currentUser.getId(), Role.FOUNDER);
-        if(!isAdmin && !isFounder) throw new UnauthorizedException("User is not an ADMINISTRATOR of the team");
+        if (!isAdmin && !isFounder) throw new UnauthorizedException("User is not an ADMINISTRATOR of the team");
 
         boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.get().getId(), recipient.get().getId());
-        if(isMember) throw new ResourceAlreadyExistsException("Recipient is already a member of the team");
+        if (isMember) throw new ResourceAlreadyExistsException("Recipient is already a member of the team");
 
         boolean inviteExists = inviteRepository.existsBySenderIdAndRecipientIdAndTeamIdAndStatus(
                 currentUser.getId(),
@@ -133,7 +124,8 @@ public class InviteService {
                 team.get().getId(),
                 InviteStatus.PENDING
         );
-        if(inviteExists) throw new ResourceAlreadyExistsException("An invite with the same sender, recipient, and team already exists");
+        if (inviteExists)
+            throw new ResourceAlreadyExistsException("An invite with the same sender, recipient, and team already exists");
 
         Invite invite = new Invite();
         invite.setSender(currentUser);
@@ -145,7 +137,7 @@ public class InviteService {
 
         emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), currentUser.getFullName());
 
-        invitationNotificationService.sendInviteNotification(savedInvite.getRecipient().getTokens(), savedInvite.getSender().getUserName(), savedInvite.getTeam().getName());
+        invitationNotificationService.sendInviteNotification(savedInvite.getRecipient().getTokens(), savedInvite);
 
         InviteVO savedInviteVO = DozerMapper.parseObject(savedInvite, InviteVO.class);
         savedInviteVO.setCreatedAt(savedInviteVO.getCreatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
@@ -166,7 +158,8 @@ public class InviteService {
 
         currentUser = getCurrentUser();
 
-        if(!Objects.equals(invite.getRecipient().getId(), currentUser.getId())) throw new UnauthorizedActionException("You are not authorized to accept this invite");
+        if (!Objects.equals(invite.getRecipient().getId(), currentUser.getId()))
+            throw new UnauthorizedActionException("You are not authorized to accept this invite");
 
         invite.setStatus(InviteStatus.ACCEPTED);
 
@@ -181,7 +174,7 @@ public class InviteService {
 
         emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
-        invitationNotificationService.sendInviteAcceptedNotification(updatedInvite.getSender().getTokens(), updatedInvite.getRecipient().getUserName(), updatedInvite.getTeam().getName());
+        invitationNotificationService.sendInviteAcceptedNotification(updatedInvite.getSender().getTokens(), updatedInvite);
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
@@ -201,14 +194,15 @@ public class InviteService {
 
         currentUser = getCurrentUser();
 
-        if(!Objects.equals(invite.getRecipient().getId(), currentUser.getId())) throw new UnauthorizedActionException("You are not authorized to decline this invite");
+        if (!Objects.equals(invite.getRecipient().getId(), currentUser.getId()))
+            throw new UnauthorizedActionException("You are not authorized to decline this invite");
 
         invite.setStatus(InviteStatus.DECLINED);
         Invite updatedInvite = inviteRepository.save(invite);
 
         emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
-        invitationNotificationService.sendInviteDeclinedNotification(updatedInvite.getSender().getTokens(), updatedInvite.getRecipient().getUserName(), updatedInvite.getTeam().getName());
+        invitationNotificationService.sendInviteDeclinedNotification(updatedInvite.getSender().getTokens(), updatedInvite);
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));

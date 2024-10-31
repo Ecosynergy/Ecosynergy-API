@@ -6,23 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 @Service
 public class NotificationService {
 
+    private static final Logger logger = Logger.getLogger(NotificationService.class.getName());
     private final FirebaseMessaging fcm;
+    @Autowired
+    private TokenService tokenService;
 
     public NotificationService(FirebaseMessaging fcm) {
         this.fcm = fcm;
     }
 
-    @Autowired
-    private TokenService tokenService;
-
-    private static final Logger logger = Logger.getLogger(NotificationService.class.getName());
-
-    public void sendNotificationToUser(String firebaseToken, String title, String body) {
+    public void sendNotificationToUser(String firebaseToken, Map<String, String> params) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
         StackTraceElement caller = stackTrace[2];
@@ -34,12 +33,12 @@ public class NotificationService {
             default -> caller.getClassName().split("\\.")[4];
         };
 
-        Message message = Message.builder()
-                .putData("title", title)
-                .putData("body", body)
-                .putData("type", "team")
-                .setToken(firebaseToken)
-                .build();
+        Message.Builder messageBuilder = Message.builder()
+                .setToken(firebaseToken);
+
+        params.forEach(messageBuilder::putData);
+
+        Message message = messageBuilder.build();
 
         try {
             String response = fcm.send(message);

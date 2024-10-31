@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 public class TestController {
     @Autowired
@@ -37,10 +40,15 @@ public class TestController {
 
         User user = userRepository.findById(userVO.getKey()).orElse(null);
 
-        if(user == null) throw new ResourceNotFoundException("User not found");
+        if (user == null) throw new ResourceNotFoundException("User not found");
+
+        Map<String, String> params = new HashMap<>();
+        params.put("title", "Recado do Andinho");
+        params.put("body", "Pega a visão");
+        params.put("vision", "get the vision");
 
         for (UserToken userToken : user.getTokens()) {
-            notificationService.sendNotificationToUser(userToken.getToken(), "Recado do Andinho", "Oi Rafael Guerra");
+            notificationService.sendNotificationToUser(userToken.getToken(), params);
         }
 
         return ResponseEntity.ok("Message Sent");

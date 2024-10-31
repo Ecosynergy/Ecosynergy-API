@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface SectorRepository extends JpaRepository<Sector, Long> {
     List<Sector> findAllByOrderByNameAsc();
+
     Optional<Sector> findByName(String name);
 }

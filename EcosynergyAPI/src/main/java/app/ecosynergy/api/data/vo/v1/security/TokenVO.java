@@ -25,7 +25,8 @@ public class TokenVO implements Serializable {
         this.refreshToken = refreshToken;
     }
 
-    public TokenVO() {}
+    public TokenVO() {
+    }
 
     public String getUsername() {
         return username;

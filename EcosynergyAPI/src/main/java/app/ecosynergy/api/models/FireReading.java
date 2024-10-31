@@ -12,22 +12,19 @@ import java.util.Objects;
 public class FireReading implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
-    public FireReading() {}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_handle", referencedColumnName = "handle")
     private Team team;
-
     @Column(name = "is_fire")
     private Boolean isFire;
-
     @Column
     private ZonedDateTime timestamp;
+
+    public FireReading() {
+    }
 
     public Long getId() {
         return id;

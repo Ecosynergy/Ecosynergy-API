@@ -37,7 +37,7 @@ public class JwtTokenFilter extends GenericFilterBean {
 
         boolean isPublicEndpoint = publicEndpoints.stream().anyMatch(path::startsWith);
 
-        if(isPublicEndpoint) {
+        if (isPublicEndpoint) {
             chain.doFilter(request, response);
             return;
         }

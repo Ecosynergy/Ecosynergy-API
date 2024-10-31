@@ -21,7 +21,7 @@ public class Team implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="handle", unique = true, nullable = false)
+    @Column(name = "handle", unique = true, nullable = false)
     private String handle;
 
     @Column
@@ -61,19 +61,6 @@ public class Team implements Serializable {
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TeamMember> teamMembers = new HashSet<>();
 
-    @PrePersist
-    public void prePersist() {
-        ZonedDateTime now = ZonedDateTime.now();
-
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
-
     public Team() {
     }
 
@@ -85,6 +72,19 @@ public class Team implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.teamMembers = teamMembers;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        ZonedDateTime now = ZonedDateTime.now();
+
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = ZonedDateTime.now();
     }
 
     public Long getId() {

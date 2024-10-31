@@ -18,68 +18,55 @@ import java.util.Objects;
 public class User implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
-    public User(){}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "user_name", unique = true)
     private String userName;
-
     @Column(name = "full_name")
     private String fullName;
-
     @Column
     private String email;
-
     @Column
     private String password;
-
     @Column
     private String gender;
-
     @Column
     private String nationality;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserToken> tokens = new ArrayList<>();
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
-
     @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
-
     @Column(name = "account_non_locked")
     private Boolean accountNonLocked;
-
     @Column(name = "credentials_non_expired")
     private Boolean credentialsNonExpired;
-
     @Column
     private Boolean enabled;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_permission",
-            joinColumns = {@JoinColumn (name = "id_user")},
-            inverseJoinColumns = {@JoinColumn (name = "id_permission")}
+            joinColumns = {@JoinColumn(name = "id_user")},
+            inverseJoinColumns = {@JoinColumn(name = "id_permission")}
     )
     private List<Permission> permissions;
+
+    public User() {
+    }
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
     }
 
-    public List<String> getRoles(){
+    public List<String> getRoles() {
         if (permissions == null) {
             return null;
         } else {
             List<String> roles = new ArrayList<>();
 
-            for(Permission permission : permissions){
+            for (Permission permission : permissions) {
                 roles.add(permission.getDescription());
             }
 
@@ -128,6 +115,10 @@ public class User implements UserDetails, Serializable {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String getUsername() {
         return userName;
@@ -151,10 +142,6 @@ public class User implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return this.enabled;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getGender() {

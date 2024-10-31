@@ -36,8 +36,8 @@ public class FireReadingService {
     @Autowired
     private PagedResourcesAssembler<FireReadingVO> assembler;
 
-    public FireReadingVO findById(Long id){
-        if(id == null) throw new RequiredObjectIsNullException();
+    public FireReadingVO findById(Long id) {
+        if (id == null) throw new RequiredObjectIsNullException();
 
         FireReading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException("Fire Reading not found with given ID: " + id));
 
@@ -50,7 +50,7 @@ public class FireReadingService {
         return vo;
     }
 
-    public PagedModel<EntityModel<FireReadingVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<FireReadingVO>> findAll(Pageable pageable) {
         Page<FireReading> readingsPage = repository.findAllWithTeam(pageable);
 
         Page<FireReadingVO> voPage = readingsPage.map(r -> {
@@ -61,10 +61,14 @@ public class FireReadingService {
             return vo;
         });
 
+        return setLinkInVoPage(pageable, voPage);
+    }
+
+    private PagedModel<EntityModel<FireReadingVO>> setLinkInVoPage(Pageable pageable, Page<FireReadingVO> voPage) {
         voPage.map(vo -> {
-            try{
+            try {
                 return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
@@ -80,7 +84,7 @@ public class FireReadingService {
         return assembler.toModel(voPage, link);
     }
 
-    public PagedModel<EntityModel<FireReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable){
+    public PagedModel<EntityModel<FireReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable) {
         Page<FireReading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
 
         TeamVO teamVO = teamService.findByHandle(teamHandle);
@@ -92,27 +96,11 @@ public class FireReadingService {
             return vo;
         });
 
-        voPage.map(vo -> {
-            try{
-                return vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
-            } catch (Exception e){
-                throw new RuntimeException(e);
-            }
-        });
-
-        Link link = linkTo(methodOn(FireReadingController.class)
-                .findAll(
-                        pageable.getPageNumber(),
-                        pageable.getPageSize(),
-                        pageable.getSort().toString()
-                ))
-                .withSelfRel();
-
-        return assembler.toModel(voPage, link);
+        return setLinkInVoPage(pageable, voPage);
     }
 
-    public FireReadingVO create(FireReadingVO reading){
-        if(reading == null) throw new RequiredObjectIsNullException();
+    public FireReadingVO create(FireReadingVO reading) {
+        if (reading == null) throw new RequiredObjectIsNullException();
 
         Team team = DozerMapper.parseObject(
                 teamService.findByHandle(reading.getTeamHandle()),
@@ -128,11 +116,12 @@ public class FireReadingService {
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(team.getTimeZone()));
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
 
-        if(vo.getFire()) fireSensorNotificationService.sendFireDetectedNotification(team.getTeamMembers(), team.getName());
+        if (vo.getFire())
+            fireSensorNotificationService.sendFireDetectedNotification(team.getTeamMembers(), team);
         return vo;
     }
 
-    public long countAllReadings(){
+    public long countAllReadings() {
         long count = repository.count();
         return Math.max(count, 1L);
     }

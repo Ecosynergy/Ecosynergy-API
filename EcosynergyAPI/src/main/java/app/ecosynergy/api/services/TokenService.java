@@ -78,7 +78,7 @@ public class TokenService {
     }
 
     public UserToken findByToken(String token) {
-        if(token == null) throw new RequiredObjectIsNullException();
+        if (token == null) throw new RequiredObjectIsNullException();
 
         return userTokenRepository.findByToken(token).orElseThrow(() -> new ResourceNotFoundException("FCM Token not found"));
     }

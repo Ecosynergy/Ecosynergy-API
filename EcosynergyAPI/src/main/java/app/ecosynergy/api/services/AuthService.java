@@ -47,25 +47,25 @@ public class AuthService {
         this.emailService = emailService;
     }
 
-    public ResponseEntity<?> signIn(AccountCredentialsVO data){
-        try{
+    public ResponseEntity<?> signIn(AccountCredentialsVO data) {
+        try {
             var loginIdentifier = data.getIdentifier();
             var password = data.getPassword();
             User user;
 
-            try{
+            try {
                 user = repository.findByUsername(loginIdentifier);
 
-                if(user != null){
+                if (user != null) {
                     authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(user.getUserName(), password)
                     );
                 } else {
                     throw new UsernameNotFoundException("Username " + loginIdentifier + " not found");
                 }
-            } catch (UsernameNotFoundException ex){
+            } catch (UsernameNotFoundException ex) {
                 user = repository.findByEmail(loginIdentifier);
-                if(user != null){
+                if (user != null) {
                     authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(user.getUserName(), password)
                     );
@@ -74,7 +74,7 @@ public class AuthService {
 
             var tokenResponse = new TokenVO();
 
-            if(user != null){
+            if (user != null) {
                 tokenResponse = tokenProvider.createAccessToken(user.getUserName(), user.getRoles());
             } else {
                 throw new UsernameNotFoundException("User not found with username/email: " + loginIdentifier);
@@ -82,7 +82,7 @@ public class AuthService {
 
             return ResponseEntity.ok(tokenResponse);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new BadCredentialsException("Invalid username/email or password supplied!");
         }
     }
@@ -90,7 +90,8 @@ public class AuthService {
     public UserVO signUp(UserVO user) throws MessagingException {
         String currentPassword = user.getPassword();
 
-        if(containsSpecialCharacters(user.getFullName())) throw new InvalidUserDataException("Full name contains special characters or digits.");
+        if (containsSpecialCharacters(user.getFullName()))
+            throw new InvalidUserDataException("Full name contains special characters or digits.");
         user.setUserName(user.getUserName().toLowerCase());
         user.setEmail(user.getEmail().toLowerCase());
         user.setPassword(passwordEncode(currentPassword));
@@ -101,11 +102,13 @@ public class AuthService {
 
         boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
 
-        if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with username '" + user.getUserName() + "' already exists");
+        if (isAlreadyExists)
+            throw new ResourceAlreadyExistsException("User with username '" + user.getUserName() + "' already exists");
 
         isAlreadyExists = repository.existsByEmail(user.getEmail());
 
-        if(isAlreadyExists) throw new ResourceAlreadyExistsException("User with email '" + user.getEmail() + "' already exists");
+        if (isAlreadyExists)
+            throw new ResourceAlreadyExistsException("User with email '" + user.getEmail() + "' already exists");
 
         User entity = DozerMapper.parseObject(user, User.class);
 
@@ -119,11 +122,11 @@ public class AuthService {
         return vo;
     }
 
-    public ResponseEntity<?> refreshToken(String username, String refreshToken){
+    public ResponseEntity<?> refreshToken(String username, String refreshToken) {
         var user = repository.findByUsername(username);
 
         var tokenResponse = new TokenVO();
-        if(user != null){
+        if (user != null) {
             tokenResponse = tokenProvider.refreshToken(refreshToken);
         } else {
             throw new UsernameNotFoundException("Username " + username + " not found!");
@@ -133,11 +136,11 @@ public class AuthService {
     }
 
     public String sendConfirmationCode(String email) throws MessagingException {
-        if(email == null) throw new RequiredObjectIsNullException();
+        if (email == null) throw new RequiredObjectIsNullException();
 
         User user = repository.findByEmail(email);
 
-        if(user == null) throw new ResourceNotFoundException("Email Not Found");
+        if (user == null) throw new ResourceNotFoundException("Email Not Found");
 
         String confirmationCode = ConfirmationCodeGenerator.generateCode();
 
@@ -146,8 +149,8 @@ public class AuthService {
         return confirmationCode;
     }
 
-    public UserVO forgotPassword(UserVO user){
-        if(user.getEmail() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
+    public UserVO forgotPassword(UserVO user) {
+        if (user.getEmail() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
 
         User entity = repository.findByEmail(user.getEmail());
 
@@ -163,7 +166,7 @@ public class AuthService {
         return fullName != null && !fullName.matches("[a-zA-Z\\s]+");
     }
 
-    private String passwordEncode(String password){
+    private String passwordEncode(String password) {
         Map<String, PasswordEncoder> encoders = new HashMap<>();
 
         Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder(

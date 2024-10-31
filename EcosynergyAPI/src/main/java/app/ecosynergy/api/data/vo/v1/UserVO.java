@@ -22,50 +22,38 @@ import java.util.Objects;
 public class UserVO extends RepresentationModel<UserVO> implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
-    public UserVO(){}
-
     @JsonProperty("id")
     @Mapping("id")
     private Long key;
-
     @JsonProperty("username")
     private String userName;
-
     private String fullName;
-
     private String email;
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
-
     private String gender;
-
     private String nationality;
-
     private ZonedDateTime createdAt;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonExpired;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonLocked;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean credentialsNonExpired;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean enabled;
-
     @JsonIgnore
     private List<Permission> permissions;
 
+    public UserVO() {
+    }
+
     @JsonIgnore
-    public List<String> getRoles(){
-        if(permissions != null){
+    public List<String> getRoles() {
+        if (permissions != null) {
             List<String> roles = new ArrayList<>();
 
-            for(Permission permission : permissions){
+            for (Permission permission : permissions) {
                 roles.add(permission.getDescription());
             }
 
@@ -117,6 +105,10 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     @JsonIgnore
     public String getUsername() {
@@ -141,10 +133,6 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     @Override
     public boolean isEnabled() {
         return this.enabled;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getGender() {

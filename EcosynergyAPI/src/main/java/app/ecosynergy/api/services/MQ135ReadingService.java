@@ -32,8 +32,8 @@ public class MQ135ReadingService {
     @Autowired
     private PagedResourcesAssembler<MQ135ReadingVO> assembler;
 
-    public MQ135ReadingVO findById(Long id){
-        if(id == null) throw new RequiredObjectIsNullException();
+    public MQ135ReadingVO findById(Long id) {
+        if (id == null) throw new RequiredObjectIsNullException();
 
         MQ135Reading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException(""));
 
@@ -46,7 +46,7 @@ public class MQ135ReadingService {
         return vo;
     }
 
-    public PagedModel<EntityModel<MQ135ReadingVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<MQ135ReadingVO>> findAll(Pageable pageable) {
         Page<MQ135Reading> readingsPage = repository.findAll(pageable);
 
         Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
@@ -58,40 +58,9 @@ public class MQ135ReadingService {
             return vo;
         });
         voPage.map(vo -> {
-            try{
+            try {
                 return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
-            } catch (Exception e){
-                throw new RuntimeException(e);
-            }
-        });
-
-        Link link = linkTo(methodOn(MQ135ReadingController.class)
-                .findAll(
-                    pageable.getPageNumber(),
-                    pageable.getPageSize(),
-                    pageable.getSort().toString()
-                ))
-                .withSelfRel();
-
-        return assembler.toModel(voPage, link);
-    }
-
-    public PagedModel<EntityModel<MQ135ReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable){
-        Page<MQ135Reading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
-
-        TeamVO teamVO = teamService.findByHandle(teamHandle);
-
-        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
-            MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
-            vo.setTeamHandle(r.getTeam().getHandle());
-            vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(teamVO.getTimeZone()));
-            return vo;
-        });
-
-        voPage.map(vo -> {
-            try{
-                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
@@ -107,8 +76,39 @@ public class MQ135ReadingService {
         return assembler.toModel(voPage, link);
     }
 
-    public MQ135ReadingVO create(MQ135ReadingVO reading){
-        if(reading == null) throw new RequiredObjectIsNullException();
+    public PagedModel<EntityModel<MQ135ReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable) {
+        Page<MQ135Reading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
+
+        TeamVO teamVO = teamService.findByHandle(teamHandle);
+
+        Page<MQ135ReadingVO> voPage = readingsPage.map(r -> {
+            MQ135ReadingVO vo = DozerMapper.parseObject(r, MQ135ReadingVO.class);
+            vo.setTeamHandle(r.getTeam().getHandle());
+            vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(teamVO.getTimeZone()));
+            return vo;
+        });
+
+        voPage.map(vo -> {
+            try {
+                return vo.add(linkTo(methodOn(MQ135ReadingController.class).findById(vo.getKey())).withSelfRel());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Link link = linkTo(methodOn(MQ135ReadingController.class)
+                .findAll(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSort().toString()
+                ))
+                .withSelfRel();
+
+        return assembler.toModel(voPage, link);
+    }
+
+    public MQ135ReadingVO create(MQ135ReadingVO reading) {
+        if (reading == null) throw new RequiredObjectIsNullException();
 
         Team team = DozerMapper.parseObject(
                 teamService.findByHandle(reading.getTeamHandle()),
@@ -127,7 +127,7 @@ public class MQ135ReadingService {
         return vo;
     }
 
-    public long countAllReadings(){
+    public long countAllReadings() {
         long count = repository.count();
         return Math.max(count, 1L);
     }

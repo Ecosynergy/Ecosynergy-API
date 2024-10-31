@@ -32,32 +32,25 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class TeamService {
+    private static final Logger logger = Logger.getLogger(TeamService.class.getName());
     @Autowired
     private TeamRepository teamRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private ActivityService activityService;
-
     @Autowired
     private TeamMemberRepository teamMemberRepository;
-
     @Autowired
     private TeamNotificationService teamNotificationService;
-
     @Autowired
     private PagedResourcesAssembler<TeamVO> assembler;
 
-    private static final Logger logger = Logger.getLogger(TeamService.class.getName());
-
     public PagedModel<EntityModel<TeamVO>> findAll(Pageable pageable) {
         Page<Team> teams = teamRepository.findAllWithMembers(pageable);
-        
+
         Page<TeamVO> teamVOs = teams.map(team -> {
             TeamVO teamVO = convertToVO(team);
             teamVO.setCreatedAt(teamVO.getCreatedAt().withZoneSameInstant(teamVO.getTimeZone()));
@@ -77,11 +70,11 @@ public class TeamService {
     }
 
     public TeamVO findById(Long id) {
-        if(id == null) throw new RequiredObjectIsNullException();
+        if (id == null) throw new RequiredObjectIsNullException();
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(id);
 
-        if(teamOpt.isEmpty()) throw new ResourceNotFoundException("Team not found with the given ID: " + id);
+        if (teamOpt.isEmpty()) throw new ResourceNotFoundException("Team not found with the given ID: " + id);
 
         Team team = teamOpt.get();
 
@@ -92,12 +85,13 @@ public class TeamService {
     }
 
     public TeamVO findByHandle(String teamHandle) {
-        if(teamHandle == null) throw new RequiredObjectIsNullException();
+        if (teamHandle == null) throw new RequiredObjectIsNullException();
         teamHandle = teamHandle.toLowerCase(Locale.ROOT);
 
         Optional<Team> teamOpt = teamRepository.findByHandleWithMembers(teamHandle);
 
-        if(teamOpt.isEmpty()) throw new ResourceNotFoundException("Team not found with the given Handle: " + teamHandle);
+        if (teamOpt.isEmpty())
+            throw new ResourceNotFoundException("Team not found with the given Handle: " + teamHandle);
 
         Team team = teamOpt.get();
 
@@ -108,7 +102,7 @@ public class TeamService {
     }
 
     public List<TeamVO> findByHandleContaining(String teamHandle) {
-        if(teamHandle == null) throw new RequiredObjectIsNullException();
+        if (teamHandle == null) throw new RequiredObjectIsNullException();
 
         List<Team> teams = teamRepository.findByHandleContaining(teamHandle.toLowerCase(Locale.ROOT));
 
@@ -123,16 +117,17 @@ public class TeamService {
 
     @Transactional(rollbackFor = Exception.class)
     public TeamVO create(TeamVO team) {
-        if(
+        if (
                 team == null ||
-                team.getName() == null ||
-                team.getHandle() == null ||
-                team.getDescription() == null ||
-                team.getActivity() == null
+                        team.getName() == null ||
+                        team.getHandle() == null ||
+                        team.getDescription() == null ||
+                        team.getActivity() == null
         ) throw new RequiredObjectIsNullException();
 
         boolean isHandlerExists = teamRepository.findByHandle(team.getHandle()).isPresent();
-        if(isHandlerExists) throw new ResourceAlreadyExistsException("A team with the given handle already exists: " + team.getHandle());
+        if (isHandlerExists)
+            throw new ResourceAlreadyExistsException("A team with the given handle already exists: " + team.getHandle());
 
         Team teamEntity = new Team();
         teamEntity.setName(team.getName());
@@ -173,7 +168,7 @@ public class TeamService {
 
     @Transactional(rollbackFor = Exception.class)
     public TeamVO update(Long teamId, TeamVO teamVO) {
-        if(teamId == null || teamVO == null) throw new RequiredObjectIsNullException();
+        if (teamId == null || teamVO == null) throw new RequiredObjectIsNullException();
 
         Team existingTeam = teamRepository.findByIdWithMembers(teamId).orElseThrow(() -> new ResourceNotFoundException("Team not found with ID: " + teamId));
 
@@ -186,7 +181,7 @@ public class TeamService {
         existingTeam.setAnnualGoal(teamVO.getAnnualGoal() != null ? teamVO.getAnnualGoal() : existingTeam.getAnnualGoal());
         existingTeam.setTimeZone(teamVO.getTimeZone() != null ? teamVO.getTimeZone() : existingTeam.getTimeZone());
 
-        if(teamVO.getActivity() != null) {
+        if (teamVO.getActivity() != null) {
             ActivityVO activity = activityService.findById(teamVO.getActivity().getKey());
             existingTeam.setActivity(DozerMapper.parseObject(activity, Activity.class));
         }
@@ -201,16 +196,19 @@ public class TeamService {
 
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long teamId) {
-        if(!teamRepository.existsById(teamId)) throw new ResourceNotFoundException("Team not found with ID: " + teamId);
+        if (!teamRepository.existsById(teamId))
+            throw new ResourceNotFoundException("Team not found with ID: " + teamId);
 
         teamRepository.deleteById(teamId);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public TeamVO addMember(TeamMemberId teamMemberId, Role role) {
-        if(teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || role == null) throw new RequiredObjectIsNullException();
+        if (teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || role == null)
+            throw new RequiredObjectIsNullException();
 
-        if(role.equals(Role.FOUNDER)) throw new UnauthorizedActionException("It is not allowed to add a user with the role of FOUNDER to a team");
+        if (role.equals(Role.FOUNDER))
+            throw new UnauthorizedActionException("It is not allowed to add a user with the role of FOUNDER to a team");
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
         Optional<User> userOpt = userRepository.findById(teamMemberId.getUserId());
@@ -228,7 +226,7 @@ public class TeamService {
         boolean isAlreadyMember = team.getTeamMembers().stream()
                 .anyMatch(tm -> tm.getUser().equals(user));
 
-        if(isAlreadyMember) throw new ResourceAlreadyExistsException("User is already a member of this team");
+        if (isAlreadyMember) throw new ResourceAlreadyExistsException("User is already a member of this team");
 
         TeamMember teamMember = new TeamMember();
         teamMember.setId(teamMemberId);
@@ -247,9 +245,11 @@ public class TeamService {
 
     @Transactional(rollbackFor = Exception.class)
     public TeamVO updateMemberRole(TeamMemberId teamMemberId, Role newRole) {
-        if (teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || newRole == null) throw new RequiredObjectIsNullException();
+        if (teamMemberId.getTeamId() == null || teamMemberId.getUserId() == null || newRole == null)
+            throw new RequiredObjectIsNullException();
 
-        if(newRole.equals(Role.FOUNDER)) throw new UnauthorizedActionException("It is not allowed to change the role to FOUNDER");
+        if (newRole.equals(Role.FOUNDER))
+            throw new UnauthorizedActionException("It is not allowed to change the role to FOUNDER");
 
         Optional<Team> teamOpt = teamRepository.findByIdWithMembers(teamMemberId.getTeamId());
         Optional<User> userOpt = userRepository.findById(teamMemberId.getUserId());
@@ -268,14 +268,15 @@ public class TeamService {
 
         boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.getId(), currentUser.getId());
 
-        if(!isMember) throw new UnauthorizedActionException("You don't belong on the team");
+        if (!isMember) throw new UnauthorizedActionException("You don't belong on the team");
 
         TeamMember teamMember = team.getTeamMembers().stream()
                 .filter(tm -> tm.getUser().equals(user))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("User is not a member of this team"));
 
-        if(teamMember.getRole().equals(Role.FOUNDER)) throw new UnauthorizedActionException("It is not permitted to change the role of a founder");
+        if (teamMember.getRole().equals(Role.FOUNDER))
+            throw new UnauthorizedActionException("It is not permitted to change the role of a founder");
 
         teamMember.setRole(newRole);
 
@@ -284,7 +285,7 @@ public class TeamService {
 
         teamRepository.save(team);
 
-        teamNotificationService.sendMemberPromotedNotification(user.getTokens(), currentUser.getUserName(), team.getName(), newRole.toString());
+        teamNotificationService.sendMemberPromotedNotification(user.getTokens(), currentUser.getUserName(), team, newRole.toString());
 
         return convertToVO(team);
     }
@@ -300,26 +301,27 @@ public class TeamService {
         User currentUser = userService.getCurrentUser();
 
         boolean isMember = teamMemberRepository.existsByTeamIdAndUserId(team.getId(), currentUser.getId());
-        if(!isMember) throw new UnauthorizedActionException("You don't belong on the team");
+        if (!isMember) throw new UnauthorizedActionException("You don't belong on the team");
 
         team.getTeamMembers().remove(teamMember);
 
         teamMemberRepository.delete(teamMember);
 
-        if(team.getTeamMembers().isEmpty()) {
+        if (team.getTeamMembers().isEmpty()) {
             teamRepository.deleteById(teamMemberId.getTeamId());
         } else {
             teamRepository.save(team);
         }
 
-        teamNotificationService.sendMemberRemovedNotification(teamMember.getUser().getTokens(), currentUser.getUserName(), teamMember.getTeam().getName());
+        teamNotificationService.sendMemberRemovedNotification(teamMember.getUser().getTokens(), currentUser.getUserName(), teamMember.getTeam());
     }
 
     @Transactional(readOnly = true)
     public List<TeamVO> findTeamsByUserId(Long userId) {
-        if(userId == null) throw new RequiredObjectIsNullException();
+        if (userId == null) throw new RequiredObjectIsNullException();
 
-        if(!userRepository.existsById(userId)) throw new ResourceNotFoundException("User not found with the given ID: " + userId);
+        if (!userRepository.existsById(userId))
+            throw new ResourceNotFoundException("User not found with the given ID: " + userId);
 
         List<Team> teams = teamMemberRepository.findTeamsByUserId(userId);
 

@@ -22,7 +22,7 @@ public class Permission implements Serializable {
     public Permission() {
     }
 
-    public String getAuthority(){
+    public String getAuthority() {
         return this.description;
     }
 

@@ -26,24 +26,24 @@ public class FireReadingController {
     FireReadingService service;
 
     @Operation(summary = "Find fire reading by ID", description = "Retrieve a fire reading by ID")
-    @GetMapping(value= "/{id}",
+    @GetMapping(value = "/{id}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public FireReadingVO findById (@PathVariable("id") Long id
-    ){
+    public FireReadingVO findById(@PathVariable("id") Long id
+    ) {
         return service.findById(id);
     }
 
     @Operation(summary = "Get all fire readings", description = "Retrieve a list of all fire readings")
     @GetMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML})
-    public ResponseEntity<PagedModel<EntityModel<FireReadingVO>>> findAll (
+    public ResponseEntity<PagedModel<EntityModel<FireReadingVO>>> findAll(
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-    ){
+    ) {
         page--;
 
-        if(limit == null) limit = (int) service.countAllReadings();
+        if (limit == null) limit = (int) service.countAllReadings();
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
@@ -57,15 +57,15 @@ public class FireReadingController {
             value = "/team/{teamHandle}",
             produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public ResponseEntity<PagedModel<EntityModel<FireReadingVO>>> findByTeamHandle (
+    public ResponseEntity<PagedModel<EntityModel<FireReadingVO>>> findByTeamHandle(
             @PathVariable("teamHandle") String teamHandle,
             @RequestParam(value = "page", defaultValue = "1") Integer page,
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-    ){
+    ) {
         page--;
 
-        if(limit == null) limit = (int) service.countAllReadings();
+        if (limit == null) limit = (int) service.countAllReadings();
 
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
@@ -78,8 +78,8 @@ public class FireReadingController {
     @PostMapping(produces = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML},
             consumes = {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML}
     )
-    public FireReadingVO create (@RequestBody FireReadingVO reading
-    ){
+    public FireReadingVO create(@RequestBody FireReadingVO reading
+    ) {
         reading.setTimestamp(ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC")).truncatedTo(ChronoUnit.SECONDS));
 
         return service.create(reading);

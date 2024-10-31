@@ -27,7 +27,8 @@ public class MQ135Reading implements Serializable {
     @Column
     private ZonedDateTime timestamp;
 
-    public MQ135Reading() {}
+    public MQ135Reading() {
+    }
 
     public Long getId() {
         return id;

@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 @Service
 public class ActivityService {
+    private static final Logger logger = Logger.getLogger(ActivityService.class.getName());
     private final ActivityRepository repository;
     private final SectorService sectorService;
 
@@ -27,10 +28,8 @@ public class ActivityService {
         this.sectorService = sectorService;
     }
 
-    private static final Logger logger = Logger.getLogger(ActivityService.class.getName());
-
     public ActivityVO findById(Long id) {
-        if(id == null) throw new RequiredObjectIsNullException();
+        if (id == null) throw new RequiredObjectIsNullException();
 
         Activity activity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Activity not found with given ID: " + id));
 
@@ -38,7 +37,7 @@ public class ActivityService {
     }
 
     public ActivityVO findByName(String name) {
-        if(name == null) throw new RequiredObjectIsNullException();
+        if (name == null) throw new RequiredObjectIsNullException();
 
         Activity activity = repository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Activity not found with given name: " + name));
 
@@ -46,7 +45,7 @@ public class ActivityService {
     }
 
     public List<ActivityVO> findBySectorId(Long sectorId) {
-        if(sectorId == null) throw new RequiredObjectIsNullException();
+        if (sectorId == null) throw new RequiredObjectIsNullException();
 
         SectorVO sectorVO = sectorService.findById(sectorId);
 
@@ -62,11 +61,12 @@ public class ActivityService {
     }
 
     public ActivityVO create(ActivityVO activityVO) {
-        if(activityVO == null) throw new RequiredObjectIsNullException();
+        if (activityVO == null) throw new RequiredObjectIsNullException();
 
         boolean isActivityAlreadyExists = repository.findByName(activityVO.getName()).isPresent();
 
-        if(isActivityAlreadyExists) throw new ResourceAlreadyExistsException("Activity with name: '" + activityVO.getName() + "' already exists");
+        if (isActivityAlreadyExists)
+            throw new ResourceAlreadyExistsException("Activity with name: '" + activityVO.getName() + "' already exists");
 
         Activity activity = convertToEntity(activityVO);
 
@@ -76,12 +76,12 @@ public class ActivityService {
     }
 
     public ActivityVO update(Long id, ActivityVO activityVO) {
-        if(id == null || activityVO == null) throw new RequiredObjectIsNullException();
+        if (id == null || activityVO == null) throw new RequiredObjectIsNullException();
 
         Activity entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Activity not found with given ID: " + id));
         entity.setName(activityVO.getName() != null ? activityVO.getName() : entity.getName());
 
-        if(activityVO.getSector() != null) {
+        if (activityVO.getSector() != null) {
             entity.setSector(DozerMapper.parseObject(sectorService.findByName(activityVO.getSector()), Sector.class));
         }
 
@@ -91,7 +91,7 @@ public class ActivityService {
     }
 
     public void delete(Long id) {
-        if(id == null) throw new RequiredObjectIsNullException();
+        if (id == null) throw new RequiredObjectIsNullException();
 
         ActivityVO activityVO = findById(id);
 

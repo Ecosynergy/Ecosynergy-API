@@ -32,8 +32,8 @@ public class MQ7ReadingService {
     @Autowired
     private PagedResourcesAssembler<MQ7ReadingVO> assembler;
 
-    public MQ7ReadingVO findById(Long id){
-        if(id == null) throw new RequiredObjectIsNullException();
+    public MQ7ReadingVO findById(Long id) {
+        if (id == null) throw new RequiredObjectIsNullException();
 
         MQ7Reading reading = repository.findByIdWithTeam(id).orElseThrow(() -> new ResourceNotFoundException("MQ7 Reading Not Found with the given ID: " + id));
 
@@ -46,7 +46,7 @@ public class MQ7ReadingService {
         return vo;
     }
 
-    public PagedModel<EntityModel<MQ7ReadingVO>> findAll(Pageable pageable){
+    public PagedModel<EntityModel<MQ7ReadingVO>> findAll(Pageable pageable) {
         Page<MQ7Reading> readingsPage = repository.findAll(pageable);
 
         Page<MQ7ReadingVO> voPage = readingsPage.map(r -> {
@@ -59,11 +59,11 @@ public class MQ7ReadingService {
         });
 
         voPage.map(vo -> {
-          try{
-              return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
-          } catch (Exception e){
-              throw new RuntimeException(e);
-          }
+            try {
+                return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
 
         Link link = linkTo(methodOn(MQ7ReadingController.class)
@@ -76,7 +76,7 @@ public class MQ7ReadingService {
         return assembler.toModel(voPage, link);
     }
 
-    public PagedModel<EntityModel<MQ7ReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable){
+    public PagedModel<EntityModel<MQ7ReadingVO>> findByTeamHandle(String teamHandle, Pageable pageable) {
         Page<MQ7Reading> readingsPage = repository.findByTeamHandle(teamHandle, pageable);
 
         TeamVO teamVO = teamService.findByHandle(teamHandle);
@@ -89,11 +89,11 @@ public class MQ7ReadingService {
         });
 
         voPage.map(vo -> {
-          try{
-              return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
-          } catch (Exception e){
-              throw new RuntimeException(e);
-          }
+            try {
+                return vo.add(linkTo(methodOn(MQ7ReadingController.class).findById(vo.getKey())).withSelfRel());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
 
         Link link = linkTo(methodOn(MQ7ReadingController.class)
@@ -106,8 +106,8 @@ public class MQ7ReadingService {
         return assembler.toModel(voPage, link);
     }
 
-    public MQ7ReadingVO create(MQ7ReadingVO reading){
-        if(reading == null) throw new RequiredObjectIsNullException();
+    public MQ7ReadingVO create(MQ7ReadingVO reading) {
+        if (reading == null) throw new RequiredObjectIsNullException();
 
         Team team = DozerMapper.parseObject(
                 teamService.findByHandle(reading.getTeamHandle()),
@@ -126,7 +126,7 @@ public class MQ7ReadingService {
         return vo;
     }
 
-    public long countAllReadings(){
+    public long countAllReadings() {
         long count = repository.count();
         return Math.max(count, 1L);
     }

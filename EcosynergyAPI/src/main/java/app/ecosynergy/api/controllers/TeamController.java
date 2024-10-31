@@ -1,10 +1,10 @@
 package app.ecosynergy.api.controllers;
 
-import app.ecosynergy.api.models.TeamMember;
-import app.ecosynergy.api.util.MediaType;
 import app.ecosynergy.api.data.vo.v1.TeamVO;
+import app.ecosynergy.api.models.TeamMember;
 import app.ecosynergy.api.models.TeamMemberId;
 import app.ecosynergy.api.services.TeamService;
+import app.ecosynergy.api.util.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -103,7 +103,7 @@ public class TeamController {
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
             @RequestBody TeamMember teamMember
-    ){
+    ) {
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
         TeamVO team = teamService.addMember(teamMemberId, teamMember.getRole());
@@ -120,7 +120,7 @@ public class TeamController {
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId,
             @RequestBody TeamMember teamMember
-    ){
+    ) {
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
         TeamVO team = teamService.updateMemberRole(teamMemberId, teamMember.getRole());
@@ -132,7 +132,7 @@ public class TeamController {
     public ResponseEntity<?> removeMember(
             @PathVariable("teamId") Long teamId,
             @PathVariable("userId") Long userId
-    ){
+    ) {
         TeamMemberId teamMemberId = new TeamMemberId(teamId, userId);
 
         teamService.removeMember(teamMemberId);

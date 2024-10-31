@@ -25,7 +25,7 @@ import java.util.Map;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         Map<String, PasswordEncoder> encoders = new HashMap<>();
 
         Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder("", 8, 185000, Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
@@ -42,7 +42,7 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManagerBean(
             AuthenticationConfiguration authenticationConfiguration
-    ) throws Exception{
+    ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -72,7 +72,8 @@ public class SecurityConfig {
                                 .requestMatchers("/users")
                                 .denyAll()
                 )
-                .cors(cors -> {})
+                .cors(cors -> {
+                })
                 .build();
     }
 

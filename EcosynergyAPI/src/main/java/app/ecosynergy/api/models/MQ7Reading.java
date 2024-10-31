@@ -27,7 +27,8 @@ public class MQ7Reading implements Serializable {
     @Column
     private ZonedDateTime timestamp;
 
-    public MQ7Reading() {}
+    public MQ7Reading() {
+    }
 
     public Long getId() {
         return id;
