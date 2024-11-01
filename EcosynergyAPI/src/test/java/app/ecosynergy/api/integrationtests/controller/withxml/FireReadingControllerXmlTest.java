@@ -99,7 +99,7 @@ public class FireReadingControllerXmlTest extends AbstractIntegrationTest {
         assertNotNull(fireReading.getTimestamp());
         assertNotNull(fireReading.getFire());
 
-        assertTrue(fireReading.getFire());
+        assertFalse(fireReading.getFire());
     }
 
     @Test
@@ -149,7 +149,7 @@ public class FireReadingControllerXmlTest extends AbstractIntegrationTest {
 
         assertEquals(fireReading.getId(), resultVO.getId());
         assertEquals(fireReading.getTimestamp(), resultVO.getTimestamp());
-        assertTrue(resultVO.getFire());
+        assertFalse(resultVO.getFire());
     }
 
     @Test
@@ -247,6 +247,6 @@ public class FireReadingControllerXmlTest extends AbstractIntegrationTest {
 
     private void mockReading(){
         fireReading.setTeamHandle("ecosynergyofc");
-        fireReading.setFire(true);
+        fireReading.setFire(false);
     }
 }

@@ -7,6 +7,8 @@ import app.ecosynergy.api.integrationtests.vo.FireReadingVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperFireReadingVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -15,8 +17,6 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -96,7 +96,7 @@ public class  FireReadingControllerJsonTest extends AbstractIntegrationTest {
         assertNotNull(fireReading.getTimestamp());
         assertNotNull(fireReading.getFire());
 
-        assertTrue(fireReading.getFire());
+        assertFalse(fireReading.getFire());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class  FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
         assertEquals(fireReading.getId(), resultVO.getId());
         assertEquals(fireReading.getTimestamp(), resultVO.getTimestamp());
-        assertTrue(resultVO.getFire());
+        assertFalse(resultVO.getFire());
     }
 
     @Test
@@ -240,6 +240,6 @@ public class  FireReadingControllerJsonTest extends AbstractIntegrationTest {
 
     private void mockReading(){
         fireReading.setTeamHandle("ecosynergyofc");
-        fireReading.setFire(true);
+        fireReading.setFire(false);
     }
 }

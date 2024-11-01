@@ -5,7 +5,9 @@ import app.ecosynergy.api.data.vo.v1.TeamVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.FireReading;
+import app.ecosynergy.api.models.Team;
 import app.ecosynergy.api.repositories.FireReadingRepository;
+import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.services.FireReadingService;
 import app.ecosynergy.api.services.TeamService;
 import app.ecosynergy.api.unittests.mapper.mocks.MockFireReading;
@@ -29,6 +31,9 @@ class FireReadingServiceTest {
 
     @Mock
     private TeamService teamService;
+
+    @Mock
+    private TeamRepository teamRepository;
 
     @Mock
     private FireReadingRepository repository;
@@ -63,7 +68,7 @@ class FireReadingServiceTest {
         FireReadingVO vo = input.mockVO(1);
         vo.setKey(1L);
 
-        when(teamService.findByHandle(any(String.class))).thenReturn(DozerMapper.parseObject(entity.getTeam(), TeamVO.class));
+        when(teamRepository.findByHandleWithMembers(any(String.class))).thenReturn(Optional.of(DozerMapper.parseObject(entity.getTeam(), Team.class)));
         when(repository.save(any(FireReading.class))).thenReturn(entity);
 
         FireReadingVO result = service.create(vo);
