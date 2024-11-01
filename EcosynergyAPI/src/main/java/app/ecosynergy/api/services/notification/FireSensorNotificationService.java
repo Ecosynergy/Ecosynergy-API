@@ -20,6 +20,7 @@ public class FireSensorNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", "fire");
         params.put("teamId", team.getId().toString());
 
         team.getTeamMembers().forEach(teamMember -> teamMember.getUser().getTokens().forEach(userToken -> notificationService.sendNotificationToUser(userToken.getToken(), params)));

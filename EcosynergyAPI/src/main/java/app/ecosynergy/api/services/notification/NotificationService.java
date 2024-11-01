@@ -34,10 +34,11 @@ public class NotificationService {
         };
 
         Message.Builder messageBuilder = Message.builder()
-                .putData("type", params.get("type") != null ? params.get("type") : type)
                 .setToken(firebaseToken);
 
         params.forEach(messageBuilder::putData);
+
+        messageBuilder.putData("type", params.get("type") != null ? params.get("type") : type);
 
         Message message = messageBuilder.build();
 

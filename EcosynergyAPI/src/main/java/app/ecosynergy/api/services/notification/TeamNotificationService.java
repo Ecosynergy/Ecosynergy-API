@@ -16,6 +16,8 @@ public class TeamNotificationService {
     @Autowired
     private NotificationService notificationService;
 
+    private final String type = "team";
+
     public void sendMemberAddedNotification(List<UserToken> newMemberTokens, Team team) {
         String title = "Bem-vindo à equipe!";
         String body = "Você entrou na equipe " + team.getName() + ". Estamos animados por tê-lo conosco!";
@@ -23,6 +25,7 @@ public class TeamNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
         params.put("teamId", team.getId().toString());
 
         for (UserToken newMemberToken : newMemberTokens) {
@@ -37,6 +40,7 @@ public class TeamNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
 
         for (UserToken removedMemberToken : removedMemberTokens) {
             notificationService.sendNotificationToUser(removedMemberToken.getToken(), params);
@@ -50,6 +54,7 @@ public class TeamNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
         params.put("teamId", team.getId().toString());
 
         for (UserToken promotedMemberToken : promotedMemberTokens) {
@@ -64,6 +69,7 @@ public class TeamNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
         params.put("teamId", team.getId().toString());
 
         for (TeamMember teamMember : members) {

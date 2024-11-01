@@ -15,6 +15,8 @@ public class InvitationNotificationService {
     @Autowired
     private NotificationService notificationService;
 
+    private final String type = "invite";
+
     public void sendInviteNotification(List<UserToken> recipientTokens, Invite invite) {
         String title = "Novo Convite para a Equipe!";
         String body = invite.getSender().getUserName() + " te convidou para se juntar à equipe " + invite.getTeam().getName() + ".";
@@ -22,6 +24,7 @@ public class InvitationNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
         params.put("inviteId", invite.getId().toString());
 
         for (UserToken recipientToken : recipientTokens) {
@@ -36,6 +39,7 @@ public class InvitationNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
         params.put("inviteId", invite.getId().toString());
 
         for (UserToken senderToken : senderTokens) {
@@ -50,6 +54,7 @@ public class InvitationNotificationService {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
+        params.put("type", type);
         params.put("inviteId", invite.getId().toString());
 
         for (UserToken senderToken : senderTokens) {
