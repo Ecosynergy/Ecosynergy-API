@@ -9,6 +9,7 @@ import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.FireReading;
 import app.ecosynergy.api.models.Team;
 import app.ecosynergy.api.repositories.FireReadingRepository;
+import app.ecosynergy.api.repositories.TeamRepository;
 import app.ecosynergy.api.services.notification.FireSensorNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,9 @@ public class FireReadingService {
 
     @Autowired
     private TeamService teamService;
+
+    @Autowired
+    private TeamRepository teamRepository;
 
     @Autowired
     private FireSensorNotificationService fireSensorNotificationService;
@@ -102,10 +106,7 @@ public class FireReadingService {
     public FireReadingVO create(FireReadingVO reading) {
         if (reading == null) throw new RequiredObjectIsNullException();
 
-        Team team = DozerMapper.parseObject(
-                teamService.findByHandle(reading.getTeamHandle()),
-                Team.class
-        );
+        Team team = teamRepository.findByHandleWithMembers(reading.getTeamHandle()).orElseThrow(() -> new ResourceNotFoundException("Team with the given handle: " + reading.getTeamHandle() +  "not found"));
 
         FireReading readingEntity = DozerMapper.parseObject(reading, FireReading.class);
         readingEntity.setTeam(team);
@@ -117,7 +118,7 @@ public class FireReadingService {
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
 
         if (vo.getFire())
-            fireSensorNotificationService.sendFireDetectedNotification(team.getTeamMembers(), team);
+            fireSensorNotificationService.sendFireDetectedNotification(team);
         return vo;
     }
 
