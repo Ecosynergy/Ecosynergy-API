@@ -18,6 +18,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -130,5 +132,6 @@ public class AuthControllerJsonTest extends AbstractIntegrationTest {
         user.setPassword("admin123");
         user.setGender("Male");
         user.setNationality("Brazilian");
+        user.setTokens(List.of("csTZKYcmRu-BXd261NiIGw:APA91bGGf_WozjsYIKdnjZdRSBjmSR0XCm5UYTHf8J_fxNDIebxR09HUj4mC19hSF3W3G7-AHRGHkIV1UseR__9EcWGEgb-wsif2cDeI6LG3oCFuLbiqnag"));
     }
 }

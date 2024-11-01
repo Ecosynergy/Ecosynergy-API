@@ -46,6 +46,8 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     private Boolean enabled;
 
+    private List<String> tokens;
+
     @JsonIgnore
     private List<Permission> permissions;
 
@@ -169,6 +171,14 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public List<String> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<String> tokens) {
+        this.tokens = tokens;
     }
 
     public List<Permission> getPermissions() {

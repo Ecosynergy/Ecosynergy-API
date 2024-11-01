@@ -1,0 +1,1 @@
+INSERT INTO `ecosynergy`.`user_tokens` (`id`, `token`, `device_type`, `is_active`, `user_id`) VALUES ('1', 'csTZKYcmRu-BXd261NiIGw:APA91bGGf_WozjsYIKdnjZdRSBjmSR0XCm5UYTHf8J_fxNDIebxR09HUj4mC19hSF3W3G7-AHRGHkIV1UseR__9EcWGEgb-wsif2cDeI6LG3oCFuLbiqnag', 'android', '1', '1');
