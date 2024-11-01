@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static app.ecosynergy.api.models.Role.ADMINISTRATOR;
 import static app.ecosynergy.api.models.Role.COMMON_USER;
 
 @Service
@@ -46,7 +45,7 @@ public class TeamNotificationService {
 
     public void sendMemberPromotedNotification(List<UserToken> promotedMemberTokens, String promoterName, Team team, String newRole) {
         String title = "Você foi promovido!";
-        String body = promoterName + " te promoveu para o cargo de " + (Objects.equals(newRole, COMMON_USER.name()) ? "USUÁRIO COMUM" : ADMINISTRATOR.name()) + " na equipe " + team.getName() + ".";
+        String body = promoterName + " te promoveu para o cargo de " + (Objects.equals(newRole, COMMON_USER.name()) ? "USUÁRIO COMUM" : "ADMINISTRADOR") + " na equipe " + team.getName() + ".";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
