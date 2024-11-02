@@ -313,7 +313,8 @@ public class TeamService {
             teamRepository.save(team);
         }
 
-        teamNotificationService.sendMemberRemovedNotification(teamMember.getUser().getTokens(), currentUser.getUserName(), teamMember.getTeam());
+        if(!Objects.equals(teamMember.getUser().getId(), currentUser.getId()))
+            teamNotificationService.sendMemberRemovedNotification(teamMember.getUser().getTokens(), currentUser.getUserName(), teamMember.getTeam());
     }
 
     @Transactional(readOnly = true)

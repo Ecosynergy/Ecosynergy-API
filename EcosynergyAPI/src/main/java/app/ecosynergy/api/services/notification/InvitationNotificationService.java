@@ -26,6 +26,7 @@ public class InvitationNotificationService {
         params.put("body", body);
         params.put("type", type);
         params.put("inviteId", invite.getId().toString());
+        params.put("status", invite.getStatus().name());
 
         for (UserToken recipientToken : recipientTokens) {
             notificationService.sendNotificationToUser(recipientToken.getToken(), params);
@@ -41,6 +42,7 @@ public class InvitationNotificationService {
         params.put("body", body);
         params.put("type", type);
         params.put("inviteId", invite.getId().toString());
+        params.put("status", invite.getStatus().name());
 
         for (UserToken senderToken : senderTokens) {
             notificationService.sendNotificationToUser(senderToken.getToken(), params);
@@ -56,6 +58,7 @@ public class InvitationNotificationService {
         params.put("body", body);
         params.put("type", type);
         params.put("inviteId", invite.getId().toString());
+        params.put("status", invite.getStatus().name());
 
         for (UserToken senderToken : senderTokens) {
             notificationService.sendNotificationToUser(senderToken.getToken(), params);
