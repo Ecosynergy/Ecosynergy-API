@@ -18,39 +18,56 @@ import java.util.Objects;
 public class User implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "user_name", unique = true)
     private String userName;
+
     @Column(name = "full_name")
     private String fullName;
+
     @Column
     private String email;
+
     @Column
     private String password;
+
     @Column
     private String gender;
+
     @Column
     private String nationality;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserToken> tokens = new ArrayList<>();
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
+
     @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
+
     @Column(name = "account_non_locked")
     private Boolean accountNonLocked;
+
     @Column(name = "credentials_non_expired")
     private Boolean credentialsNonExpired;
+
     @Column
     private Boolean enabled;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_permission",
             joinColumns = {@JoinColumn(name = "id_user")},
             inverseJoinColumns = {@JoinColumn(name = "id_permission")}
     )
     private List<Permission> permissions;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<NotificationPreference> notificationPreferences;
 
     public User() {
     }
@@ -216,16 +233,24 @@ public class User implements UserDetails, Serializable {
         this.permissions = permissions;
     }
 
+    public List<NotificationPreference> getNotificationPreferences() {
+        return notificationPreferences;
+    }
+
+    public void setNotificationPreferences(List<NotificationPreference> notificationPreferences) {
+        this.notificationPreferences = notificationPreferences;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserName(), user.getUserName()) && Objects.equals(getFullName(), user.getFullName()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getGender(), user.getGender()) && Objects.equals(getNationality(), user.getNationality()) && Objects.equals(isAccountNonExpired(), user.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), user.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), user.isCredentialsNonExpired()) && Objects.equals(isEnabled(), user.isEnabled()) && Objects.equals(getPermissions(), user.getPermissions());
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUserName(), user.getUserName()) && Objects.equals(getFullName(), user.getFullName()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getGender(), user.getGender()) && Objects.equals(getNationality(), user.getNationality()) && Objects.equals(getTokens(), user.getTokens()) && Objects.equals(getCreatedAt(), user.getCreatedAt()) && Objects.equals(isAccountNonExpired(), user.isAccountNonExpired()) && Objects.equals(isAccountNonLocked(), user.isAccountNonLocked()) && Objects.equals(isCredentialsNonExpired(), user.isCredentialsNonExpired()) && Objects.equals(isEnabled(), user.isEnabled()) && Objects.equals(getPermissions(), user.getPermissions()) && Objects.equals(getNotificationPreferences(), user.getNotificationPreferences());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUserName(), getFullName(), getEmail(), getPassword(), getGender(), getNationality(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getPermissions());
+        return Objects.hash(getId(), getUserName(), getFullName(), getEmail(), getPassword(), getGender(), getNationality(), getTokens(), getCreatedAt(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled(), getPermissions(), getNotificationPreferences());
     }
 }

@@ -22,26 +22,39 @@ import java.util.Objects;
 public class UserVO extends RepresentationModel<UserVO> implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     @JsonProperty("id")
     @Mapping("id")
     private Long key;
+
     @JsonProperty("username")
     private String userName;
+
     private String fullName;
+
     private String email;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
     private String gender;
+
     private String nationality;
+
     private ZonedDateTime createdAt;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonExpired;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean accountNonLocked;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean credentialsNonExpired;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean enabled;
+
     @JsonIgnore
     private List<Permission> permissions;
 

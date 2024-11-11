@@ -23,6 +23,10 @@ public class FireSensorNotificationService {
         params.put("type", "fire");
         params.put("teamId", team.getId().toString());
 
-        team.getTeamMembers().forEach(teamMember -> teamMember.getUser().getTokens().forEach(userToken -> notificationService.sendNotificationToUser(userToken.getToken(), params)));
+        team.getTeamMembers().forEach(teamMember -> teamMember.getUser().getTokens().forEach(userToken -> teamMember.getUser().getNotificationPreferences().forEach(notificationPreference -> {
+            if(notificationPreference.getPlatform() == userToken.getPlatform() && notificationPreference.isFireDetection()) {
+                notificationService.sendNotificationToUser(userToken.getToken(), params);
+            }
+        })));
     }
 }

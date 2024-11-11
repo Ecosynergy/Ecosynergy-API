@@ -137,7 +137,7 @@ public class InviteService {
 
         emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), currentUser.getFullName());
 
-        invitationNotificationService.sendInviteNotification(savedInvite.getRecipient().getTokens(), savedInvite);
+        invitationNotificationService.sendInviteNotification(savedInvite.getRecipient(), savedInvite);
 
         InviteVO savedInviteVO = DozerMapper.parseObject(savedInvite, InviteVO.class);
         savedInviteVO.setCreatedAt(savedInviteVO.getCreatedAt().withZoneSameInstant(savedInvite.getTeam().getTimeZone()));
@@ -174,7 +174,7 @@ public class InviteService {
 
         emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
-        invitationNotificationService.sendInviteAcceptedNotification(updatedInvite.getSender().getTokens(), updatedInvite);
+        invitationNotificationService.sendInviteAcceptedNotification(updatedInvite.getSender(), updatedInvite);
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));
@@ -202,7 +202,7 @@ public class InviteService {
 
         emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
 
-        invitationNotificationService.sendInviteDeclinedNotification(updatedInvite.getSender().getTokens(), updatedInvite);
+        invitationNotificationService.sendInviteDeclinedNotification(updatedInvite.getSender(), updatedInvite);
 
         InviteVO inviteVO = DozerMapper.parseObject(updatedInvite, InviteVO.class);
         inviteVO.setCreatedAt(inviteVO.getCreatedAt().withZoneSameInstant(invite.getTeam().getTimeZone()));

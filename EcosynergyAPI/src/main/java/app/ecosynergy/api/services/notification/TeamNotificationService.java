@@ -22,11 +22,7 @@ public class TeamNotificationService {
         String title = "Bem-vindo à equipe!";
         String body = "Você entrou na equipe " + team.getName() + ". Estamos animados por tê-lo conosco!";
 
-        Map<String, String> params = new HashMap<>();
-        params.put("title", title);
-        params.put("body", body);
-        params.put("type", type);
-        params.put("teamId", team.getId().toString());
+        Map<String, String> params = setParams(team, title, body);
 
         for (UserToken newMemberToken : newMemberTokens) {
             notificationService.sendNotificationToUser(newMemberToken.getToken(), params);
@@ -51,11 +47,7 @@ public class TeamNotificationService {
         String title = "Você foi promovido!";
         String body = promoterName + " te promoveu para o cargo de " + (Objects.equals(newRole, COMMON_USER.name()) ? "USUÁRIO COMUM" : "ADMINISTRADOR") + " na equipe " + team.getName() + ".";
 
-        Map<String, String> params = new HashMap<>();
-        params.put("title", title);
-        params.put("body", body);
-        params.put("type", type);
-        params.put("teamId", team.getId().toString());
+        Map<String, String> params = setParams(team, title, body);
 
         for (UserToken promotedMemberToken : promotedMemberTokens) {
             notificationService.sendNotificationToUser(promotedMemberToken.getToken(), params);
@@ -66,14 +58,21 @@ public class TeamNotificationService {
         String title = "Meta Atingida!";
         String body = "A equipe " + team.getName() + " atingiu a meta " + goalType + "!";
 
+        Map<String, String> params = setParams(team, title, body);
+
+        team.getTeamMembers().forEach(teamMember -> teamMember.getUser().getTokens().forEach(userToken -> teamMember.getUser().getNotificationPreferences().forEach(notificationPreference -> {
+            if(notificationPreference.getPlatform() == userToken.getPlatform() && notificationPreference.isTeamGoalReached()) {
+                notificationService.sendNotificationToUser(userToken.getToken(), params);
+            }
+        })));
+    }
+
+    private Map<String, String> setParams(Team team, String title, String body) {
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
         params.put("body", body);
         params.put("type", type);
         params.put("teamId", team.getId().toString());
-
-        for (TeamMember teamMember : members) {
-            teamMember.getUser().getTokens().forEach(memberToken -> notificationService.sendNotificationToUser(memberToken.getToken(), params));
-        }
+        return params;
     }
 }
