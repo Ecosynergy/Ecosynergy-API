@@ -19,6 +19,7 @@ public class AbstractIntegrationTest {
         @SuppressWarnings({"unchecked", "rawtypes"})
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
+            mysql.withUsername("root").withPassword("GabrielBen2024");
             startContainers();
             ConfigurableEnvironment environment = applicationContext.getEnvironment();
             MapPropertySource testContainers = new MapPropertySource(

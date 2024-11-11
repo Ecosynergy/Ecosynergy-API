@@ -1,0 +1,1 @@
+UPDATE user_tokens SET platform = 'ANDROID' where user_id = 1;

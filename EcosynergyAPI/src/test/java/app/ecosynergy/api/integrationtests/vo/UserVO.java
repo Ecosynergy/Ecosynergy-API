@@ -1,5 +1,6 @@
 package app.ecosynergy.api.integrationtests.vo;
 
+import app.ecosynergy.api.models.NotificationPreference;
 import app.ecosynergy.api.models.Permission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -47,6 +48,8 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
     private Boolean enabled;
 
     private List<String> tokens;
+
+    private List<NotificationPreference> notificationPreferences;
 
     @JsonIgnore
     private List<Permission> permissions;
@@ -179,6 +182,14 @@ public class UserVO extends RepresentationModel<UserVO> implements UserDetails, 
 
     public void setTokens(List<String> tokens) {
         this.tokens = tokens;
+    }
+
+    public List<NotificationPreference> getNotificationPreferences() {
+        return notificationPreferences;
+    }
+
+    public void setNotificationPreferences(List<NotificationPreference> notificationPreferences) {
+        this.notificationPreferences = notificationPreferences;
     }
 
     public List<Permission> getPermissions() {

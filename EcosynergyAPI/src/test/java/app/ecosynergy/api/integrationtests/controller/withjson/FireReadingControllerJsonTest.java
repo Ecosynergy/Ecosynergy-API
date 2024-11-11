@@ -50,6 +50,7 @@ public class  FireReadingControllerJsonTest extends AbstractIntegrationTest {
         AccountCredentialsVO credentials = new AccountCredentialsVO("anderson", "admin123");
         String accessToken = given()
                 .basePath("/auth/signin")
+                .filters(List.of(new RequestLoggingFilter(LogDetail.ALL), new ResponseLoggingFilter(LogDetail.ALL)))
                 .port(TestConfigs.SERVER_PORT)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
                 .body(credentials)

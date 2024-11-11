@@ -2,7 +2,9 @@ package app.ecosynergy.api.unittests.mockito.services;
 
 import app.ecosynergy.api.data.vo.v1.UserVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
+import app.ecosynergy.api.models.NotificationPreference;
 import app.ecosynergy.api.models.User;
+import app.ecosynergy.api.repositories.NotificationPreferenceRepository;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.services.UserService;
 import app.ecosynergy.api.unittests.mapper.mocks.MockUser;
@@ -23,6 +25,9 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService service;
+
+    @Mock
+    private NotificationPreferenceRepository notificationPreferenceRepository;
 
     @Mock
     UserRepository repository;
@@ -102,7 +107,7 @@ class UserServiceTest {
         UserVO vo = input.mockUserVO(1);
 
         when(repository.save(any(User.class))).thenReturn(entity);
-
+        when(notificationPreferenceRepository.save(any(NotificationPreference.class))).thenReturn(null);
         UserVO result = service.create(vo);
 
         assertNotNull(result);

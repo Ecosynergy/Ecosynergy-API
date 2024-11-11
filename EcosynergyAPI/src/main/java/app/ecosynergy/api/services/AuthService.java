@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -38,6 +39,8 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository repository;
     private final EmailService emailService;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Autowired
     public AuthService(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, EmailService emailService) {
@@ -83,6 +86,7 @@ public class AuthService {
             return ResponseEntity.ok(tokenResponse);
 
         } catch (Exception e) {
+            logger.info(e.getMessage());
             throw new BadCredentialsException("Invalid username/email or password supplied!");
         }
     }
