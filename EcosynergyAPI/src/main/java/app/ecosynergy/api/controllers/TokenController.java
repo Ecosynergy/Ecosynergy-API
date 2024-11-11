@@ -31,43 +31,43 @@ public class TokenController {
     })
     public ResponseEntity<String> saveToken(
             @Parameter(description = "FCM token", required = true) @RequestParam String fcmToken,
-            @Parameter(description = "Type of the device", required = true) @RequestParam String platform) {
+            @Parameter(description = "Type of the platform", required = true) @RequestParam String platform) {
         tokenService.saveOrUpdateToken(fcmToken, Platform.valueOf(platform.toUpperCase()));
         return ResponseEntity.ok("FCM token saved successfully.");
     }
 
-    @PostMapping("/remove")
-    @Operation(summary = "Remove FCM token", description = "Removes the FCM token for a specified user and device.")
+    @DeleteMapping("/remove")
+    @Operation(summary = "Remove FCM token", description = "Removes the FCM token for a specified user and platform.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "FCM token removed successfully."),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters."),
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
     public ResponseEntity<String> removeToken(
-            @Parameter(description = "Type of the device", required = true) @RequestParam String platform) {
+            @Parameter(description = "Type of the platform", required = true) @RequestParam String platform) {
         tokenService.removeToken(Platform.valueOf(platform.toUpperCase()));
         return ResponseEntity.ok("FCM token removed successfully.");
     }
 
-    @PostMapping("/remove-all")
+    @DeleteMapping("/remove-all")
     @Operation(summary = "Remove all FCM tokens for a user", description = "Removes all FCM tokens associated with a user.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "All FCM tokens removed successfully."),
+            @ApiResponse(responseCode = "200", description = "All FCM tokens were removed successfully."),
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
     public ResponseEntity<String> removeAllTokens() {
         tokenService.removeAllTokens();
-        return ResponseEntity.ok("All FCM tokens removed successfully.");
+        return ResponseEntity.ok("All FCM tokens were removed successfully.");
     }
 
     @GetMapping("/get")
-    @Operation(summary = "Get FCM token for a user", description = "Retrieves the FCM token for a specified user and device.")
+    @Operation(summary = "Get FCM token for a user", description = "Retrieves the FCM token for a specified user and platform.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Token found."),
             @ApiResponse(responseCode = "404", description = "Token not found.")
     })
     public ResponseEntity<List<UserTokenVO>> getUserTokens(
-            @Parameter(description = "Type of the device", required = true) @RequestParam String platform) {
+            @Parameter(description = "Type of the platform", required = true) @RequestParam String platform) {
         List<UserTokenVO> tokens = tokenService.getUserToken(Platform.valueOf(platform.toUpperCase()));
         return ResponseEntity.ok(tokens);
     }
