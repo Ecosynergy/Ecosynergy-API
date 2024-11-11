@@ -52,4 +52,13 @@
         </field>
     </mapping>
 
+    <mapping>
+        <class-a>app.ecosynergy.api.models.NotificationPreference</class-a>
+        <class-b>app.ecosynergy.api.data.vo.v1.NotificationPreferenceVO</class-b>
+        <field>
+            <a>user.id</a>
+            <b>userId</b>
+        </field>
+    </mapping>
+
 </mappings>

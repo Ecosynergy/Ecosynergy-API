@@ -4,6 +4,7 @@ import app.ecosynergy.api.data.vo.v1.UserTokenVO;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
+import app.ecosynergy.api.models.Platform;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.models.UserToken;
 import app.ecosynergy.api.repositories.UserRepository;
@@ -25,11 +26,11 @@ public class TokenService {
     @Autowired
     private UserTokenRepository userTokenRepository;
 
-    public void saveOrUpdateToken(String fcmToken, String deviceType) {
+    public void saveOrUpdateToken(String fcmToken, Platform platform) {
         User user = userService.getCurrentUser();
 
         UserToken existingToken = user.getTokens().stream()
-                .filter(token -> token.getDeviceType().equals(deviceType))
+                .filter(token -> token.getPlatform().equals(platform))
                 .findFirst()
                 .orElse(null);
 
@@ -38,7 +39,7 @@ public class TokenService {
         } else {
             UserToken newToken = new UserToken();
             newToken.setToken(fcmToken);
-            newToken.setDeviceType(deviceType);
+            newToken.setPlatform(platform);
             newToken.setUser(user);
             user.getTokens().add(newToken);
         }
@@ -46,11 +47,11 @@ public class TokenService {
         userRepository.save(user);
     }
 
-    public void removeToken(String deviceType) {
+    public void removeToken(Platform platform) {
         User user = userService.getCurrentUser();
 
         List<UserToken> tokens = user.getTokens();
-        tokens.removeIf(token -> token.getDeviceType().equals(deviceType));
+        tokens.removeIf(token -> token.getPlatform().equals(platform));
 
         userRepository.save(user);
     }
@@ -62,10 +63,10 @@ public class TokenService {
         userRepository.save(user);
     }
 
-    public List<UserTokenVO> getUserToken(String deviceType) {
+    public List<UserTokenVO> getUserToken(Platform platform) {
         List<UserToken> userTokens = userTokenRepository.findByUserId(userService.getCurrentUser().getId())
                 .stream()
-                .filter(token -> token.getDeviceType().equals(deviceType))
+                .filter(token -> token.getPlatform().equals(platform))
                 .toList();
 
         return DozerMapper.parseListObjects(userTokens, UserTokenVO.class);

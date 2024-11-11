@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user_tokens")
@@ -16,8 +17,9 @@ public class UserToken implements Serializable {
     @Column(nullable = false)
     private String token;
 
-    @Column(name = "device_type")
-    private String deviceType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "platform", nullable = false, length = 10)
+    private Platform platform;
 
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
@@ -51,12 +53,12 @@ public class UserToken implements Serializable {
         this.token = token;
     }
 
-    public String getDeviceType() {
-        return deviceType;
+    public Platform getPlatform() {
+        return platform;
     }
 
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
     }
 
     public ZonedDateTime getCreatedAt() {
@@ -81,5 +83,18 @@ public class UserToken implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserToken userToken = (UserToken) o;
+        return Objects.equals(getId(), userToken.getId()) && Objects.equals(getToken(), userToken.getToken()) && getPlatform() == userToken.getPlatform() && Objects.equals(getCreatedAt(), userToken.getCreatedAt()) && Objects.equals(isActive, userToken.isActive) && Objects.equals(getUser(), userToken.getUser());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getToken(), getPlatform(), getCreatedAt(), isActive, getUser());
     }
 }

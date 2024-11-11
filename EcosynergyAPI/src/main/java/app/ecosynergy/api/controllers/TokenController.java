@@ -1,6 +1,7 @@
 package app.ecosynergy.api.controllers;
 
 import app.ecosynergy.api.data.vo.v1.UserTokenVO;
+import app.ecosynergy.api.models.Platform;
 import app.ecosynergy.api.services.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,8 +31,8 @@ public class TokenController {
     })
     public ResponseEntity<String> saveToken(
             @Parameter(description = "FCM token", required = true) @RequestParam String fcmToken,
-            @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        tokenService.saveOrUpdateToken(fcmToken, deviceType);
+            @Parameter(description = "Type of the device", required = true) @RequestParam String platform) {
+        tokenService.saveOrUpdateToken(fcmToken, Platform.valueOf(platform.toUpperCase()));
         return ResponseEntity.ok("FCM token saved successfully.");
     }
 
@@ -43,8 +44,8 @@ public class TokenController {
             @ApiResponse(responseCode = "404", description = "User not found.")
     })
     public ResponseEntity<String> removeToken(
-            @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        tokenService.removeToken(deviceType);
+            @Parameter(description = "Type of the device", required = true) @RequestParam String platform) {
+        tokenService.removeToken(Platform.valueOf(platform.toUpperCase()));
         return ResponseEntity.ok("FCM token removed successfully.");
     }
 
@@ -66,8 +67,8 @@ public class TokenController {
             @ApiResponse(responseCode = "404", description = "Token not found.")
     })
     public ResponseEntity<List<UserTokenVO>> getUserTokens(
-            @Parameter(description = "Type of the device", required = true) @RequestParam String deviceType) {
-        List<UserTokenVO> tokens = tokenService.getUserToken(deviceType);
+            @Parameter(description = "Type of the device", required = true) @RequestParam String platform) {
+        List<UserTokenVO> tokens = tokenService.getUserToken(Platform.valueOf(platform.toUpperCase()));
         return ResponseEntity.ok(tokens);
     }
 

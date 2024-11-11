@@ -1,0 +1,14 @@
+CREATE TABLE notification_preferences (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    platform VARCHAR(10) CHECK (platform IN ('WEB', 'ANDROID')),
+    fire_detection BOOLEAN NOT NULL DEFAULT TRUE,
+    invite_status BOOLEAN NOT NULL DEFAULT TRUE,
+    invite_received BOOLEAN NOT NULL DEFAULT TRUE,
+    team_goal_reached BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

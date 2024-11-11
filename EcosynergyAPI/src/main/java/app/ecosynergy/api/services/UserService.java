@@ -6,7 +6,10 @@ import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
+import app.ecosynergy.api.models.NotificationPreference;
+import app.ecosynergy.api.models.Platform;
 import app.ecosynergy.api.models.User;
+import app.ecosynergy.api.repositories.NotificationPreferenceRepository;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -26,7 +29,9 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -37,13 +42,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserService implements UserDetailsService {
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserRepository repository;
+    private final NotificationPreferenceRepository notificationPreferenceRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final HttpServletRequest request;
     private final PagedResourcesAssembler<UserVO> assembler;
 
     @Autowired
-    public UserService(UserRepository repository, @Lazy JwtTokenProvider jwtTokenProvider, HttpServletRequest request, PagedResourcesAssembler<UserVO> assembler) {
+    public UserService(UserRepository repository, NotificationPreferenceRepository notificationPreferenceRepository, @Lazy JwtTokenProvider jwtTokenProvider, HttpServletRequest request, PagedResourcesAssembler<UserVO> assembler) {
         this.repository = repository;
+        this.notificationPreferenceRepository = notificationPreferenceRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.request = request;
         this.assembler = assembler;
@@ -135,6 +142,7 @@ public class UserService implements UserDetailsService {
         }).toList();
     }
 
+    @Transactional
     public UserVO create(UserVO user) {
         if (user == null) throw new RequiredObjectIsNullException();
 
@@ -152,10 +160,29 @@ public class UserService implements UserDetailsService {
 
         logger.info("Creating user!");
 
-        UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
+        entity = repository.save(entity);
+        createDefaultPreferences(entity);
+
+        UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
+    }
+
+    private void createDefaultPreferences(User user) {
+        for (Platform platform : Platform.values()) {
+            NotificationPreference preference = new NotificationPreference();
+            preference.setUser(user);
+            preference.setPlatform(platform);
+            preference.setFireDetection(true);
+            preference.setInviteStatus(true);
+            preference.setInviteReceived(true);
+            preference.setTeamGoalReached(true);
+            preference.setCreatedAt(ZonedDateTime.now());
+            preference.setUpdatedAt(ZonedDateTime.now());
+
+            notificationPreferenceRepository.save(preference);
+        }
     }
 
     public UserVO update(Long id, UserVO user) {
