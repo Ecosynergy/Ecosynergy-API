@@ -6,6 +6,7 @@ import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.UserVO;
 import app.ecosynergy.api.integrationtests.vo.pagedmodels.PagedModelUser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
@@ -15,7 +16,6 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -105,7 +105,7 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
 
         assertEquals(3, user.getId());
         assertEquals("testecontainerxml", user.getUsername());
-        assertEquals("Anderson Rodrigues XML", user.getFullName());
+        assertEquals("Anderson Rodrigues Xml", user.getFullName());
         assertEquals("testecontainerxml@gmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());

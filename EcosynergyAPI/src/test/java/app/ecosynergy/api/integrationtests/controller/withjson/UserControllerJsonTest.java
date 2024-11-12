@@ -6,6 +6,8 @@ import app.ecosynergy.api.integrationtests.vo.AccountCredentialsVO;
 import app.ecosynergy.api.integrationtests.vo.TokenVO;
 import app.ecosynergy.api.integrationtests.vo.UserVO;
 import app.ecosynergy.api.integrationtests.vo.wrappers.WrapperUserVO;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -14,8 +16,6 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -101,7 +101,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
 
         assertEquals(2, user.getId());
         assertEquals("testecontainerjson", user.getUsername());
-        assertEquals("Anderson Rodrigues JSON", user.getFullName());
+        assertEquals("Anderson Rodrigues Json", user.getFullName());
         assertEquals("testecontainerjson@gmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
