@@ -2,16 +2,18 @@ package app.ecosynergy.api.services;
 
 import app.ecosynergy.api.controllers.UserController;
 import app.ecosynergy.api.data.vo.v1.UserVO;
+import app.ecosynergy.api.exceptions.InvalidUserDataException;
 import app.ecosynergy.api.exceptions.RequiredObjectIsNullException;
 import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
-import app.ecosynergy.api.models.NotificationPreference;
-import app.ecosynergy.api.models.Platform;
 import app.ecosynergy.api.models.User;
 import app.ecosynergy.api.repositories.NotificationPreferenceRepository;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
+import app.ecosynergy.api.util.PasswordUtils;
+import app.ecosynergy.api.util.UserPreferenceUtils;
+import app.ecosynergy.api.util.ValidationUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +24,14 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -113,7 +112,7 @@ public class UserService implements UserDetailsService {
 
         logger.info("Finding User by Username!");
 
-        User entity = repository.findByUsername(username);
+        User entity = loadUserByUsername(username);
 
         UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
@@ -125,7 +124,7 @@ public class UserService implements UserDetailsService {
 
         DecodedJWT decodedJWT = jwtTokenProvider.decodedToken(token);
 
-        return repository.findByUsername(decodedJWT.getSubject());
+        return loadUserByUsername(decodedJWT.getSubject());
     }
 
     public List<UserVO> findByIdentifierContaining(String identifier) {
@@ -161,7 +160,8 @@ public class UserService implements UserDetailsService {
         logger.info("Creating user!");
 
         entity = repository.save(entity);
-        createDefaultPreferences(entity);
+
+        notificationPreferenceRepository.saveAll(UserPreferenceUtils.createDefaultPreferences(entity));
 
         UserVO vo = DozerMapper.parseObject(entity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
@@ -169,27 +169,19 @@ public class UserService implements UserDetailsService {
         return vo;
     }
 
-    private void createDefaultPreferences(User user) {
-        for (Platform platform : Platform.values()) {
-            NotificationPreference preference = new NotificationPreference();
-            preference.setUser(user);
-            preference.setPlatform(platform);
-            preference.setFireDetection(true);
-            preference.setInviteStatus(true);
-            preference.setInviteReceived(true);
-            preference.setTeamGoalReached(true);
-            preference.setCreatedAt(ZonedDateTime.now());
-            preference.setUpdatedAt(ZonedDateTime.now());
-
-            notificationPreferenceRepository.save(preference);
-        }
-    }
-
     public UserVO update(Long id, UserVO user) {
         if (user == null) throw new RequiredObjectIsNullException();
 
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with the given ID: " + id));
+
+        if(!ValidationUtils.isValidEmail(user.getEmail())) {
+            throw new InvalidUserDataException("Invalid email format");
+        }
+
+        if(!ValidationUtils.isFullNameValid(user.getFullName())) {
+            throw new InvalidUserDataException("Full name contais special characters or digits");
+        }
 
         boolean isAlreadyExists = repository.existsByUserName(user.getUserName());
 
@@ -202,7 +194,7 @@ public class UserService implements UserDetailsService {
             throw new ResourceAlreadyExistsException("The email: '" + user.getEmail() + "' is already in use");
 
         entity.setUserName(user.getUserName() != null ? user.getUserName().toLowerCase(Locale.ROOT) : entity.getUserName());
-        entity.setFullName(user.getFullName() != null ? user.getFullName() : entity.getFullName());
+        entity.setFullName(user.getFullName() != null ? ValidationUtils.formatFullName(user.getFullName()) : entity.getFullName());
         entity.setEmail(user.getEmail() != null ? user.getEmail().toLowerCase() : entity.getEmail());
         entity.setGender(user.getGender() != null ? user.getGender() : entity.getGender());
         entity.setNationality(user.getNationality() != null ? user.getNationality() : entity.getNationality());
@@ -233,7 +225,7 @@ public class UserService implements UserDetailsService {
 
         User entity = getCurrentUser();
 
-        entity.setPassword(passwordEncode(user.getPassword()));
+        entity.setPassword(PasswordUtils.passwordEncode(user.getPassword()));
 
         UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
 
@@ -249,32 +241,15 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.info("Finding one User by name " + username + "!");
 
-        var user = repository.findByUsername(username);
+        User user = repository.findByUsername(username);
 
         if (user != null) {
             return user;
         } else {
             throw new UsernameNotFoundException("Username " + username + " not found!");
         }
-    }
-
-    private String passwordEncode(String password) {
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-
-        Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder(
-                "",
-                8,
-                185000,
-                Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256
-        );
-
-        encoders.put("pbkdf2", pbkdf2PasswordEncoder);
-        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
-        passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
-
-        return passwordEncoder.encode(password);
     }
 }

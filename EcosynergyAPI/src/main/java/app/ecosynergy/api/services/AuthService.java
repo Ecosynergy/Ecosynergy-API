@@ -10,9 +10,13 @@ import app.ecosynergy.api.exceptions.ResourceAlreadyExistsException;
 import app.ecosynergy.api.exceptions.ResourceNotFoundException;
 import app.ecosynergy.api.mapper.DozerMapper;
 import app.ecosynergy.api.models.User;
+import app.ecosynergy.api.repositories.NotificationPreferenceRepository;
 import app.ecosynergy.api.repositories.UserRepository;
 import app.ecosynergy.api.security.jwt.JwtTokenProvider;
 import app.ecosynergy.api.util.ConfirmationCodeGenerator;
+import app.ecosynergy.api.util.PasswordUtils;
+import app.ecosynergy.api.util.UserPreferenceUtils;
+import app.ecosynergy.api.util.ValidationUtils;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -21,13 +25,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -39,15 +38,17 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository repository;
     private final EmailService emailService;
+    private final NotificationPreferenceRepository notificationPreferenceRepository;
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Autowired
-    public AuthService(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, EmailService emailService) {
+    public AuthService(@Lazy JwtTokenProvider tokenProvider, AuthenticationManager authenticationManager, UserRepository repository, EmailService emailService, NotificationPreferenceRepository notificationPreferenceRepository) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.repository = repository;
         this.emailService = emailService;
+        this.notificationPreferenceRepository = notificationPreferenceRepository;
     }
 
     public ResponseEntity<?> signIn(AccountCredentialsVO data) {
@@ -56,37 +57,27 @@ public class AuthService {
             var password = data.getPassword();
             User user;
 
-            try {
-                user = repository.findByUsername(loginIdentifier);
-
-                if (user != null) {
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(user.getUserName(), password)
-                    );
-                } else {
-                    throw new UsernameNotFoundException("Username " + loginIdentifier + " not found");
-                }
-            } catch (UsernameNotFoundException ex) {
+            if(ValidationUtils.isValidEmail(data.getIdentifier())){
                 user = repository.findByEmail(loginIdentifier);
-                if (user != null) {
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(user.getUserName(), password)
-                    );
-                }
+            } else {
+                user = repository.findByUsername(loginIdentifier);
+            }
+
+            if (user != null) {
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(user.getUserName(), password)
+                );
+            } else {
+                throw new UsernameNotFoundException("Username " + loginIdentifier + " not found");
             }
 
             var tokenResponse = new TokenVO();
-
-            if (user != null) {
-                tokenResponse = tokenProvider.createAccessToken(user.getUserName(), user.getRoles());
-            } else {
-                throw new UsernameNotFoundException("User not found with username/email: " + loginIdentifier);
-            }
+            tokenResponse = tokenProvider.createAccessToken(user.getUserName(), user.getRoles());
 
             return ResponseEntity.ok(tokenResponse);
 
         } catch (Exception e) {
-            logger.info(e.getMessage());
+            logger.warning(e.getMessage());
             throw new BadCredentialsException("Invalid username/email or password supplied!");
         }
     }
@@ -94,11 +85,17 @@ public class AuthService {
     public UserVO signUp(UserVO user) throws MessagingException {
         String currentPassword = user.getPassword();
 
-        if (containsSpecialCharacters(user.getFullName()))
+        if(!ValidationUtils.isValidEmail(user.getEmail())){
+            throw new InvalidUserDataException("Invalid email format");
+        }
+
+        if(!ValidationUtils.isFullNameValid(user.getFullName())){
             throw new InvalidUserDataException("Full name contains special characters or digits.");
+        }
+
+        user.setFullName(ValidationUtils.formatFullName(user.getFullName()));
         user.setUserName(user.getUserName().toLowerCase());
-        user.setEmail(user.getEmail().toLowerCase());
-        user.setPassword(passwordEncode(currentPassword));
+        user.setPassword(PasswordUtils.passwordEncode(currentPassword));
         user.setEnabled(true);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
@@ -117,6 +114,8 @@ public class AuthService {
         User entity = DozerMapper.parseObject(user, User.class);
 
         User savedEntity = repository.save(entity);
+
+        notificationPreferenceRepository.saveAll(UserPreferenceUtils.createDefaultPreferences(savedEntity));
 
         UserVO vo = DozerMapper.parseObject(savedEntity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
@@ -140,7 +139,7 @@ public class AuthService {
     }
 
     public String sendConfirmationCode(String email) throws MessagingException {
-        if (email == null) throw new RequiredObjectIsNullException();
+        if (!ValidationUtils.isValidEmail(email)) throw new InvalidUserDataException("Invalid email format");
 
         User user = repository.findByEmail(email);
 
@@ -156,34 +155,17 @@ public class AuthService {
     public UserVO forgotPassword(UserVO user) {
         if (user.getEmail() == null || user.getPassword() == null) throw new RequiredObjectIsNullException();
 
+        if(!ValidationUtils.isValidEmail(user.getEmail())){
+            throw new InvalidUserDataException("Invalid email format");
+        }
+
         User entity = repository.findByEmail(user.getEmail());
 
-        entity.setPassword(passwordEncode(user.getPassword()));
+        entity.setPassword(PasswordUtils.passwordEncode(user.getPassword()));
 
         UserVO vo = DozerMapper.parseObject(repository.save(entity), UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
         return vo;
-    }
-
-    private boolean containsSpecialCharacters(String fullName) {
-        return fullName != null && !fullName.matches("[a-zA-Z\\s]+");
-    }
-
-    private String passwordEncode(String password) {
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-
-        Pbkdf2PasswordEncoder pbkdf2PasswordEncoder = new Pbkdf2PasswordEncoder(
-                "",
-                8,
-                185000,
-                Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256
-        );
-
-        encoders.put("pbkdf2", pbkdf2PasswordEncoder);
-        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
-        passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2PasswordEncoder);
-
-        return passwordEncoder.encode(password);
     }
 }
