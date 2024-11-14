@@ -34,8 +34,8 @@ public class DozerConverterTest {
         assertNotNull(vo.getNationality());
 
         assertEquals("user0", vo.getUserName());
-        assertEquals("User0", vo.getFullName());
-        assertEquals("email0", vo.getEmail());
+        assertEquals("User", vo.getFullName());
+        assertEquals("email0@gmail.com", vo.getEmail());
         assertEquals("Password0", vo.getPassword());
         assertEquals("Male", vo.getGender());
         assertEquals("Brazilian0", vo.getNationality());
@@ -62,8 +62,8 @@ public class DozerConverterTest {
             assertNotNull(vo.getGender());
             assertNotNull(vo.getNationality());
 
-            assertEquals("User" + vo.getKey(), vo.getFullName());
-            assertEquals("email" + vo.getKey(), vo.getEmail());
+            assertEquals("User", vo.getFullName());
+            assertEquals("email" + vo.getKey() + "@gmail.com", vo.getEmail());
             assertEquals("Password" + vo.getKey(), vo.getPassword());
             assertEquals(vo.getKey() % 2 == 0 ? "Male" : "Female", vo.getGender());
             assertEquals("Brazilian" + vo.getKey(), vo.getNationality());
@@ -89,8 +89,8 @@ public class DozerConverterTest {
         assertNotNull(entity.getNationality());
 
         assertEquals("user0", entity.getUserName());
-        assertEquals("User0", entity.getFullName());
-        assertEquals("email0", entity.getEmail());
+        assertEquals("User", entity.getFullName());
+        assertEquals("email0@gmail.com", entity.getEmail());
         assertEquals("Password0", entity.getPassword());
         assertEquals("Male", entity.getGender());
         assertEquals("Brazilian0", entity.getNationality());
@@ -117,8 +117,8 @@ public class DozerConverterTest {
             assertNotNull(entity.getGender());
             assertNotNull(entity.getNationality());
 
-            assertEquals("User" + entity.getId(), entity.getFullName());
-            assertEquals("email" + entity.getId(), entity.getEmail());
+            assertEquals("User", entity.getFullName());
+            assertEquals("email" + entity.getId() + "@gmail.com", entity.getEmail());
             assertEquals("Password" + entity.getId(), entity.getPassword());
             assertEquals(entity.getId() % 2 == 0 ? "Male" : "Female", entity.getGender());
             assertEquals("Brazilian" + entity.getId(), entity.getNationality());
