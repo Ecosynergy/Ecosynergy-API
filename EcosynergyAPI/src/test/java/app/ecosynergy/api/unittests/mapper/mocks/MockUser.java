@@ -20,7 +20,7 @@ public class MockUser {
         entity.setId(number.longValue());
         entity.setUserName("user" + number);
         entity.setFullName("User");
-        entity.setEmail("email" + number);
+        entity.setEmail("email" +  number + "@gmail.com");
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
         entity.setNationality("Brazilian" + number);
@@ -37,7 +37,7 @@ public class MockUser {
         entity.setKey(number.longValue());
         entity.setUserName("user" + number);
         entity.setFullName("User");
-        entity.setEmail("email" + number);
+        entity.setEmail("email" + number + "@gmail.com");
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
         entity.setNationality("Brazilian" + number);

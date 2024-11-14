@@ -58,7 +58,7 @@ class UserServiceTest {
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User", result.getFullName());
-        assertEquals("email1", result.getEmail());
+        assertEquals("email1@gmail.com", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
@@ -89,7 +89,7 @@ class UserServiceTest {
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User", result.getFullName());
-        assertEquals("email1", result.getEmail());
+        assertEquals("email1@gmail.com", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
@@ -123,7 +123,7 @@ class UserServiceTest {
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User", result.getFullName());
-        assertEquals("email1", result.getEmail());
+        assertEquals("email1@gmail.com", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
@@ -168,7 +168,7 @@ class UserServiceTest {
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
         assertEquals("User", result.getFullName());
-        assertEquals("email1", result.getEmail());
+        assertEquals("email1@gmail.com", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
         assertEquals("Brazilian1", result.getNationality());
