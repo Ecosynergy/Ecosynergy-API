@@ -105,7 +105,7 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
 
         assertEquals(3, user.getId());
         assertEquals("testecontainerxml", user.getUsername());
-        assertEquals("Anderson Rodrigues Xml", user.getFullName());
+        assertEquals("Anderson Rodrigues XML", user.getFullName());
         assertEquals("testecontainerxml@gmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
@@ -169,7 +169,7 @@ public class UserControllerXmlTest extends AbstractIntegrationTest {
 
         assertEquals(3, user.getId());
         assertEquals("testecontainerxml", user.getUsername());
-        assertEquals("Anderson Rodrigues XML", user.getFullName());
+        assertEquals("Anderson Rodrigues Xml", user.getFullName());
         assertEquals("andiin@hotmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
