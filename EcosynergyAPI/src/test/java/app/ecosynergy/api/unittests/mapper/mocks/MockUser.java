@@ -19,7 +19,7 @@ public class MockUser {
         User entity = new User();
         entity.setId(number.longValue());
         entity.setUserName("user" + number);
-        entity.setFullName("User" + number);
+        entity.setFullName("User");
         entity.setEmail("email" + number);
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
@@ -36,7 +36,7 @@ public class MockUser {
         UserVO entity = new UserVO();
         entity.setKey(number.longValue());
         entity.setUserName("user" + number);
-        entity.setFullName("User" + number);
+        entity.setFullName("User");
         entity.setEmail("email" + number);
         entity.setPassword("Password" + number);
         entity.setGender(number % 2 == 0 ? "Male" : "Female");
