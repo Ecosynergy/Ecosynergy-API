@@ -57,7 +57,7 @@ class UserServiceTest {
 
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
-        assertEquals("User1", result.getFullName());
+        assertEquals("User", result.getFullName());
         assertEquals("email1", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
@@ -88,7 +88,7 @@ class UserServiceTest {
 
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
-        assertEquals("User1", result.getFullName());
+        assertEquals("User", result.getFullName());
         assertEquals("email1", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
@@ -122,7 +122,7 @@ class UserServiceTest {
 
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
-        assertEquals("User1", result.getFullName());
+        assertEquals("User", result.getFullName());
         assertEquals("email1", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
@@ -167,7 +167,7 @@ class UserServiceTest {
 
         assertTrue(result.toString().contains("links: [</api/user/v1/id/1>;rel=\"self\"]"));
         assertEquals("user1", result.getUserName());
-        assertEquals("User1", result.getFullName());
+        assertEquals("User", result.getFullName());
         assertEquals("email1", result.getEmail());
         assertEquals("Password1", result.getPassword());
         assertEquals("Female", result.getGender());
