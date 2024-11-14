@@ -101,7 +101,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
 
         assertEquals(2, user.getId());
         assertEquals("testecontainerjson", user.getUsername());
-        assertEquals("Anderson Rodrigues Json", user.getFullName());
+        assertEquals("Anderson Rodrigues JSON", user.getFullName());
         assertEquals("testecontainerjson@gmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
@@ -164,7 +164,7 @@ public class UserControllerJsonTest extends AbstractIntegrationTest {
 
         assertEquals(2, user.getId());
         assertEquals("testecontainerjson1", user.getUsername());
-        assertEquals("Anderson Rodrigues JSON", user.getFullName());
+        assertEquals("Anderson Rodrigues Json", user.getFullName());
         assertEquals("and.rt@hotmail.com", user.getEmail());
         assertEquals("Male", user.getGender());
         assertEquals("Brazilian", user.getNationality());
