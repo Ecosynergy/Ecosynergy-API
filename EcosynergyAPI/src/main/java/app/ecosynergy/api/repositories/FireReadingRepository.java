@@ -19,6 +19,6 @@ public interface FireReadingRepository extends JpaRepository<FireReading, Long> 
     @Query("SELECT r FROM FireReading r JOIN FETCH r.team")
     Page<FireReading> findAllWithTeam(Pageable pageable);
 
-    @Query("SELECT fr FROM FireReading fr WHERE fr.team.id = :teamId and fr.isFire = true ORDER BY fr.timestamp DESC")
+    @Query("SELECT fr FROM FireReading fr WHERE fr.team.id = :teamId and fr.isFire = true ORDER BY fr.timestamp DESC LIMIT 1")
     Optional<FireReading> findLatestByTeamId(@Param("teamId") Long teamId);
 }
