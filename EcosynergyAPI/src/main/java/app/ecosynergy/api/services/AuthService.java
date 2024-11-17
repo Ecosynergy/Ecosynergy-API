@@ -120,7 +120,7 @@ public class AuthService {
         UserVO vo = DozerMapper.parseObject(savedEntity, UserVO.class);
         vo.add(linkTo(methodOn(UserController.class).findById(vo.getKey())).withSelfRel());
 
-        emailService.sendWelcomeEmail(savedEntity.getEmail(), savedEntity.getFullName().split(" ")[0]);
+        emailService.sendWelcomeEmail(savedEntity);
 
         return vo;
     }

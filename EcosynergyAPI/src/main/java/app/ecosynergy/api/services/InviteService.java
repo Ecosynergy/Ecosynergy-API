@@ -135,7 +135,7 @@ public class InviteService {
 
         Invite savedInvite = inviteRepository.save(invite);
 
-        emailService.sendInviteEmail(recipient.get().getEmail(), team.get().getName(), currentUser.getFullName());
+        emailService.sendInviteEmail(savedInvite);
 
         invitationNotificationService.sendInviteNotification(savedInvite.getRecipient(), savedInvite);
 
@@ -172,7 +172,7 @@ public class InviteService {
 
         Invite updatedInvite = inviteRepository.save(invite);
 
-        emailService.sendInviteAcceptedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+        emailService.sendInviteAcceptedNotification(updatedInvite);
 
         invitationNotificationService.sendInviteAcceptedNotification(updatedInvite.getSender(), updatedInvite);
 
@@ -200,7 +200,7 @@ public class InviteService {
         invite.setStatus(InviteStatus.DECLINED);
         Invite updatedInvite = inviteRepository.save(invite);
 
-        emailService.sendInviteRejectedNotification(updatedInvite.getSender().getEmail(), updatedInvite.getSender().getFullName().split(" ")[0], updatedInvite.getRecipient().getFullName(), updatedInvite.getTeam().getName());
+        emailService.sendInviteRejectedNotification(updatedInvite);
 
         invitationNotificationService.sendInviteDeclinedNotification(updatedInvite.getSender(), updatedInvite);
 
