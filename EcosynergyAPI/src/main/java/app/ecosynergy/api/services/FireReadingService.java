@@ -110,6 +110,8 @@ public class FireReadingService {
 
         Team team = teamRepository.findByHandleWithMembers(reading.getTeamHandle()).orElseThrow(() -> new ResourceNotFoundException("Team with the given handle: " + reading.getTeamHandle() +  "not found"));
 
+        FireReading lastReading = repository.findLatestByTeamId(team.getId()).orElse(null);
+
         FireReading readingEntity = DozerMapper.parseObject(reading, FireReading.class);
         readingEntity.setTeam(team);
         readingEntity = repository.save(readingEntity);
@@ -118,8 +120,6 @@ public class FireReadingService {
         vo.setTeamHandle(readingEntity.getTeam().getHandle());
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(team.getTimeZone()));
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
-
-        FireReading lastReading = repository.findLatestByTeamId(team.getId()).orElse(null);
 
         if (vo.getFire()) {
             fireSensorNotificationService.sendFireDetectedNotification(team, lastReading != null ? lastReading.getTimestamp() : null);
