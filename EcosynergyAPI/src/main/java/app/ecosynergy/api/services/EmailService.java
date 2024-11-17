@@ -55,7 +55,7 @@ public class EmailService {
                 "                    </tr>\n" +
                 "                    <tr>\n" +
                 "                        <td style=\"padding: 20px; font-size: 16px; line-height: 24px; color: #333333;\">\n" +
-                "                            <p style=\"margin: 0 0 15px;\"><i>Olá, " + ValidationUtils.formatFullName(name) + ".</i></p>\n" +
+                "                            <p style=\"margin: 0 0 15px;\"><i>Olá, " + ValidationUtils.formatFullName(name.split(" ")[0]) + ".</i></p>\n" +
                 "                            <p style=\"margin: 0 0 15px;\">Nós recebemos uma solicitação de um código de uso único para sua conta Ecosynergy.</p>\n" +
                 "                            <p style=\"margin: 0 0 15px;\"><i>Verifique os detalhes da sessão para garantir que tenha sido você.</i></p>\n" +
                 "                            <table style=\"width: 100%; background-color: #e2e1e1; padding: 20px; margin: 20px 0; border-radius: 6px; text-align: center;\">\n" +
