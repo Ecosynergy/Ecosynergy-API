@@ -26,7 +26,7 @@ public class FireSensorNotificationService {
         params.put("type", "fire");
         params.put("teamId", team.getId().toString());
 
-        long minutesDifference = timestamp != null ? ChronoUnit.MINUTES.between(timestamp, Instant.now()) : 10;
+        long minutesDifference = timestamp != null ? ChronoUnit.MINUTES.between(timestamp.toInstant(), Instant.now()) : 10;
 
         team.getTeamMembers().forEach(teamMember -> teamMember.getUser().getTokens().forEach(userToken -> teamMember.getUser().getNotificationPreferences().forEach(notificationPreference -> {
             if(notificationPreference.getPlatform() == userToken.getPlatform() && notificationPreference.isFireDetection() && minutesDifference >= notificationPreference.getFireIntervalMinutes()) {
