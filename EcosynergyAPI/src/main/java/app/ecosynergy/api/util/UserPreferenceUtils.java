@@ -16,6 +16,7 @@ public class UserPreferenceUtils {
             preference.setUser(user);
             preference.setPlatform(platform);
             preference.setFireDetection(true);
+            preference.setFireNotificationIntervalMinutes(10);
             preference.setInviteStatus(true);
             preference.setInviteReceived(true);
             preference.setTeamGoalReached(true);

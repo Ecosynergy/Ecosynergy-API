@@ -19,22 +19,36 @@ public class NotificationPreference {
     @Enumerated(EnumType.STRING)
     private Platform platform;
 
+    @Column(name = "fire_detection", nullable = false)
     private boolean fireDetection;
+
+    @Column(name = "fire_notification_interval_minutes", nullable = false)
+    private int fireNotificationIntervalMinutes = 10;
+
+    @Column(name = "invite_status", nullable = false)
     private boolean inviteStatus;
+
+    @Column(name = "invite_received", nullable = false)
     private boolean inviteReceived;
+
+    @Column(name = "team_goal_reached", nullable = false)
     private boolean teamGoalReached;
 
+    @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
     private ZonedDateTime updatedAt;
 
     public NotificationPreference() {
     }
 
-    public NotificationPreference(Long id, User user, Platform platform, boolean fireDetection, boolean inviteStatus, boolean inviteReceived, boolean teamGoalReached, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
+    public NotificationPreference(Long id, User user, Platform platform, boolean fireDetection, int fireNotificationIntervalMinutes, boolean inviteStatus, boolean inviteReceived, boolean teamGoalReached, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
         this.id = id;
         this.user = user;
         this.platform = platform;
         this.fireDetection = fireDetection;
+        this.fireNotificationIntervalMinutes = fireNotificationIntervalMinutes;
         this.inviteStatus = inviteStatus;
         this.inviteReceived = inviteReceived;
         this.teamGoalReached = teamGoalReached;
@@ -84,6 +98,14 @@ public class NotificationPreference {
         this.fireDetection = fireDetection;
     }
 
+    public int getFireNotificationIntervalMinutes() {
+        return fireNotificationIntervalMinutes;
+    }
+
+    public void setFireNotificationIntervalMinutes(int fireNotificationIntervalMinutes) {
+        this.fireNotificationIntervalMinutes = fireNotificationIntervalMinutes;
+    }
+
     public boolean isInviteStatus() {
         return inviteStatus;
     }
@@ -126,14 +148,13 @@ public class NotificationPreference {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NotificationPreference that = (NotificationPreference) o;
-        return isFireDetection() == that.isFireDetection() && isInviteStatus() == that.isInviteStatus() && isInviteReceived() == that.isInviteReceived() && isTeamGoalReached() == that.isTeamGoalReached() && Objects.equals(getId(), that.getId()) && Objects.equals(getUser(), that.getUser()) && getPlatform() == that.getPlatform() && Objects.equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(getUpdatedAt(), that.getUpdatedAt());
+        return isFireDetection() == that.isFireDetection() && getFireNotificationIntervalMinutes() == that.getFireNotificationIntervalMinutes() && isInviteStatus() == that.isInviteStatus() && isInviteReceived() == that.isInviteReceived() && isTeamGoalReached() == that.isTeamGoalReached() && Objects.equals(getId(), that.getId()) && Objects.equals(getUser(), that.getUser()) && getPlatform() == that.getPlatform() && Objects.equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(getUpdatedAt(), that.getUpdatedAt());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUser(), getPlatform(), isFireDetection(), isInviteStatus(), isInviteReceived(), isTeamGoalReached(), getCreatedAt(), getUpdatedAt());
+        return Objects.hash(getId(), getUser(), getPlatform(), isFireDetection(), getFireNotificationIntervalMinutes(), isInviteStatus(), isInviteReceived(), isTeamGoalReached(), getCreatedAt(), getUpdatedAt());
     }
 }

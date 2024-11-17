@@ -50,6 +50,7 @@ public class NotificationPreferenceService {
                 .orElseThrow(() -> new ResourceNotFoundException("Notification Preference not found with the given User ID: " + currentUser.getId() + " and the given platform: " + notificationPreferenceVO.getPlatform()));
 
         notificationPreference.setFireDetection(notificationPreferenceVO.isFireDetection());
+        notificationPreference.setFireNotificationIntervalMinutes(notificationPreferenceVO.getFireNotificationIntervalMinutes());
         notificationPreference.setInviteStatus(notificationPreferenceVO.isInviteStatus());
         notificationPreference.setInviteReceived(notificationPreferenceVO.isInviteReceived());
         notificationPreference.setTeamGoalReached(notificationPreferenceVO.isTeamGoalReached());

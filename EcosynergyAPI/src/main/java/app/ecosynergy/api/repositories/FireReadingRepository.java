@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -17,4 +18,7 @@ public interface FireReadingRepository extends JpaRepository<FireReading, Long> 
 
     @Query("SELECT r FROM FireReading r JOIN FETCH r.team")
     Page<FireReading> findAllWithTeam(Pageable pageable);
+
+    @Query("SELECT fr FROM FireReading fr WHERE fr.team.id = :teamId ORDER BY fr.timestamp DESC")
+    Optional<FireReading> findLatestByTeamId(@Param("teamId") Long teamId);
 }

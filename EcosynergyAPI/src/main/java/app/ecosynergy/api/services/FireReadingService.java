@@ -39,6 +39,8 @@ public class FireReadingService {
 
     @Autowired
     private PagedResourcesAssembler<FireReadingVO> assembler;
+    @Autowired
+    private FireReadingRepository fireReadingRepository;
 
     public FireReadingVO findById(Long id) {
         if (id == null) throw new RequiredObjectIsNullException();
@@ -117,8 +119,11 @@ public class FireReadingService {
         vo.setTimestamp(vo.getTimestamp().withZoneSameInstant(team.getTimeZone()));
         vo.add(linkTo(methodOn(FireReadingController.class).findById(vo.getKey())).withSelfRel());
 
-        if (vo.getFire())
-            fireSensorNotificationService.sendFireDetectedNotification(team);
+        FireReading lastReading = repository.findLatestByTeamId(team.getId()).orElse(null);
+
+        if (vo.getFire()) {
+            fireSensorNotificationService.sendFireDetectedNotification(team, lastReading != null ? lastReading.getTimestamp() : null);
+        }
         return vo;
     }
 

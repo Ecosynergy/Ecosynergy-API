@@ -69,6 +69,7 @@ class FireReadingServiceTest {
 
         when(teamRepository.findByHandleWithMembers(any(String.class))).thenReturn(Optional.of(entity.getTeam()));
         when(repository.save(any(FireReading.class))).thenReturn(entity);
+        when(repository.findLatestByTeamId(any(Long.class))).thenReturn(Optional.of(entity));
 
         FireReadingVO result = service.create(vo);
 
