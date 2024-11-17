@@ -29,7 +29,7 @@ public class FireSensorNotificationService {
         long minutesDifference = timestamp != null ? ChronoUnit.MINUTES.between(timestamp, Instant.now()) : 10;
 
         team.getTeamMembers().forEach(teamMember -> teamMember.getUser().getTokens().forEach(userToken -> teamMember.getUser().getNotificationPreferences().forEach(notificationPreference -> {
-            if(notificationPreference.getPlatform() == userToken.getPlatform() && notificationPreference.isFireDetection() && minutesDifference >= notificationPreference.getFireNotificationIntervalMinutes()) {
+            if(notificationPreference.getPlatform() == userToken.getPlatform() && notificationPreference.isFireDetection() && minutesDifference >= notificationPreference.getFireIntervalMinutes()) {
                 notificationService.sendNotificationToUser(userToken.getToken(), params);
             }
         })));

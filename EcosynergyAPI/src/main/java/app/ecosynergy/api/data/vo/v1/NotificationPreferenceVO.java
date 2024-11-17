@@ -24,7 +24,7 @@ public class NotificationPreferenceVO implements Serializable {
     private Platform platform;
 
     private boolean fireDetection;
-    private int fireNotificationIntervalMinutes;
+    private int fireIntervalMinutes;
     private boolean inviteStatus;
     private boolean inviteReceived;
     private boolean teamGoalReached;
@@ -35,12 +35,12 @@ public class NotificationPreferenceVO implements Serializable {
     public NotificationPreferenceVO() {
     }
 
-    public NotificationPreferenceVO(Long key, Long userId, Platform platform, boolean fireDetection, int fireNotificationIntervalMinutes, boolean inviteStatus, boolean inviteReceived, boolean teamGoalReached, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
+    public NotificationPreferenceVO(Long key, Long userId, Platform platform, boolean fireDetection, int fireIntervalMinutes, boolean inviteStatus, boolean inviteReceived, boolean teamGoalReached, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
         this.key = key;
         this.userId = userId;
         this.platform = platform;
         this.fireDetection = fireDetection;
-        this.fireNotificationIntervalMinutes = fireNotificationIntervalMinutes;
+        this.fireIntervalMinutes = fireIntervalMinutes;
         this.inviteStatus = inviteStatus;
         this.inviteReceived = inviteReceived;
         this.teamGoalReached = teamGoalReached;
@@ -80,12 +80,12 @@ public class NotificationPreferenceVO implements Serializable {
         this.fireDetection = fireDetection;
     }
 
-    public int getFireNotificationIntervalMinutes() {
-        return fireNotificationIntervalMinutes;
+    public int getFireIntervalMinutes() {
+        return fireIntervalMinutes;
     }
 
-    public void setFireNotificationIntervalMinutes(int fireNotificationIntervalMinutes) {
-        this.fireNotificationIntervalMinutes = fireNotificationIntervalMinutes;
+    public void setFireIntervalMinutes(int fireIntervalMinutes) {
+        this.fireIntervalMinutes = fireIntervalMinutes;
     }
 
     public boolean isInviteStatus() {
@@ -132,11 +132,11 @@ public class NotificationPreferenceVO implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         NotificationPreferenceVO that = (NotificationPreferenceVO) o;
-        return isFireDetection() == that.isFireDetection() && getFireNotificationIntervalMinutes() == that.getFireNotificationIntervalMinutes() && isInviteStatus() == that.isInviteStatus() && isInviteReceived() == that.isInviteReceived() && isTeamGoalReached() == that.isTeamGoalReached() && Objects.equals(getKey(), that.getKey()) && Objects.equals(getUserId(), that.getUserId()) && getPlatform() == that.getPlatform() && Objects.equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(getUpdatedAt(), that.getUpdatedAt());
+        return isFireDetection() == that.isFireDetection() && getFireIntervalMinutes() == that.getFireIntervalMinutes() && isInviteStatus() == that.isInviteStatus() && isInviteReceived() == that.isInviteReceived() && isTeamGoalReached() == that.isTeamGoalReached() && Objects.equals(getKey(), that.getKey()) && Objects.equals(getUserId(), that.getUserId()) && getPlatform() == that.getPlatform() && Objects.equals(getCreatedAt(), that.getCreatedAt()) && Objects.equals(getUpdatedAt(), that.getUpdatedAt());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getKey(), getUserId(), getPlatform(), isFireDetection(), getFireNotificationIntervalMinutes(), isInviteStatus(), isInviteReceived(), isTeamGoalReached(), getCreatedAt(), getUpdatedAt());
+        return Objects.hash(getKey(), getUserId(), getPlatform(), isFireDetection(), getFireIntervalMinutes(), isInviteStatus(), isInviteReceived(), isTeamGoalReached(), getCreatedAt(), getUpdatedAt());
     }
 }
