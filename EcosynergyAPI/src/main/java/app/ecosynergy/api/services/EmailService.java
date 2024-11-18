@@ -16,8 +16,9 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEmail(String to, String subject, String htmlContent) throws MessagingException {
+    public void sendEmail(String to, String subject, String htmlContent, String preHeader) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
+        mimeMessage.addHeader("X-Pre-Header", preHeader);
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
         helper.setText(htmlContent, true);
@@ -30,6 +31,7 @@ public class EmailService {
 
     public void sendConfirmationEmail(String recipientEmail, String name, String code) throws MessagingException {
         String subject = "Verifique seu E-mail";
+        String preHeader = "Seu código de confirmação do e-mail da sua conta Ecosynergy é: " + code;
 
         String htmlContent = "<html>\n" +
                 "<head>\n" +
@@ -83,19 +85,22 @@ public class EmailService {
                 "</body>\n" +
                 "</html>";
 
-        sendEmail(recipientEmail, subject, htmlContent);
+        sendEmail(recipientEmail, subject, htmlContent,  preHeader);
     }
 
     public void sendWelcomeEmail(User user) throws MessagingException {
         String subject = "Bem-vindo(a) à Ecosynergy!";
+        String preHeader = "Veja como aproveitar ao máximo a nossa plataforma.";
 
         String htmlContent = "";
 
-        sendEmail(user.getEmail(), subject, htmlContent);
+        sendEmail(user.getEmail(), subject, htmlContent, preHeader);
     }
 
     public void sendInviteEmail(Invite invite) throws MessagingException {
         String subject = "Você foi convidado para se juntar à equipe " + invite.getTeam().getName() + ".";
+        String preHeader = "Confira o convite e veja como participar da equipe.";
+
         String text = "<html>\n" +
                 "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
@@ -179,11 +184,12 @@ public class EmailService {
                 "    </script>\n" +
                 "</body>\n" +
                 "</html>";
-        sendEmail(invite.getRecipient().getEmail(), subject, text);
+        sendEmail(invite.getRecipient().getEmail(), subject, text, preHeader);
     }
 
     public void sendInviteAcceptedNotification(Invite invite) throws MessagingException {
         String subject = "Convite para a equipe " + invite.getTeam().getName() + " aceito.";
+        String preHeader = "";
 
         String htmlContent = "<html>\n" +
                 "<head>\n" +
@@ -247,11 +253,13 @@ public class EmailService {
                 "</body>\n" +
                 "</html>";
 
-        sendEmail(invite.getSender().getEmail(), subject, htmlContent);
+        sendEmail(invite.getSender().getEmail(), subject, htmlContent, preHeader);
     }
 
     public void sendInviteRejectedNotification(Invite invite) throws MessagingException {
         String subject = "Convite para equipe " + invite.getTeam().getName() + " recusado";
+        String preHeader = "";
+
         String htmlContent = "<html>\n" +
                 "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +
@@ -322,6 +330,6 @@ public class EmailService {
                 "</body>\n" +
                 "</html>";
 
-        sendEmail(invite.getSender().getEmail(), subject, htmlContent);
+        sendEmail(invite.getSender().getEmail(), subject, htmlContent, preHeader);
     }
 }
