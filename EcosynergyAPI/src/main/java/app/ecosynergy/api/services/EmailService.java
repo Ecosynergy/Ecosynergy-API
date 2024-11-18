@@ -30,7 +30,7 @@ public class EmailService {
     }
 
     public void sendConfirmationEmail(String recipientEmail, String name, String code) throws MessagingException {
-        String subject = "Verifique seu E-mail";
+        String subject = "Seu código de confirmação de e-mail da sua conta Ecosynergy é: " + code;
         String preHeader = "Seu código de confirmação do e-mail da sua conta Ecosynergy é: " + code;
 
         String htmlContent = "<html>\n" +
@@ -45,11 +45,6 @@ public class EmailService {
                 "        <tr>\n" +
                 "            <td style=\"text-align: center;\">\n" +
                 "                <table style=\"max-width: 600px; width: 100%; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin: 0 auto; text-align: start;\">\n" +
-                "                    <tr>\n" +
-                "                        <td style=\"padding: 10px; font-size: 16px; color: #333333;\">\n" +
-                "                            <p style=\"margin: 0; font-weight: 400;\">Seu código de confirmação de e-mail da sua conta Ecosynergy é: <strong>" + code + "</strong></p>\n" +
-                "                        </td>\n" +
-                "                    </tr>\n" +
                 "                    <tr>\n" +
                 "                        <td style=\"padding: 20px 0; text-align: center;\">\n" +
                 "                            <img src=\"https://github.com/Ecosynergy/VisualIdentity/blob/master/Logo_Symbol_Transparent_Wtih_Shine.png?raw=true\" alt=\"Logo Ecosynergy\" style=\"max-width: 200px; height: auto; display: block; margin: 0 auto;\">\n" +
@@ -113,11 +108,6 @@ public class EmailService {
                 "        <tr>\n" +
                 "            <td style=\"text-align: center;\">\n" +
                 "                <table style=\"max-width: 600px; width: 100%; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); margin: 0 auto; text-align: start;\">\n" +
-                "                    <tr>\n" +
-                "                        <td style=\"padding: 10px; font-size: 16px; color: #333333;\">\n" +
-                "                            <p style=\"margin: 0; font-weight: 400;\">Confira o convite e veja como participar da equipe.</p>\n" +
-                "                        </td>\n" +
-                "                    </tr>\n" +
                 "                    <tr>\n" +
                 "                        <td style=\"padding: 20px 0; text-align: center;\">\n" +
                 "                            <img src=\"https://github.com/Ecosynergy/VisualIdentity/blob/master/Logo_Symbol_Transparent_Wtih_Shine.png?raw=true\" alt=\"Logo Ecosynergy\" style=\"max-width: 200px; height: auto; display: block; margin: 0 auto;\">\n" +
