@@ -143,7 +143,7 @@ public class EmailService {
                 "                            <table style=\"width: 100%; margin: 20px 0;\">\n" +
                 "                                <tr>\n" +
                 "                                    <td style=\"text-align: center;\">\n" +
-                "                                        <a href=\"http://ec2-44-220-83-117.compute-1.amazonaws.com/redirect/" + invite.getId() + "\" onclick=\"redirectToApp()\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: #000; background-color: #28a745; text-decoration: none; border-radius: 5px; font-family: 'Poppins', sans-serif; text-align: center; font-weight: 600; cursor: pointer\">\n" +
+                "                                        <a href=\"http://ec2-44-220-83-117.compute-1.amazonaws.com/redirect/home/\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: #000; background-color: #28a745; text-decoration: none; border-radius: 5px; font-family: 'Poppins', sans-serif; text-align: center; font-weight: 600; cursor: pointer\">\n" +
                 "                                            ACESSAR PLATAFORMA ECOSYNERGY\n" +
                 "                                        </a>                                        \n" +
                 "                                    </td>\n" +

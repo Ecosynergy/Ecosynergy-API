@@ -66,7 +66,7 @@ public class SecurityConfig {
                                         "/api/user/v1/exists/**",
                                         "/api-docs/**",
                                         "/swagger-ui.html**",
-                                        "/redirect/"
+                                        "/redirect/**"
                                 ).permitAll()
                                 .requestMatchers("/api/**")
                                 .authenticated()
