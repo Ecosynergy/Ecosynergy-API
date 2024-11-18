@@ -143,7 +143,7 @@ public class EmailService {
                 "                            <table style=\"width: 100%; margin: 20px 0;\">\n" +
                 "                                <tr>\n" +
                 "                                    <td style=\"text-align: center;\">\n" +
-                "                                        <a href=\"ecosynergy://invite?inviteId=" + invite.getId() + "\" onclick=\"redirectToApp()\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: #000; background-color: #28a745; text-decoration: none; border-radius: 5px; font-family: 'Poppins', sans-serif; text-align: center; font-weight: 600;\">\n" +
+                "                                        <a href=\"http://ec2-44-220-83-117.compute-1.amazonaws.com/" + invite.getId() + "\" onclick=\"redirectToApp()\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: #000; background-color: #28a745; text-decoration: none; border-radius: 5px; font-family: 'Poppins', sans-serif; text-align: center; font-weight: 600; cursor: pointer\">\n" +
                 "                                            ACESSAR PLATAFORMA ECOSYNERGY\n" +
                 "                                        </a>                                        \n" +
                 "                                    </td>\n" +
@@ -160,18 +160,6 @@ public class EmailService {
                 "            </td>\n" +
                 "        </tr>\n" +
                 "    </table>\n" +
-                "    <script>\n" +
-                "        function redirectToApp() {\n" +
-                "            const appLink = 'ecosynergy://invite?inviteId=" + invite.getId() + "';\n" +
-                "            const fallbackLink = 'http://ecosynergybr.com.s3-website-us-east-1.amazonaws.com/';\n" +
-                "    \n" +
-                "            window.location.href = appLink;\n" +
-                "\n" +
-                "            setTimeout(() => {\n" +
-                "                window.location.href = fallbackLink;\n" +
-                "            }, 2000);\n" +
-                "        }\n" +
-                "    </script>\n" +
                 "</body>\n" +
                 "</html>";
         sendEmail(invite.getRecipient().getEmail(), subject, text, preHeader);

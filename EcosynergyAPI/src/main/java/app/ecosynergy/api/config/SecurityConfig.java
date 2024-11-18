@@ -65,7 +65,8 @@ public class SecurityConfig {
                                         "/auth/refresh/**",
                                         "/api/user/v1/exists/**",
                                         "/api-docs/**",
-                                        "/swagger-ui.html**"
+                                        "/swagger-ui.html**",
+                                        "/redirect/"
                                 ).permitAll()
                                 .requestMatchers("/api/**")
                                 .authenticated()
