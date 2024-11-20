@@ -31,7 +31,7 @@ public class TeamNotificationService {
 
     public void sendMemberRemovedNotification(List<UserToken> removedMemberTokens, String removerName, Team team) {
         String title = "Você foi removido da equipe";
-        String body = removerName + " te removeu da equipe " + team.getName() + ".";
+        String body = "@" + removerName + " te removeu da equipe " + team.getName() + ".";
 
         Map<String, String> params = new HashMap<>();
         params.put("title", title);
@@ -45,7 +45,7 @@ public class TeamNotificationService {
 
     public void sendMemberPromotedNotification(List<UserToken> promotedMemberTokens, String promoterName, Team team, String newRole) {
         String title = "Você foi promovido!";
-        String body = promoterName + " te promoveu para o cargo de " + (Objects.equals(newRole, COMMON_USER.name()) ? "USUÁRIO COMUM" : "ADMINISTRADOR") + " na equipe " + team.getName() + ".";
+        String body = "@" + promoterName + " te promoveu para o cargo de " + (Objects.equals(newRole, COMMON_USER.name()) ? "USUÁRIO COMUM" : "ADMINISTRADOR") + " na equipe " + team.getName() + ".";
 
         Map<String, String> params = setParams(team, title, body);
 

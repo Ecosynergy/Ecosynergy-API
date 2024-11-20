@@ -17,7 +17,7 @@ public class InvitationNotificationService {
 
     public void sendInviteNotification(User recipient, Invite invite) {
         String title = "Novo Convite para a Equipe!";
-        String body = invite.getSender().getUserName() + " te convidou para se juntar à equipe " + invite.getTeam().getName() + ".";
+        String body = "@" + invite.getSender().getUserName() + " te convidou para se juntar à equipe " + invite.getTeam().getName() + ".";
 
         Map<String, String> params = setParams(invite, title, body);
 
@@ -32,7 +32,7 @@ public class InvitationNotificationService {
 
     public void sendInviteAcceptedNotification(User sender, Invite invite) {
         String title = "Convite Aceito";
-        String body = invite.getRecipient().getUserName() + " aceitou seu convite para se juntar à equipe " + invite.getTeam().getName() + "!";
+        String body = "@" + invite.getRecipient().getUserName() + " aceitou seu convite para se juntar à equipe " + invite.getTeam().getName() + "!";
 
         Map<String, String> params = setParams(invite, title, body);
 
@@ -47,7 +47,7 @@ public class InvitationNotificationService {
 
     public void sendInviteDeclinedNotification(User sender, Invite invite) {
         String title = "Convite Recusado";
-        String body = invite.getRecipient().getUserName() + " recusou seu convite para se juntar à equipe " + invite.getTeam().getName() + ".";
+        String body = "@" + invite.getRecipient().getUserName() + " recusou seu convite para se juntar à equipe " + invite.getTeam().getName() + ".";
 
         Map<String, String> params = setParams(invite, title, body);
 
