@@ -84,10 +84,82 @@ public class EmailService {
     }
 
     public void sendWelcomeEmail(User user) throws MessagingException {
-        String subject = "Bem-vindo(a) à Ecosynergy!";
+        String saudation = switch (user.getGender().toLowerCase()) {
+            case "female" -> "bem-vinda";
+            case "male" -> "bem-vindo";
+            default -> "bem-vindo(a)";
+        };
+
+        String subject = "Seja " + saudation + " ao Ecosynergy!";
         String preHeader = "Veja como aproveitar ao máximo a nossa plataforma.";
 
-        String htmlContent = "";
+        String htmlContent = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>Email de Boas Vindas Ecosynergy</title>\n" +
+                "</head>\n" +
+                "<body style=\"margin: 0; padding: 0; background-color: #f9f9f9; font-family: 'Poppins', sans-serif;\">\n" +
+                "    <table style=\"width: 100%;background-color: #f9f9f9; padding: 20px; text-align: center;\">\n" +
+                "        <tr>\n" +
+                "            <td style=\"text-align: center\">\n" +
+                "                <table style=\"width: 600px; max-width: 600px; width: 100%; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); text-align: start; border: none;\">\n" +
+                "                    <tr>\n" +
+                "                        <td style=\"padding: 20px 0; text-align: center\">\n" +
+                "                            <img src=\"https://github.com/Ecosynergy/VisualIdentity/blob/master/Logo_Symbol_Transparent_Wtih_Shine.png?raw=true\" alt=\"Logo Ecosynergy\" style=\"max-width: 200px; height: auto;\">\n" +
+                "                        </td>\n" +
+                "                    </tr>\n" +
+                "                    <tr>\n" +
+                "                        <td style=\"padding: 20px; font-size: 16px; line-height: 24px; color: #333333;\">\n" +
+                "                            <p style=\"margin: 0 0 20px;\">Olá, " + user.getFullName().split(" ")[0] + ".</p>\n" +
+                "                            <h1 style=\"margin: 0 0 20px; font-size: 22px; font-weight: 600;\">\n" +
+                "                                Parabéns e seja bem-vindo à plataforma Ecosynergy!\n" +
+                "                            </h1>\n" +
+                "                            <p style=\"margin: 0 0 20px; font-size: 16px;\">\n" +
+                "                                Estamos animados por você se juntar a nós na missão de tornar o ambiente industrial mais sustentável.\n" +
+                "                            </p>\n" +
+                "                            <p style=\"margin: 0 0 20px; font-size: 16px;\">\n" +
+                "                                Para garantir que você aproveite ao máximo todas as funcionalidades do Ecosynergy, aqui estão algumas dicas importantes:\n" +
+                "                            </p>\n" +
+                "                            <div style=\"background-color: #e2e1e1; padding: 20px; margin: 20px 0; border-radius: 6px;\">\n" +
+                "                                <p style=\"margin: 0; font-size: 16px; font-weight: 600;\">Dicas para começar:</p>\n" +
+                "                                <ol style=\"margin: 10px 0 0 20px; padding: 0; color: #555555;\">\n" +
+                "                                    <li style=\"margin: 10px 0;\">\n" +
+                "                                        <p style=\"margin: 0; font-size: 14px;\">\n" +
+                "                                            <strong>Explore as Ferramentas:</strong> Entenda as ferramentas que vão te ajudar a monitorar emissões, acompanhar projetos e otimizar o desempenho ambiental.\n" +
+                "                                        </p>\n" +
+                "                                    </li>\n" +
+                "                                    <li style=\"margin: 10px 0;\">\n" +
+                "                                        <p style=\"margin: 0; font-size: 14px;\">\n" +
+                "                                            <strong>Comunicação:</strong> Utilize a plataforma para facilitar a comunicação entre os membros da equipe.\n" +
+                "                                        </p>\n" +
+                "                                    </li>\n" +
+                "                                    <li style=\"margin: 10px 0;\">\n" +
+                "                                        <p style=\"margin: 0; font-size: 14px;\">\n" +
+                "                                            <strong>Defina Metas:</strong> Acompanhe as metas do projeto para garantir que os resultados sustentáveis sejam alcançados de forma eficiente.\n" +
+                "                                        </p>\n" +
+                "                                    </li>\n" +
+                "                                </ol>\n" +
+                "                            </div>\n" +
+                "                            <h1 style=\"margin: 0 0 20px; font-size: 22px; font-weight: 600;\">\n" +
+                "                                Estamos ansiosos para ver o impacto positivo que você terá nessa nova etapa!\n" +
+                "                            </h1>\n" +
+                "                            <p style=\"margin: 0; font-size: 16px;\">\n" +
+                "                                <i>Se precisar de qualquer ajuda, nossa equipe de suporte está à disposição.</i>\n" +
+                "                            </p>\n" +
+                "                        </td>\n" +
+                "                    </tr>\n" +
+                "                    <tr>\n" +
+                "                        <td style=\"padding: 20px; font-size: 14px; color: #777777; text-align: center;\">\n" +
+                "                            <p style=\"margin: 0;\">Atenciosamente,<br><strong>Ecosynergy</strong></p>\n" +
+                "                        </td>\n" +
+                "                    </tr>\n" +
+                "                </table>\n" +
+                "            </td>\n" +
+                "        </tr>\n" +
+                "    </table>\n" +
+                "</body>\n" +
+                "</html>";
 
         sendEmail(user.getEmail(), subject, htmlContent, preHeader);
     }
@@ -145,7 +217,7 @@ public class EmailService {
                 "                                    <td style=\"text-align: center;\">\n" +
                 "                                        <a href=\"http://ec2-44-220-83-117.compute-1.amazonaws.com/redirect/home/\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: #000; background-color: #28a745; text-decoration: none; border-radius: 5px; font-family: 'Poppins', sans-serif; text-align: center; font-weight: 600; cursor: pointer\">\n" +
                 "                                            ACESSAR PLATAFORMA ECOSYNERGY\n" +
-                "                                        </a>                                        \n" +
+                "                                        </a>\n" +
                 "                                    </td>\n" +
                 "                                </tr>\n" +
                 "                            </table>\n" +
